@@ -1,0 +1,274 @@
+name: Build Pacey for All Platforms
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  # Generate code and prepare source
+  prepare-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@main
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
+        with:
+          channel: 'stable'
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
+      - name: Upload source artifacts
+        uses: actions/upload-artifact@main
+        with:
+          name: pacey-source
+          path: |
+            .
+            !.git
+            !.github
+          retention-days: 1
+
+  # Build for Windows
+  build-windows:
+    needs: prepare-build
+    runs-on: windows-latest
+    steps:
+      - name: Download source artifacts
+        uses: actions/download-artifact@main
+        with:
+          name: pacey-source
+          path: .
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
+        with:
+          channel: 'stable'
+
+      - name: Build Windows executable
+        run: flutter build windows --release
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: pacey-windows
+          path: build/windows/x64/runner/Release/energy_pacing.exe
+          retention-days: 30
+
+  # Build for macOS
+  build-macos:
+    needs: prepare-build
+    runs-on: macos-latest
+    steps:
+      - name: Download source artifacts
+        uses: actions/download-artifact@main
+        with:
+          name: pacey-source
+          path: .
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
+        with:
+          channel: 'stable'
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@master
+        with:
+          xcode-version: latest-stable
+
+      - name: Build macOS app
+        run: flutter build macos --release
+
+      - name: Create macOS zip
+        run: |
+          cd build/macos/Build/Products/Release
+          zip -r pacey-macos.zip energy_pacing.app
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: pacey-macos
+          path: build/macos/Build/Products/Release/pacey-macos.zip
+          retention-days: 30
+
+  # Build for Linux
+  build-linux:
+    needs: prepare-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update --fix-missing || true
+          sudo apt-get install -y --fix-missing clang cmake ninja-build pkg-config libgtk-3-dev libpng-dev libjpeg-dev libtiff-dev fuse2 libfuse2 || true
+          # Fallback installation if some packages fail
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev || sudo apt-get install -y clang cmake ninja-build pkg-config 
+
+      - name: Download source artifacts
+        uses: actions/download-artifact@main
+        with:
+          name: pacey-source
+          path: .
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
+        with:
+          channel: 'stable'
+
+      - name: Build Linux executable
+        run: flutter build linux --release
+
+      - name: Create AppImage
+        run: |
+          # Download appimagetool
+          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+          
+          # Extract AppImage to avoid FUSE issues
+          ./appimagetool-x86_64.AppImage --appimage-extract
+          mv squashfs-root appimagetool
+          
+          # Create AppDir structure
+          mkdir -p AppImageDir/usr/bin
+          mkdir -p AppImageDir/usr/share/applications
+          mkdir -p AppImageDir/usr/share/icons/hicolor/256x256/apps
+          
+          # Copy application files
+          cp -r build/linux/x64/release/bundle/* AppImageDir/usr/bin/
+          
+          # Create desktop file
+          cat > AppImageDir/energy_pacing.desktop << EOF
+          [Desktop Entry]
+          Name=Pacey
+          Comment=Energy pacing application
+          Exec=energy_pacing
+          Icon=energy_pacing
+          Type=Application
+          Categories=Utility;
+          EOF
+          
+          # Create AppRun script
+          cat > AppImageDir/AppRun << 'EOF'
+          #!/bin/sh
+          HERE="$(dirname "$(readlink -f "${0}")")"
+          export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
+          export PATH="${HERE}/usr/bin:${PATH}"
+          exec "${HERE}/usr/bin/energy_pacing" "$@"
+          EOF
+          chmod +x AppImageDir/AppRun
+          
+          # Create a simple icon file using ImageMagick if available, otherwise create a minimal PNG
+          if command -v convert &> /dev/null; then
+            convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/energy_pacing.png
+          else
+            # Install ImageMagick and create icon
+            sudo apt-get update && sudo apt-get install -y imagemagick
+            convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/energy_pacing.png || \
+            # Final fallback: copy AppRun as PNG (will work for AppImageTool even if not a valid image)
+            cp AppImageDir/AppRun AppImageDir/energy_pacing.png
+          fi
+          
+          # Build AppImage using extracted tool
+          ./appimagetool/AppRun AppImageDir Pacey-x86_64.AppImage
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: pacey-linux-appimage
+          path: Pacey-x86_64.AppImage
+          retention-days: 30
+
+  # Build for Android (APK)
+  build-android:
+    needs: prepare-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@main
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download source artifacts
+        uses: actions/download-artifact@main
+        with:
+          name: pacey-source
+          path: .
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
+        with:
+          channel: 'stable'
+
+      - name: Build Android APK
+        run: flutter build apk --debug
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: pacey-android
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 30
+
+  # Build for iOS (only on macOS)
+  build-ios:
+    needs: prepare-build
+    runs-on: macos-latest
+    steps:
+      - name: Download source artifacts
+        uses: actions/download-artifact@main
+        with:
+          name: pacey-source
+          path: .
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
+        with:
+          channel: 'stable'
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@master
+        with:
+          xcode-version: latest-stable
+
+      - name: Build iOS app
+        run: flutter build ios --release --no-codesign
+
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: pacey-ios
+          path: build/ios/iphoneos/Runner.app
+          retention-days: 30
+
+  # Create release with all artifacts
+  create-release:
+    needs: [build-windows, build-macos, build-linux, build-android, build-ios]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@main
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@main
+        with:
+          files: |
+            artifacts/pacey-windows/energy_pacing.exe
+            artifacts/pacey-macos/pacey-macos.zip
+            artifacts/pacey-linux-appimage/Pacey-x86_64.AppImage
+            artifacts/pacey-linux-flatpak/Pacey.flatpak
+            artifacts/pacey-android/app-debug.apk
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

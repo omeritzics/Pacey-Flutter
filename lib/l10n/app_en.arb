@@ -1,0 +1,36 @@
+{
+  "appTitle": "Pacey",
+  "healingLevel": "Healing Level {level}",
+  "@healingLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "stabilization": "Stabilization",
+  "strengthening": "Strengthening",
+  "expansion": "Expansion",
+  "currentEnergy": "Current Energy",
+  "tasksForEnergy": "Tasks for {energy} ⚡",
+  "@tasksForEnergy": {
+    "placeholders": {
+      "energy": {
+        "type": "int"
+      }
+    }
+  },
+  "noTasks": "No tasks for this energy level.",
+  "addTask": "Add Task",
+  "taskTitle": "Task Title",
+  "energyCost": "Energy Cost",
+  "cancel": "Cancel",
+  "save": "Save",
+  "alreadyLogged": "You have already logged your energy for this time block.",
+  "history": "History",
+  "energyTrend": "Energy Trend",
+  "energyLogs": "Energy Logs",
+  "tasks": "Tasks",
+  "noHistory": "No history recorded yet.",
+  "energyUpdate": "Energy Level Update"
+}

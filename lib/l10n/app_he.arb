@@ -1,0 +1,36 @@
+{
+  "appTitle": "פייסי",
+  "healingLevel": "רמת החלמה {level}",
+  "@healingLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "stabilization": "התייצבות",
+  "strengthening": "התחזקות",
+  "expansion": "הרחבת היכולות",
+  "currentEnergy": "רמת אנרגיה נוכחית",
+  "tasksForEnergy": "משימות עבור {energy} ⚡",
+  "@tasksForEnergy": {
+    "placeholders": {
+      "energy": {
+        "type": "int"
+      }
+    }
+  },
+  "noTasks": "אין משימות לרמת האנרגיה הזו.",
+  "addTask": "הוספת משימה",
+  "taskTitle": "שם המשימה",
+  "energyCost": "עלות אנרגיה",
+  "cancel": "ביטול",
+  "save": "שמירה",
+  "alreadyLogged": "כבר תיעדת את רמת האנרגיה לפרק הזמן הזה.",
+  "history": "היסטוריה",
+  "energyTrend": "מגמת אנרגיה",
+  "energyLogs": "יומן אנרגיה",
+  "tasks": "משימות",
+  "noHistory": "אין עדיין היסטוריה מתועדת.",
+  "energyUpdate": "עדכון רמת אנרגיה"
+}
