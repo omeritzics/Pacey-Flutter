@@ -207,7 +207,7 @@ jobs:
           channel: 'stable'
 
       - name: Build Android APK
-        run: flutter build apk --debug
+        run: flutter build apk --debug --tree-shake-icons
 
       - name: Upload Android artifact
         uses: actions/upload-artifact@main
@@ -253,6 +253,23 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
+      - name: Checkout code
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push nightly tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Delete existing nightly tag if it exists
+          git tag -d nightly || true
+          git push origin :nightly || true
+          # Create new nightly tag
+          git tag nightly
+          git push origin nightly
+
       - name: Download all artifacts
         uses: actions/download-artifact@main
         with:
