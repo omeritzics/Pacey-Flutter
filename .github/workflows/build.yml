@@ -207,14 +207,14 @@ jobs:
           channel: 'stable'
 
       - name: Build Android APK
-        run: flutter build apk --debug --tree-shake-icons
+        run: flutter build apk --profile --tree-shake-icons --no-pub --split-debug-info=build/debug-info
 
       - name: Upload Android artifact
         uses: actions/upload-artifact@main
         with:
           name: pacey-android
-          path: build/app/outputs/flutter-apk/app-debug.apk
-          retention-days: 30
+          path: build/app/outputs/flutter-apk/app-profile.apk
+          retention-days: 7
 
   # Build for iOS (only on macOS)
   build-ios:
@@ -245,7 +245,7 @@ jobs:
         with:
           name: pacey-ios
           path: build/ios/iphoneos/Runner.app
-          retention-days: 30
+          retention-days: 7
 
   # Create release with all artifacts
   create-release:

@@ -40,6 +40,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addTask => 'Add Task';
 
   @override
+  String get editTask => 'Edit Task';
+
+  @override
   String get taskTitle => 'Task Title';
 
   @override

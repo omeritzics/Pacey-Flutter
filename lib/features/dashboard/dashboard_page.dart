@@ -268,10 +268,67 @@ class _TaskTile extends ConsumerWidget {
           ),
           const SizedBox(width: 8),
           IconButton(
+            icon: const Icon(Icons.edit_outlined, size: 20),
+            onPressed: () => _showEditTaskDialog(context, ref, task),
+          ),
+          IconButton(
             icon: const Icon(Icons.delete_outline, size: 20),
             onPressed: () => ref.read(taskActionsProvider).deleteTask(task.id),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showEditTaskDialog(BuildContext context, WidgetRef ref, Task task) {
+    final titleController = TextEditingController(text: task.title);
+    int selectedEnergy = task.energyCost;
+    final l10n = AppLocalizations.of(context)!;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(l10n.editTask),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(labelText: l10n.taskTitle),
+                autofocus: true,
+              ),
+              const SizedBox(height: 16),
+              Text(l10n.energyCost),
+              Slider(
+                value: selectedEnergy.toDouble(),
+                min: 1,
+                max: 10,
+                divisions: 9,
+                label: '$selectedEnergy',
+                onChanged: (value) =>
+                    setState(() => selectedEnergy = value.toInt()),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                if (titleController.text.isNotEmpty) {
+                  ref
+                      .read(taskActionsProvider)
+                      .editTask(task.id, titleController.text, selectedEnergy);
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(l10n.save),
+            ),
+          ],
+        ),
       ),
     );
   }

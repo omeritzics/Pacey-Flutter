@@ -152,6 +152,12 @@ abstract class AppLocalizations {
   /// **'Add Task'**
   String get addTask;
 
+  /// No description provided for @editTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Task'**
+  String get editTask;
+
   /// No description provided for @taskTitle.
   ///
   /// In en, this message translates to:

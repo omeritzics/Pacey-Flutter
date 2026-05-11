@@ -70,6 +70,16 @@ class TaskActions {
     }
   }
 
+  Future<void> editTask(String id, String title, int energyCost) async {
+    final db = _ref.read(databaseProvider);
+    await (db.update(db.tasks)..where((t) => t.id.equals(id))).write(
+      TasksCompanion(
+        title: Value(title),
+        energyCost: Value(energyCost),
+      ),
+    );
+  }
+
   Future<void> deleteTask(String id) async {
     final db = _ref.read(databaseProvider);
     await (db.delete(db.tasks)..where((t) => t.id.equals(id))).go();

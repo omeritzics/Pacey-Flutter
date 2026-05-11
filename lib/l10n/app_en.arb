@@ -22,6 +22,7 @@
   },
   "noTasks": "No tasks for this energy level.",
   "addTask": "Add Task",
+  "editTask": "Edit Task",
   "taskTitle": "Task Title",
   "energyCost": "Energy Cost",
   "cancel": "Cancel",

@@ -9,7 +9,7 @@ class AppLocalizationsHe extends AppLocalizations {
   AppLocalizationsHe([String locale = 'he']) : super(locale);
 
   @override
-  String get appTitle => 'פייסי';
+  String get appTitle => 'Pacey';
 
   @override
   String healingLevel(int level) {
@@ -38,6 +38,9 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get addTask => 'הוספת משימה';
+
+  @override
+  String get editTask => 'עריכת משימה';
 
   @override
   String get taskTitle => 'שם המשימה';
@@ -79,43 +82,44 @@ class AppLocalizationsHe extends AppLocalizations {
   String get language => 'שפה';
 
   @override
-  String get selectLanguage => 'בחר שפה';
+  String get selectLanguage => 'בחירת שפה';
 
   @override
-  String get followSystem => 'עקוב אחר המערכת';
+  String get followSystem => 'לפי המערכת';
 
   @override
-  String get p2pSync => 'סינכרון P2P';
+  String get p2pSync => 'סנכרון P2P';
 
   @override
-  String get syncSettings => 'הגדרות סינכרון';
+  String get syncSettings => 'הגדרות סנכרון';
 
   @override
-  String get connectionStatus => 'סטטוס חיבור';
+  String get connectionStatus => 'מצב חיבור';
 
   @override
   String get connectedPeers => 'מכשירים מחוברים';
 
   @override
-  String get connectToPeer => 'התחבר למכשיר';
+  String get connectToPeer => 'התחברות למכשיר';
 
   @override
   String get yourPeerId => 'מזהה המכשיר שלך';
 
   @override
-  String get shareQrCode => 'שתף קוד QR זה או מזהה עם מכשירים אחרים כדי להתחבר';
+  String get shareQrCode =>
+      'אפשר לשתף קוד QR זה או מזהה עם מכשירים אחרים כדי להתחבר';
 
   @override
-  String get enterPeerId => 'הכנס מזהה מכשיר';
+  String get enterPeerId => 'נא להכניס מזהה מכשיר';
 
   @override
-  String get pastePeerId => 'הדבק את מזהה המכשיר כאן';
+  String get pastePeerId => 'נא להדביק את מזהה המכשיר כאן';
 
   @override
-  String get connect => 'התחבר';
+  String get connect => 'התחברות';
 
   @override
-  String get scanQr => 'סרוק QR';
+  String get scanQr => 'סריקת קוד QR';
 
   @override
   String get noPeersConnected => 'אין מכשירים מחוברים';
@@ -127,31 +131,31 @@ class AppLocalizationsHe extends AppLocalizations {
   String get connectedToP2P => 'מחובר לרשת P2P';
 
   @override
-  String get peerConnected => 'מכשיר התחבר';
+  String get peerConnected => 'המכשיר התחבר';
 
   @override
-  String get peerDisconnected => 'מכשיר התנתק';
+  String get peerDisconnected => 'המכשיר התנתק';
 
   @override
-  String get syncingData => 'מסנכרן נתונים...';
+  String get syncingData => 'הנתונים מסתנכרנים...';
 
   @override
   String get connectionRequest => 'בקשת חיבור';
 
   @override
   String deviceWantsToConnect(Object peerId) {
-    return 'מכשיר $peerId רוצה להתחבר אליך. האם ברצונך לאשר חיבור זה?';
+    return 'המכשיר $peerId רוצה להתחבר למכשירך. האם ברצונך לאשר חיבור זה?';
   }
 
   @override
-  String get accept => 'אשר';
+  String get accept => 'אישור';
 
   @override
-  String get reject => 'דחה';
+  String get reject => 'דחייה';
 
   @override
   String connectionRejected(Object peerId) {
-    return 'החיבור מ-$peerId נדחה';
+    return 'החיבור מהמכשיר $peerId נדחה';
   }
 
   @override
@@ -163,5 +167,5 @@ class AppLocalizationsHe extends AppLocalizations {
   String get cameraPermissionRequired => 'נדרשת הרשאת מצלמה כדי לסרוק קודי QR';
 
   @override
-  String get initializing => 'מאתחל...';
+  String get initializing => 'בתהליך אתחול...';
 }
