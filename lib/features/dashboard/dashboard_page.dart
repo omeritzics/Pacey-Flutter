@@ -6,6 +6,7 @@ import '../tasks/task_provider.dart';
 import '../../core/database/database.dart';
 import '../history/history_page.dart';
 import '../gamification/gamification_provider.dart';
+import '../p2p/p2p_screen.dart';
 
 import 'package:energy_pacing/core/localization/locale_provider.dart';
 
@@ -23,6 +24,16 @@ class DashboardPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.appTitle),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const P2PScreen()),
+              );
+            },
+            icon: const Icon(Icons.share),
+            tooltip: 'P2P Sync',
+          ),
           TextButton.icon(
             onPressed: () => ref.read(localeProvider.notifier).toggleLocale(),
             icon: const Icon(Icons.language, size: 20),
@@ -210,7 +221,7 @@ class _EnergySelector extends StatelessWidget {
                 child: Text(
                   '⚡',
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 18,
                     fontFamily: isFilled ? 'Noto Color Emoji' : 'Noto Emoji',
                     // Fallback for visual clarity if fonts aren't perfectly distinct
                     color: isFilled ? null : Colors.grey.withValues(alpha: 0.3),
@@ -260,7 +271,7 @@ class _TaskTile extends ConsumerWidget {
             task.energyCost,
             (_) => const Text(
               '⚡',
-              style: TextStyle(fontSize: 14, fontFamily: 'Noto Color Emoji'),
+              style: TextStyle(fontSize: 18, fontFamily: 'Noto Color Emoji'),
             ),
           ),
           const SizedBox(width: 8),
