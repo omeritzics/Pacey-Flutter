@@ -72,4 +72,99 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get energyUpdate => 'Energy Level Update';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get followSystem => 'Follow System';
+
+  @override
+  String get p2pSync => 'P2P Sync';
+
+  @override
+  String get syncSettings => 'Sync Settings';
+
+  @override
+  String get connectionStatus => 'Connection Status';
+
+  @override
+  String get connectedPeers => 'Connected Peers';
+
+  @override
+  String get connectToPeer => 'Connect to Peer';
+
+  @override
+  String get yourPeerId => 'Your Peer ID';
+
+  @override
+  String get shareQrCode =>
+      'Share this QR code or ID with other devices to connect';
+
+  @override
+  String get enterPeerId => 'Enter Peer ID';
+
+  @override
+  String get pastePeerId => 'Paste the peer ID here';
+
+  @override
+  String get connect => 'Connect';
+
+  @override
+  String get scanQr => 'Scan QR';
+
+  @override
+  String get noPeersConnected => 'No peers connected';
+
+  @override
+  String get disconnected => 'Disconnected';
+
+  @override
+  String get connectedToP2P => 'Connected to P2P network';
+
+  @override
+  String get peerConnected => 'Peer connected';
+
+  @override
+  String get peerDisconnected => 'Peer disconnected';
+
+  @override
+  String get syncingData => 'Syncing data...';
+
+  @override
+  String get connectionRequest => 'Connection Request';
+
+  @override
+  String deviceWantsToConnect(Object peerId) {
+    return 'Device $peerId wants to connect with you. Do you want to accept this connection?';
+  }
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String connectionRejected(Object peerId) {
+    return 'Connection from $peerId rejected';
+  }
+
+  @override
+  String connectedTo(Object peerId) {
+    return 'Connected to $peerId';
+  }
+
+  @override
+  String get cameraPermissionRequired =>
+      'Camera permission is required to scan QR codes';
+
+  @override
+  String get initializing => 'Initializing...';
 }

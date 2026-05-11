@@ -34,7 +34,7 @@ class AppLocalizationsHe extends AppLocalizations {
   }
 
   @override
-  String get noTasks => 'אין משימות לרמת האנרגיה הזו.';
+  String get noTasks => 'אין משימות עבור רמת האנרגיה הזו.';
 
   @override
   String get addTask => 'הוספת משימה';
@@ -71,4 +71,97 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get energyUpdate => 'עדכון רמת אנרגיה';
+
+  @override
+  String get settings => 'הגדרות';
+
+  @override
+  String get language => 'שפה';
+
+  @override
+  String get selectLanguage => 'בחר שפה';
+
+  @override
+  String get followSystem => 'עקוב אחר המערכת';
+
+  @override
+  String get p2pSync => 'סינכרון P2P';
+
+  @override
+  String get syncSettings => 'הגדרות סינכרון';
+
+  @override
+  String get connectionStatus => 'סטטוס חיבור';
+
+  @override
+  String get connectedPeers => 'מכשירים מחוברים';
+
+  @override
+  String get connectToPeer => 'התחבר למכשיר';
+
+  @override
+  String get yourPeerId => 'מזהה המכשיר שלך';
+
+  @override
+  String get shareQrCode => 'שתף קוד QR זה או מזהה עם מכשירים אחרים כדי להתחבר';
+
+  @override
+  String get enterPeerId => 'הכנס מזהה מכשיר';
+
+  @override
+  String get pastePeerId => 'הדבק את מזהה המכשיר כאן';
+
+  @override
+  String get connect => 'התחבר';
+
+  @override
+  String get scanQr => 'סרוק QR';
+
+  @override
+  String get noPeersConnected => 'אין מכשירים מחוברים';
+
+  @override
+  String get disconnected => 'מנותק';
+
+  @override
+  String get connectedToP2P => 'מחובר לרשת P2P';
+
+  @override
+  String get peerConnected => 'מכשיר התחבר';
+
+  @override
+  String get peerDisconnected => 'מכשיר התנתק';
+
+  @override
+  String get syncingData => 'מסנכרן נתונים...';
+
+  @override
+  String get connectionRequest => 'בקשת חיבור';
+
+  @override
+  String deviceWantsToConnect(Object peerId) {
+    return 'מכשיר $peerId רוצה להתחבר אליך. האם ברצונך לאשר חיבור זה?';
+  }
+
+  @override
+  String get accept => 'אשר';
+
+  @override
+  String get reject => 'דחה';
+
+  @override
+  String connectionRejected(Object peerId) {
+    return 'החיבור מ-$peerId נדחה';
+  }
+
+  @override
+  String connectedTo(Object peerId) {
+    return 'מחובר אל $peerId';
+  }
+
+  @override
+  String get cameraPermissionRequired => 'נדרשת הרשאת מצלמה כדי לסרוק קודי QR';
+
+  @override
+  String get initializing => 'מאתחל...';
 }

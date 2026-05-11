@@ -38,6 +38,18 @@ final p2pConnectionStateProvider = StreamProvider<P2PConnectionState>((ref) {
           peerId: event.data['peerId'] as String,
           data: event.data['message'],
         );
+      case P2PEventType.connectionRequest:
+        return P2PConnectionState.connectionRequest(
+          peerId: event.data['peerId'] as String,
+        );
+      case P2PEventType.connectionAccepted:
+        return P2PConnectionState.connectionAccepted(
+          peerId: event.data['peerId'] as String,
+        );
+      case P2PEventType.connectionRejected:
+        return P2PConnectionState.connectionRejected(
+          peerId: event.data['peerId'] as String,
+        );
     }
   });
 });
@@ -59,6 +71,9 @@ enum P2PConnectionStatus {
   peerConnected,
   peerDisconnected,
   dataReceived,
+  connectionRequest,
+  connectionAccepted,
+  connectionRejected,
 }
 
 class P2PConnectionState {
@@ -88,6 +103,15 @@ class P2PConnectionState {
          peerId: peerId,
          data: data,
        );
+
+  const P2PConnectionState.connectionRequest({required String peerId})
+    : this._(status: P2PConnectionStatus.connectionRequest, peerId: peerId);
+
+  const P2PConnectionState.connectionAccepted({required String peerId})
+    : this._(status: P2PConnectionStatus.connectionAccepted, peerId: peerId);
+
+  const P2PConnectionState.connectionRejected({required String peerId})
+    : this._(status: P2PConnectionStatus.connectionRejected, peerId: peerId);
 
   @override
   bool operator ==(Object other) {

@@ -32,6 +32,9 @@ class P2PSyncService {
       case P2PEventType.peerDisconnected:
         _onPeerDisconnected(event.data['peerId']);
         break;
+      case P2PEventType.connectionRequest:
+        _handleConnectionRequest(event.data['peerId']);
+        break;
       default:
         break;
     }
@@ -135,6 +138,11 @@ class P2PSyncService {
     // Handle peer disconnection if needed
   }
 
+  void _handleConnectionRequest(String peerId) {
+    // This will be handled by the UI layer for confirmation
+    // The event is already being broadcast by P2P service
+  }
+
   Future<void> _broadcastAllData() async {
     if (_database == null) return;
 
@@ -210,6 +218,14 @@ class P2PSyncService {
 
   Future<void> connectToPeer(String peerId) async {
     await _p2pService.connectToPeer(peerId);
+  }
+
+  void acceptConnection(String peerId) {
+    _p2pService.acceptConnection(peerId);
+  }
+
+  void rejectConnection(String peerId) {
+    _p2pService.rejectConnection(peerId);
   }
 
   List<String> get connectedPeers => _p2pService.connectedPeers;

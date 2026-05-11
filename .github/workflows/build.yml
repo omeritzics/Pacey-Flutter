@@ -259,7 +259,7 @@ jobs:
           path: artifacts
 
       - name: Create Release
-        uses: softprops/action-gh-release@main
+        uses: softprops/action-gh-release@master
         with:
           files: |
             artifacts/pacey-windows/energy_pacing.exe

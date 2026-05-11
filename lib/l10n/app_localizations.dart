@@ -217,6 +217,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Energy Level Update'**
   String get energyUpdate;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @selectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguage;
+
+  /// No description provided for @followSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow System'**
+  String get followSystem;
+
+  /// No description provided for @p2pSync.
+  ///
+  /// In en, this message translates to:
+  /// **'P2P Sync'**
+  String get p2pSync;
+
+  /// No description provided for @syncSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Settings'**
+  String get syncSettings;
+
+  /// No description provided for @connectionStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Status'**
+  String get connectionStatus;
+
+  /// No description provided for @connectedPeers.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected Peers'**
+  String get connectedPeers;
+
+  /// No description provided for @connectToPeer.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to Peer'**
+  String get connectToPeer;
+
+  /// No description provided for @yourPeerId.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Peer ID'**
+  String get yourPeerId;
+
+  /// No description provided for @shareQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this QR code or ID with other devices to connect'**
+  String get shareQrCode;
+
+  /// No description provided for @enterPeerId.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Peer ID'**
+  String get enterPeerId;
+
+  /// No description provided for @pastePeerId.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste the peer ID here'**
+  String get pastePeerId;
+
+  /// No description provided for @connect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connect;
+
+  /// No description provided for @scanQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR'**
+  String get scanQr;
+
+  /// No description provided for @noPeersConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'No peers connected'**
+  String get noPeersConnected;
+
+  /// No description provided for @disconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected'**
+  String get disconnected;
+
+  /// No description provided for @connectedToP2P.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected to P2P network'**
+  String get connectedToP2P;
+
+  /// No description provided for @peerConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Peer connected'**
+  String get peerConnected;
+
+  /// No description provided for @peerDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Peer disconnected'**
+  String get peerDisconnected;
+
+  /// No description provided for @syncingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing data...'**
+  String get syncingData;
+
+  /// No description provided for @connectionRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Request'**
+  String get connectionRequest;
+
+  /// No description provided for @deviceWantsToConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Device {peerId} wants to connect with you. Do you want to accept this connection?'**
+  String deviceWantsToConnect(Object peerId);
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get reject;
+
+  /// No description provided for @connectionRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection from {peerId} rejected'**
+  String connectionRejected(Object peerId);
+
+  /// No description provided for @connectedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected to {peerId}'**
+  String connectedTo(Object peerId);
+
+  /// No description provided for @cameraPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission is required to scan QR codes'**
+  String get cameraPermissionRequired;
+
+  /// No description provided for @initializing.
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing...'**
+  String get initializing;
 }
 
 class _AppLocalizationsDelegate

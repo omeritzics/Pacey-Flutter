@@ -72,6 +72,26 @@ class P2PService {
     });
   }
 
+  void acceptConnection(String peerId) {
+    final conn = _connections[peerId];
+    if (conn != null) {
+      _eventController.add(
+        P2PEvent(type: P2PEventType.connectionAccepted, data: {'peerId': peerId}),
+      );
+    }
+  }
+
+  void rejectConnection(String peerId) {
+    final conn = _connections[peerId];
+    if (conn != null) {
+      conn.close();
+      _connections.remove(peerId);
+      _eventController.add(
+        P2PEvent(type: P2PEventType.connectionRejected, data: {'peerId': peerId}),
+      );
+    }
+  }
+
   Future<DataConnection> connectToPeer(String peerId) async {
     if (!_isInitialized) {
       throw StateError('P2P service not initialized');
@@ -123,6 +143,9 @@ enum P2PEventType {
   peerConnected,
   peerDisconnected,
   dataReceived,
+  connectionRequest,
+  connectionAccepted,
+  connectionRejected,
 }
 
 class P2PEvent {

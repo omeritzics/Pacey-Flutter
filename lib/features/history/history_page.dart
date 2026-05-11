@@ -91,7 +91,7 @@ class HistoryPage extends ConsumerWidget {
                         ),
                         trailing: const Text(
                           '⚡',
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(fontSize: 20),
                         ),
                       );
                     },

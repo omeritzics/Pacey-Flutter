@@ -17,7 +17,8 @@ class EnergyPacingApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final locale = ref.watch(localeProvider);
+    final localeNotifier = ref.watch(localeProvider.notifier);
+    final locale = localeNotifier.getEffectiveLocale();
 
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
