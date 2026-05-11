@@ -84,9 +84,15 @@ class HistoryPage extends ConsumerWidget {
                         leading: CircleAvatar(child: Text('${log.level}')),
                         title: Text(l10n.energyUpdate),
                         subtitle: Text(
-                          DateFormat('MMM dd, HH:mm', locale).format(log.timestamp),
+                          DateFormat(
+                            'MMM dd, HH:mm',
+                            locale,
+                          ).format(log.timestamp),
                         ),
-                        trailing: const Text('⚡', style: TextStyle(fontSize: 18)),
+                        trailing: const Text(
+                          '⚡',
+                          style: TextStyle(fontSize: 18),
+                        ),
                       );
                     },
                   ),

@@ -17,16 +17,16 @@ class AppLocalizationsHe extends AppLocalizations {
   }
 
   @override
-  String get stabilization => 'ייצוב';
+  String get stabilization => 'התייצבות';
 
   @override
-  String get strengthening => 'חיזוק';
+  String get strengthening => 'התחזקות';
 
   @override
-  String get expansion => 'הרחבה';
+  String get expansion => 'הרחבת היכולות';
 
   @override
-  String get currentEnergy => 'אנרגיה נוכחית';
+  String get currentEnergy => 'רמת אנרגיה נוכחית';
 
   @override
   String tasksForEnergy(int energy) {
