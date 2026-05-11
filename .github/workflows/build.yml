@@ -141,8 +141,16 @@ jobs:
           EOF
           chmod +x AppImageDir/AppRun
           
-          # Create icon (placeholder)
-          cp AppImageDir/AppRun AppImageDir/usr/share/icons/hicolor/256x256/apps/energy_pacing.png
+          # Create a simple icon file using ImageMagick if available, otherwise create a minimal PNG
+          if command -v convert &> /dev/null; then
+            convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/energy_pacing.png
+          else
+            # Install ImageMagick and create icon
+            sudo apt-get update && sudo apt-get install -y imagemagick
+            convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/energy_pacing.png || \
+            # Final fallback: copy AppRun as PNG (will work for AppImageTool even if not a valid image)
+            cp AppImageDir/AppRun AppImageDir/energy_pacing.png
+          fi
           
           # Build AppImage using extracted tool
           ./appimagetool/AppRun AppImageDir Pacey-x86_64.AppImage
