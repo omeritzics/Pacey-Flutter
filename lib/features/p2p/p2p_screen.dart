@@ -95,7 +95,7 @@ class _P2PScreenState extends ConsumerState<P2PScreen> {
                                 version: QrVersions.auto,
                                 size: 200.0,
                                 backgroundColor: Colors.white,
-                                textColor: Colors.black,
+                                foregroundColor: Colors.black,
                               ),
                             ),
                           ),
