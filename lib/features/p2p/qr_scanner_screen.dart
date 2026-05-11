@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/p2p/p2p_sync_provider.dart';
 
@@ -12,22 +12,12 @@ class QRScannerScreen extends ConsumerStatefulWidget {
 }
 
 class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  QRViewController? controller;
+  final MobileScannerController controller = MobileScannerController();
   bool isScanning = true;
 
   @override
-  void reassemble() {
-    super.reassemble();
-    if (controller != null) {
-      controller!.pauseCamera();
-      controller!.resumeCamera();
-    }
-  }
-
-  @override
   void dispose() {
-    controller?.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -43,9 +33,9 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
               setState(() {
                 isScanning = !isScanning;
                 if (isScanning) {
-                  controller?.resumeCamera();
+                  controller.start();
                 } else {
-                  controller?.pauseCamera();
+                  controller.stop();
                 }
               });
             },
@@ -56,16 +46,19 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
         children: [
           Expanded(
             flex: 5,
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: _onQRViewCreated,
-              overlay: QrScannerOverlayShape(
-                borderColor: Theme.of(context).primaryColor,
-                borderRadius: 10,
-                borderLength: 30,
-                borderWidth: 10,
-                cutOutSize: 250,
-              ),
+            child: Stack(
+              children: [
+                MobileScanner(
+                  controller: controller,
+                  onDetect: _onBarcodeDetect,
+                ),
+                CustomPaint(
+                  size: Size.infinite,
+                  painter: QrScannerOverlayPainter(
+                    borderColor: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -81,19 +74,19 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-
-    controller.scannedDataStream.listen((scanData) {
-      if (scanData.code != null) {
-        _handleQRCode(scanData.code!);
-      }
-    });
+  void _onBarcodeDetect(BarcodeCapture capture) {
+    final barcode = capture.barcodes.first;
+    if (barcode.rawValue != null && isScanning) {
+      _handleQRCode(barcode.rawValue!);
+    }
   }
 
   Future<void> _handleQRCode(String qrCode) async {
     // Stop scanning to prevent multiple reads
-    controller?.pauseCamera();
+    setState(() {
+      isScanning = false;
+    });
+    controller.stop();
 
     // Validate that this looks like a peer ID
     if (_isValidPeerId(qrCode)) {
@@ -138,7 +131,10 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
 
     // Resume scanning after a short delay
     await Future.delayed(const Duration(seconds: 2));
-    controller?.resumeCamera();
+    setState(() {
+      isScanning = true;
+    });
+    controller.start();
   }
 
   bool _isValidPeerId(String peerId) {
@@ -148,6 +144,102 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
         peerId.length <= 50 &&
         RegExp(r'^[a-zA-Z0-9_-]+$').hasMatch(peerId);
   }
+}
+
+class QrScannerOverlayPainter extends CustomPainter {
+  final Color borderColor;
+
+  QrScannerOverlayPainter({required this.borderColor});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.5)
+      ..style = PaintingStyle.fill;
+
+    final borderPaint = Paint()
+      ..color = borderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10;
+
+    final cutOutSize = 250.0;
+    final cutOutRect = Rect.fromCenter(
+      center: Offset(size.width / 2, size.height / 2),
+      width: cutOutSize,
+      height: cutOutSize,
+    );
+
+    // Draw the overlay with transparent center
+    final path = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..addRect(cutOutRect)
+      ..fillType = PathFillType.evenOdd;
+
+    canvas.drawPath(path, paint);
+
+    // Draw the border corners
+    final borderLength = 30.0;
+    final borderRadius = 10.0;
+
+    // Top left corner
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          cutOutRect.left - 5,
+          cutOutRect.top - 5,
+          borderLength,
+          10,
+        ),
+        Radius.circular(borderRadius),
+      ),
+      borderPaint,
+    );
+
+    // Top right corner
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          cutOutRect.right - borderLength + 5,
+          cutOutRect.top - 5,
+          borderLength,
+          10,
+        ),
+        Radius.circular(borderRadius),
+      ),
+      borderPaint,
+    );
+
+    // Bottom left corner
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          cutOutRect.left - 5,
+          cutOutRect.bottom - 5,
+          borderLength,
+          10,
+        ),
+        Radius.circular(borderRadius),
+      ),
+      borderPaint,
+    );
+
+    // Bottom right corner
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          cutOutRect.right - borderLength + 5,
+          cutOutRect.bottom - 5,
+          borderLength,
+          10,
+        ),
+        Radius.circular(borderRadius),
+      ),
+      borderPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 // Request camera permission before showing QR scanner

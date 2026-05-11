@@ -108,6 +108,10 @@ jobs:
           wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
           
+          # Extract AppImage to avoid FUSE issues
+          ./appimagetool-x86_64.AppImage --appimage-extract
+          mv squashfs-root appimagetool
+          
           # Create AppDir structure
           mkdir -p AppImageDir/usr/bin
           mkdir -p AppImageDir/usr/share/applications
@@ -140,8 +144,8 @@ jobs:
           # Create icon (placeholder)
           cp AppImageDir/AppRun AppImageDir/usr/share/icons/hicolor/256x256/apps/energy_pacing.png
           
-          # Build AppImage
-          ./appimagetool-x86_64.AppImage AppImageDir Pacey-x86_64.AppImage
+          # Build AppImage using extracted tool
+          ./appimagetool/AppRun AppImageDir Pacey-x86_64.AppImage
 
       - name: Create Flatpak
         run: |
