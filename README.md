@@ -1,6 +1,8 @@
 # Pacey
 
-A new Flutter project.
+A simple energy management application for people with CFS/ME. Note that I primarily made this app for my personal use and that it still isn't ready for daily usage. I am not responsible for your usage of Pacey.
+
+For license, see https://github.com/omeritzics/Pacey?tab=License-1-ov-file.
 
 ## Getting Started
 
