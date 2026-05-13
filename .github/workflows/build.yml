@@ -19,12 +19,39 @@ jobs:
         uses: subosito/flutter-action@main
         with:
           channel: 'stable'
+          cache: true
+
+      - name: Cache pub dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
 
       - name: Get Flutter dependencies
         run: flutter pub get
 
       - name: Generate code
         run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
+      - name: Upload pub cache
+        uses: actions/upload-artifact@main
+        with:
+          name: pub-cache
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          retention-days: 1
+
+      - name: Upload Flutter installation
+        uses: actions/upload-artifact@main
+        with:
+          name: flutter-installation
+          path: /opt/hostedtoolcache/Flutter
+          retention-days: 1
 
       - name: Upload source artifacts
         uses: actions/upload-artifact@main
@@ -47,10 +74,19 @@ jobs:
           name: pacey-source
           path: .
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@main
+      - name: Download Flutter installation
+        uses: actions/download-artifact@main
         with:
-          channel: 'stable'
+          name: flutter-installation
+          path: C:/hostedtoolcache/Flutter
+
+      - name: Download pub cache
+        uses: actions/download-artifact@main
+        with:
+          name: pub-cache
+          path: |
+            C:/Users/runneradmin/.pub-cache
+            .dart_tool
 
       - name: Build Windows executable
         run: flutter build windows --release
@@ -73,10 +109,19 @@ jobs:
           name: pacey-source
           path: .
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@main
+      - name: Download Flutter installation
+        uses: actions/download-artifact@main
         with:
-          channel: 'stable'
+          name: flutter-installation
+          path: /opt/hostedtoolcache/Flutter
+
+      - name: Download pub cache
+        uses: actions/download-artifact@main
+        with:
+          name: pub-cache
+          path: |
+            ~/.pub-cache
+            .dart_tool
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@master
@@ -116,10 +161,19 @@ jobs:
           name: pacey-source
           path: .
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@main
+      - name: Download Flutter installation
+        uses: actions/download-artifact@main
         with:
-          channel: 'stable'
+          name: flutter-installation
+          path: /opt/hostedtoolcache/Flutter
+
+      - name: Download pub cache
+        uses: actions/download-artifact@main
+        with:
+          name: pub-cache
+          path: |
+            ~/.pub-cache
+            .dart_tool
 
       - name: Build Linux executable
         run: flutter build linux --release
@@ -201,10 +255,19 @@ jobs:
           name: pacey-source
           path: .
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@main
+      - name: Download Flutter installation
+        uses: actions/download-artifact@main
         with:
-          channel: 'stable'
+          name: flutter-installation
+          path: /opt/hostedtoolcache/Flutter
+
+      - name: Download pub cache
+        uses: actions/download-artifact@main
+        with:
+          name: pub-cache
+          path: |
+            ~/.pub-cache
+            .dart_tool
 
       - name: Build Android APK
         run: flutter build apk --profile --tree-shake-icons --split-debug-info=build/debug-info
@@ -227,10 +290,19 @@ jobs:
           name: pacey-source
           path: .
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@main
+      - name: Download Flutter installation
+        uses: actions/download-artifact@main
         with:
-          channel: 'stable'
+          name: flutter-installation
+          path: /opt/hostedtoolcache/Flutter
+
+      - name: Download pub cache
+        uses: actions/download-artifact@main
+        with:
+          name: pub-cache
+          path: |
+            ~/.pub-cache
+            .dart_tool
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@master
