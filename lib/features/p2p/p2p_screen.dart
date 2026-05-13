@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:energy_pacing/l10n/app_localizations.dart';
+import 'package:pacey/l10n/app_localizations.dart';
 import '../../core/p2p/p2p_sync_provider.dart';
 import 'qr_scanner_screen.dart';
 

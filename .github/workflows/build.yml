@@ -59,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: pacey-windows
-          path: build/windows/x64/runner/Release/energy_pacing.exe
+          path: build/windows/x64/runner/Release/pacey.exe
           retention-days: 30
 
   # Build for macOS
@@ -89,7 +89,7 @@ jobs:
       - name: Create macOS zip
         run: |
           cd build/macos/Build/Products/Release
-          zip -r pacey-macos.zip energy_pacing.app
+          zip -r pacey-macos.zip pacey.app
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@main
@@ -143,12 +143,12 @@ jobs:
           cp -r build/linux/x64/release/bundle/* AppImageDir/usr/bin/
           
           # Create desktop file
-          cat > AppImageDir/energy_pacing.desktop << EOF
+          cat > AppImageDir/pacey.desktop << EOF
           [Desktop Entry]
           Name=Pacey
           Comment=Energy pacing application
-          Exec=energy_pacing
-          Icon=energy_pacing
+          Exec=pacey
+          Icon=pacey
           Type=Application
           Categories=Utility;
           EOF
@@ -159,19 +159,19 @@ jobs:
           HERE="$(dirname "$(readlink -f "${0}")")"
           export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
           export PATH="${HERE}/usr/bin:${PATH}"
-          exec "${HERE}/usr/bin/energy_pacing" "$@"
+          exec "${HERE}/usr/bin/pacey" "$@"
           EOF
           chmod +x AppImageDir/AppRun
           
           # Create a simple icon file using ImageMagick if available, otherwise create a minimal PNG
           if command -v convert &> /dev/null; then
-            convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/energy_pacing.png
+            convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/pacey.png
           else
             # Install ImageMagick and create icon
             sudo apt-get update && sudo apt-get install -y imagemagick
-            convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/energy_pacing.png || \
+            convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/pacey.png || \
             # Final fallback: copy AppRun as PNG (will work for AppImageTool even if not a valid image)
-            cp AppImageDir/AppRun AppImageDir/energy_pacing.png
+            cp AppImageDir/AppRun AppImageDir/pacey.png
           fi
           
           # Build AppImage using extracted tool
@@ -279,7 +279,7 @@ jobs:
         uses: softprops/action-gh-release@master
         with:
           files: |
-            artifacts/pacey-windows/energy_pacing.exe
+            artifacts/pacey-windows/pacey.exe
             artifacts/pacey-macos/pacey-macos.zip
             artifacts/pacey-linux-appimage/Pacey-x86_64.AppImage
             artifacts/pacey-linux-flatpak/Pacey.flatpak

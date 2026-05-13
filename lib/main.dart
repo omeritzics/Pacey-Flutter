@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:energy_pacing/l10n/app_localizations.dart';
-import 'package:energy_pacing/core/localization/locale_provider.dart';
+import 'package:pacey/l10n/app_localizations.dart';
+import 'package:pacey/core/localization/locale_provider.dart';
 import 'features/dashboard/dashboard_page.dart';
 
 void main() async {

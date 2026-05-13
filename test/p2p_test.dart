@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:energy_pacing/core/p2p/p2p_service.dart';
-import 'package:energy_pacing/core/p2p/p2p_sync_service.dart';
+import 'package:pacey/core/p2p/p2p_service.dart';
+import 'package:pacey/core/p2p/p2p_sync_service.dart';
 
 void main() {
   group('P2P Service Tests', () {
