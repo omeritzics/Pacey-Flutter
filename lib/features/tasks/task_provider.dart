@@ -3,8 +3,8 @@ import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
+import '../../core/p2p/p2p_sync_provider.dart';
 import '../energy/energy_provider.dart';
-
 import '../gamification/gamification_provider.dart';
 
 final tasksProvider = StreamProvider<List<Task>>((ref) {
@@ -33,24 +33,40 @@ class TaskActions {
 
   Future<void> addTask(String title, int energyCost) async {
     final db = _ref.read(databaseProvider);
+    final syncService = _ref.read(p2pSyncServiceProvider);
+    
+    final taskId = _uuid.v4();
     await db
         .into(db.tasks)
         .insert(
           TasksCompanion.insert(
-            id: _uuid.v4(),
+            id: taskId,
             title: title,
             energyCost: energyCost,
           ),
         );
+    
+    // Broadcast task creation to connected peers
+    final createdTask = await (db.select(db.tasks)
+          ..where((t) => t.id.equals(taskId)))
+        .getSingle();
+    syncService.broadcastTaskCreated(createdTask);
   }
 
   Future<void> toggleTask(Task task) async {
     final db = _ref.read(databaseProvider);
+    final syncService = _ref.read(p2pSyncServiceProvider);
     final isNowCompleted = !task.isCompleted;
 
     await (db.update(db.tasks)..where((t) => t.id.equals(task.id))).write(
       TasksCompanion(isCompleted: Value(isNowCompleted)),
     );
+
+    // Broadcast task update to connected peers
+    final updatedTask = await (db.select(db.tasks)
+          ..where((t) => t.id.equals(task.id)))
+        .getSingle();
+    syncService.broadcastTaskUpdated(updatedTask);
 
     final currentEnergy = _ref.read(energyLevelProvider);
     if (isNowCompleted) {
@@ -72,16 +88,29 @@ class TaskActions {
 
   Future<void> editTask(String id, String title, int energyCost) async {
     final db = _ref.read(databaseProvider);
+    final syncService = _ref.read(p2pSyncServiceProvider);
+    
     await (db.update(db.tasks)..where((t) => t.id.equals(id))).write(
       TasksCompanion(
         title: Value(title),
         energyCost: Value(energyCost),
       ),
     );
+    
+    // Broadcast task update to connected peers
+    final updatedTask = await (db.select(db.tasks)
+          ..where((t) => t.id.equals(id)))
+        .getSingle();
+    syncService.broadcastTaskUpdated(updatedTask);
   }
 
   Future<void> deleteTask(String id) async {
     final db = _ref.read(databaseProvider);
+    final syncService = _ref.read(p2pSyncServiceProvider);
+    
     await (db.delete(db.tasks)..where((t) => t.id.equals(id))).go();
+    
+    // Broadcast task deletion to connected peers
+    syncService.broadcastTaskDeleted(id);
   }
 }
