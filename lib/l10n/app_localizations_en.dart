@@ -170,4 +170,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get initializing => 'Initializing...';
+
+  @override
+  String get connectedDevices => 'Connected Devices';
+
+  @override
+  String get noDevicesConnected => 'No devices connected';
+
+  @override
+  String get connectDevicesToSync => 'Connect devices to start syncing data';
+
+  @override
+  String get online => 'Online';
+
+  @override
+  String peerIdLabel(String peerId) {
+    return 'Peer ID: $peerId';
+  }
+
+  @override
+  String get copyPeerId => 'Copy Peer ID';
+
+  @override
+  String get disconnect => 'Disconnect';
+
+  @override
+  String get disconnectDevice => 'Disconnect Device';
+
+  @override
+  String confirmDisconnect(String peerId) {
+    return 'Are you sure you want to disconnect from $peerId?';
+  }
+
+  @override
+  String deviceDisconnected(String peerId) {
+    return 'Disconnected from $peerId';
+  }
 }

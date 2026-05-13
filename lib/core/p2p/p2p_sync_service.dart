@@ -232,6 +232,10 @@ class P2PSyncService {
 
   String? get localPeerId => _p2pService.localPeerId;
 
+  Map<String, DeviceInfo> get connectedDevices => _p2pService.connectedDevices;
+
+  DeviceInfo? get localDeviceInfo => _p2pService.localDeviceInfo;
+
   Future<void> dispose() async {
     await _p2pSubscription?.cancel();
     await _p2pService.dispose();

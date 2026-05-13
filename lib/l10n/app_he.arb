@@ -1,6 +1,18 @@
 {
-  "appTitle": "Pacey",
-  "healingLevel": "רמת החלמה {level}",
+  "@confirmDisconnect": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  },
+  "@deviceDisconnected": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  },
   "@healingLevel": {
     "placeholders": {
       "level": {
@@ -8,11 +20,13 @@
       }
     }
   },
-  "stabilization": "התייצבות",
-  "strengthening": "התחזקות",
-  "expansion": "הרחבת היכולות",
-  "currentEnergy": "רמת אנרגיה נוכחית",
-  "tasksForEnergy": "משימות עבור {energy} ⚡",
+  "@peerIdLabel": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  },
   "@tasksForEnergy": {
     "placeholders": {
       "energy": {
@@ -20,47 +34,64 @@
       }
     }
   },
-  "noTasks": "אין משימות עבור רמת האנרגיה הזו.",
+  "accept": "אישור",
   "addTask": "הוספת משימה",
-  "editTask": "עריכת משימה",
-  "taskTitle": "שם המשימה",
-  "energyCost": "עלות אנרגיה",
-  "cancel": "ביטול",
-  "save": "שמירה",
   "alreadyLogged": "כבר תיעדת את רמת האנרגיה לפרק הזמן הזה.",
-  "history": "היסטוריה",
-  "energyTrend": "מגמת אנרגיה",
-  "energyLogs": "יומן אנרגיה",
-  "tasks": "משימות",
-  "noHistory": "אין עדיין היסטוריה מתועדת.",
-  "energyUpdate": "עדכון רמת אנרגיה",
-  "settings": "הגדרות",
-  "language": "שפה",
-  "selectLanguage": "בחירת שפה",
-  "followSystem": "לפי המערכת",
-  "p2pSync": "סנכרון P2P",
-  "syncSettings": "הגדרות סנכרון",
-  "connectionStatus": "מצב חיבור",
-  "connectedPeers": "מכשירים מחוברים",
-  "connectToPeer": "התחברות למכשיר",
-  "yourPeerId": "מזהה המכשיר שלך",
-  "shareQrCode": "אפשר לשתף קוד QR זה או מזהה עם מכשירים אחרים כדי להתחבר",
-  "enterPeerId": "נא להכניס מזהה מכשיר",
-  "pastePeerId": "נא להדביק את מזהה המכשיר כאן",
+  "appTitle": "Pacey",
+  "cameraPermissionRequired": "נדרשת הרשאת מצלמה כדי לסרוק קודי QR",
+  "cancel": "ביטול",
+  "confirmDisconnect": "האם אתה בטוח שברצונך להתנתק מ-{peerId}?",
   "connect": "התחברות",
-  "scanQr": "סריקת קוד QR",
-  "noPeersConnected": "אין מכשירים מחוברים",
-  "disconnected": "מנותק",
+  "connectDevicesToSync": "חבר מכשירים כדי להתחיל לסנכרן נתונים",
+  "connectToPeer": "התחברות למכשיר",
+  "connectedDevices": "התקנים מחוברים",
+  "connectedPeers": "מכשירים מחוברים",
+  "connectedTo": "מחובר אל {peerId}",
   "connectedToP2P": "מחובר לרשת P2P",
+  "connectionRejected": "החיבור מהמכשיר {peerId} נדחה",
+  "connectionRequest": "בקשת חיבור",
+  "connectionStatus": "מצב חיבור",
+  "copyPeerId": "העתק את מזהה עמיתים",
+  "currentEnergy": "רמת אנרגיה נוכחית",
+  "deviceDisconnected": "מנותק מ-{peerId}",
+  "deviceWantsToConnect": "המכשיר {peerId} רוצה להתחבר למכשירך. האם ברצונך לאשר חיבור זה?",
+  "disconnect": "לְנַתֵק",
+  "disconnectDevice": "נתק מכשיר",
+  "disconnected": "מנותק",
+  "editTask": "עריכת משימה",
+  "energyCost": "עלות אנרגיה",
+  "energyLogs": "יומן אנרגיה",
+  "energyTrend": "מגמת אנרגיה",
+  "energyUpdate": "עדכון רמת אנרגיה",
+  "enterPeerId": "נא להכניס מזהה מכשיר",
+  "expansion": "הרחבת היכולות",
+  "followSystem": "לפי המערכת",
+  "healingLevel": "רמת החלמה {level}",
+  "history": "היסטוריה",
+  "initializing": "בתהליך אתחול...",
+  "language": "שפה",
+  "noDevicesConnected": "אין מכשירים מחוברים",
+  "noHistory": "אין עדיין היסטוריה מתועדת.",
+  "noPeersConnected": "אין מכשירים מחוברים",
+  "noTasks": "אין משימות עבור רמת האנרגיה הזו.",
+  "online": "באינטרנט",
+  "p2pSync": "סנכרון P2P",
+  "pastePeerId": "נא להדביק את מזהה המכשיר כאן",
   "peerConnected": "המכשיר התחבר",
   "peerDisconnected": "המכשיר התנתק",
-  "syncingData": "הנתונים מסתנכרנים...",
-  "connectionRequest": "בקשת חיבור",
-  "deviceWantsToConnect": "המכשיר {peerId} רוצה להתחבר למכשירך. האם ברצונך לאשר חיבור זה?",
-  "accept": "אישור",
+  "peerIdLabel": "מזהה עמית: {peerId}",
   "reject": "דחייה",
-  "connectionRejected": "החיבור מהמכשיר {peerId} נדחה",
-  "connectedTo": "מחובר אל {peerId}",
-  "cameraPermissionRequired": "נדרשת הרשאת מצלמה כדי לסרוק קודי QR",
-  "initializing": "בתהליך אתחול..."
+  "save": "שמירה",
+  "scanQr": "סריקת קוד QR",
+  "selectLanguage": "בחירת שפה",
+  "settings": "הגדרות",
+  "shareQrCode": "אפשר לשתף קוד QR זה או מזהה עם מכשירים אחרים כדי להתחבר",
+  "stabilization": "התייצבות",
+  "strengthening": "התחזקות",
+  "syncSettings": "הגדרות סנכרון",
+  "syncingData": "הנתונים מסתנכרנים...",
+  "taskTitle": "שם המשימה",
+  "tasks": "משימות",
+  "tasksForEnergy": "משימות עבור {energy} ⚡",
+  "yourPeerId": "מזהה המכשיר שלך"
 }

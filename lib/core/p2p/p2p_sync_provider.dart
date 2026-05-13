@@ -64,6 +64,16 @@ final localPeerIdProvider = Provider<String?>((ref) {
   return syncService.localPeerId;
 });
 
+final connectedDevicesProvider = Provider<Map<String, DeviceInfo>>((ref) {
+  final syncService = ref.watch(p2pSyncServiceProvider);
+  return syncService.connectedDevices;
+});
+
+final localDeviceInfoProvider = Provider<DeviceInfo?>((ref) {
+  final syncService = ref.watch(p2pSyncServiceProvider);
+  return syncService.localDeviceInfo;
+});
+
 enum P2PConnectionStatus {
   disconnected,
   connecting,
