@@ -50,13 +50,6 @@ jobs:
             .dart_tool
           retention-days: 1
 
-      - name: Upload Flutter installation
-        uses: actions/upload-artifact@main
-        with:
-          name: flutter-installation
-          path: /opt/hostedtoolcache/Flutter
-          retention-days: 1
-
       - name: Upload source artifacts
         uses: actions/upload-artifact@main
         with:
@@ -79,11 +72,11 @@ jobs:
           name: pacey-source
           path: .
 
-      - name: Download Flutter installation
-        uses: actions/download-artifact@main
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
         with:
-          name: flutter-installation
-          path: C:/hostedtoolcache/Flutter
+          channel: 'stable'
+          cache: true
 
       - name: Download pub cache
         uses: actions/download-artifact@main
@@ -115,11 +108,11 @@ jobs:
           name: pacey-source
           path: .
 
-      - name: Download Flutter installation
-        uses: actions/download-artifact@main
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
         with:
-          name: flutter-installation
-          path: /opt/hostedtoolcache/Flutter
+          channel: 'stable'
+          cache: true
 
       - name: Download pub cache
         uses: actions/download-artifact@main
@@ -175,11 +168,11 @@ jobs:
           name: pacey-source
           path: .
 
-      - name: Download Flutter installation
-        uses: actions/download-artifact@main
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
         with:
-          name: flutter-installation
-          path: /opt/hostedtoolcache/Flutter
+          channel: 'stable'
+          cache: true
 
       - name: Download pub cache
         uses: actions/download-artifact@main
@@ -267,11 +260,11 @@ jobs:
           name: pacey-source
           path: .
 
-      - name: Download Flutter installation
-        uses: actions/download-artifact@main
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
         with:
-          name: flutter-installation
-          path: /opt/hostedtoolcache/Flutter
+          channel: 'stable'
+          cache: true
 
       - name: Download pub cache
         uses: actions/download-artifact@main
@@ -309,11 +302,11 @@ jobs:
           name: pacey-source
           path: .
 
-      - name: Download Flutter installation
-        uses: actions/download-artifact@main
+      - name: Setup Flutter
+        uses: subosito/flutter-action@main
         with:
-          name: flutter-installation
-          path: /opt/hostedtoolcache/Flutter
+          channel: 'stable'
+          cache: true
 
       - name: Download pub cache
         uses: actions/download-artifact@main
