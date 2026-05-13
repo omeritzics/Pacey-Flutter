@@ -49,7 +49,7 @@ jobs:
             .
             !.git
             !.github
-          retention-days: 1
+          retention-days: 7
 
   # Build for Windows
   build-windows:
@@ -80,7 +80,7 @@ jobs:
         with:
           name: pacey-windows
           path: build/windows/x64/runner/Release/pacey.exe
-          retention-days: 30
+          retention-days: 7
 
   # Build for macOS
   build-macos:
@@ -121,7 +121,7 @@ jobs:
         with:
           name: pacey-macos
           path: build/macos/Build/Products/Release/pacey-macos.zip
-          retention-days: 30
+          retention-days: 7
 
   # Build for Linux
   build-linux:
@@ -217,7 +217,7 @@ jobs:
         with:
           name: pacey-linux-appimage
           path: Pacey-x86_64.AppImage
-          retention-days: 30
+          retention-days: 7
 
   # Build for Android (APK)
   build-android:
@@ -253,12 +253,19 @@ jobs:
             flutter build apk --profile --tree-shake-icons --split-debug-info=build/debug-info
           fi
 
+      - name: Rename Android APK
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            cd build/app/outputs/flutter-apk
+            mv app-profile.apk pacey.apk
+          fi
+
       - name: Upload Android artifact
         uses: actions/upload-artifact@main
         with:
           name: pacey-android
           path: |
-            ${{ github.event_name == 'pull_request' && 'build/app/outputs/flutter-apk/app-debug.apk' || 'build/app/outputs/flutter-apk/app-profile.apk' }}
+            ${{ github.event_name == 'pull_request' && 'build/app/outputs/flutter-apk/app-debug.apk' || 'build/app/outputs/flutter-apk/pacey.apk' }}
           retention-days: 7
 
   # Build for iOS (only on macOS)
@@ -337,10 +344,12 @@ jobs:
             artifacts/pacey-windows/pacey.exe
             artifacts/pacey-macos/pacey-macos.zip
             artifacts/pacey-linux-appimage/Pacey-x86_64.AppImage
-            artifacts/pacey-android/app-profile.apk
+            artifacts/pacey-android/pacey.apk
             artifacts/pacey-ios/Pacey.app
           generate_release_notes: true
           draft: false
           prerelease: false
+          replace_existing_tag: true
+          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

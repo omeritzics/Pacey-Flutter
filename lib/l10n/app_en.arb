@@ -93,5 +93,31 @@
         "type": "String"
       }
     }
+  },
+  "confirmConnect": "Connect to Device",
+  "confirmConnectMessage": "Are you sure you want to connect to device {peerId}?",
+  "@confirmConnectMessage": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  },
+  "connecting": "Connecting...",
+  "connectionSuccessful": "Successfully connected to {peerId}",
+  "@connectionSuccessful": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  },
+  "connectionFailed": "Failed to connect to {peerId}",
+  "@connectionFailed": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
   }
 }
