@@ -41,15 +41,6 @@ jobs:
       - name: Generate code
         run: flutter packages pub run build_runner build --delete-conflicting-outputs
 
-      - name: Upload pub cache
-        uses: actions/upload-artifact@main
-        with:
-          name: pub-cache
-          path: |
-            ~/.pub-cache
-            .dart_tool
-          retention-days: 1
-
       - name: Upload source artifacts
         uses: actions/upload-artifact@main
         with:
@@ -78,13 +69,8 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Download pub cache
-        uses: actions/download-artifact@main
-        with:
-          name: pub-cache
-          path: |
-            C:/Users/runneradmin/.pub-cache
-            .dart_tool
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Build Windows executable
         run: flutter build windows --release
@@ -114,13 +100,8 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Download pub cache
-        uses: actions/download-artifact@main
-        with:
-          name: pub-cache
-          path: |
-            ~/.pub-cache
-            .dart_tool
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@master
@@ -174,13 +155,8 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Download pub cache
-        uses: actions/download-artifact@main
-        with:
-          name: pub-cache
-          path: |
-            ~/.pub-cache
-            .dart_tool
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Build Linux executable
         run: flutter build linux --release
@@ -266,13 +242,8 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Download pub cache
-        uses: actions/download-artifact@main
-        with:
-          name: pub-cache
-          path: |
-            ~/.pub-cache
-            .dart_tool
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Build Android APK
         run: |
@@ -308,13 +279,8 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Download pub cache
-        uses: actions/download-artifact@main
-        with:
-          name: pub-cache
-          path: |
-            ~/.pub-cache
-            .dart_tool
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@master
