@@ -99,6 +99,76 @@ class _P2PScreenState extends ConsumerState<P2PScreen> {
     );
   }
 
+  void _showConnectConfirmationDialog(String peerId, dynamic syncService, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(l10n.confirmConnect),
+          content: Text(l10n.confirmConnectMessage(_formatPeerId(peerId))),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                
+                // Show loading indicator
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(l10n.connecting),
+                      ],
+                    ),
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+                
+                try {
+                  await syncService.connectToPeer(peerId);
+                  _peerIdController.clear();
+                  
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.connectionSuccessful(_formatPeerId(peerId))),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.connectionFailed(_formatPeerId(peerId))),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: Text(l10n.connect),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String _formatPeerId(String peerId) {
+    if (peerId.length <= 12) return peerId;
+    return '${peerId.substring(0, 6)}...${peerId.substring(peerId.length - 6)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -241,8 +311,7 @@ class _P2PScreenState extends ConsumerState<P2PScreen> {
                             onPressed: () {
                               final peerId = _peerIdController.text.trim();
                               if (peerId.isNotEmpty) {
-                                syncService.connectToPeer(peerId);
-                                _peerIdController.clear();
+                                _showConnectConfirmationDialog(peerId, syncService, l10n);
                               }
                             },
                             icon: const Icon(Icons.link),

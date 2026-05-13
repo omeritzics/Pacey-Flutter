@@ -457,6 +457,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Disconnected from {peerId}'**
   String deviceDisconnected(String peerId);
+
+  /// No description provided for @confirmConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to Device'**
+  String get confirmConnect;
+
+  /// No description provided for @confirmConnectMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to connect to device {peerId}?'**
+  String confirmConnectMessage(String peerId);
+
+  /// No description provided for @connecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting...'**
+  String get connecting;
+
+  /// No description provided for @connectionSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully connected to {peerId}'**
+  String connectionSuccessful(String peerId);
+
+  /// No description provided for @connectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to {peerId}'**
+  String connectionFailed(String peerId);
 }
 
 class _AppLocalizationsDelegate

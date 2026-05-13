@@ -204,4 +204,25 @@ class AppLocalizationsHe extends AppLocalizations {
   String deviceDisconnected(String peerId) {
     return 'מנותק מ-$peerId';
   }
+
+  @override
+  String get confirmConnect => 'Connect to Device';
+
+  @override
+  String confirmConnectMessage(String peerId) {
+    return 'Are you sure you want to connect to device $peerId?';
+  }
+
+  @override
+  String get connecting => 'Connecting...';
+
+  @override
+  String connectionSuccessful(String peerId) {
+    return 'Successfully connected to $peerId';
+  }
+
+  @override
+  String connectionFailed(String peerId) {
+    return 'Failed to connect to $peerId';
+  }
 }

@@ -201,26 +201,72 @@ class ConnectedDevicesList extends ConsumerWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(l10n.disconnectDevice),
-          content: Text(l10n.confirmDisconnect(_formatPeerId(peerId))),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.confirmDisconnect(_formatPeerId(peerId))),
+              const SizedBox(height: 12),
+              Text(
+                'This will stop syncing data with this device.',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(l10n.cancel),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
+                
+                // Show disconnecting message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text('Disconnecting...'),
+                      ],
+                    ),
+                    backgroundColor: Colors.orange,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+                
                 // Close the connection
                 syncService.rejectConnection(peerId);
                 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.deviceDisconnected(_formatPeerId(peerId))),
-                    backgroundColor: Colors.orange,
-                  ),
-                );
+                // Show success message after a delay
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.deviceDisconnected(_formatPeerId(peerId))),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                });
               },
-              child: Text(l10n.disconnect, style: const TextStyle(color: Colors.red)),
+              child: Text(l10n.disconnect),
             ),
           ],
         );
