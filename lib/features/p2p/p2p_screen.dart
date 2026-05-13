@@ -115,7 +115,7 @@ class _P2PScreenState extends ConsumerState<P2PScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.p2pSync)),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

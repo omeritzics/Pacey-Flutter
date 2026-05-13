@@ -1,11 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart';
-import '../lib/core/database/database.dart';
-import '../lib/core/database/database_provider.dart';
-import '../lib/core/p2p/p2p_sync_service.dart';
-import '../lib/features/tasks/task_provider.dart';
-import '../lib/features/energy/energy_provider.dart';
-import '../lib/features/gamification/gamification_provider.dart';
+import 'package:drift/native.dart';
+import 'package:pacey/core/database/database.dart';
+import 'package:pacey/core/database/database_provider.dart';
+import 'package:pacey/core/p2p/p2p_sync_service.dart';
+import 'package:pacey/features/tasks/task_provider.dart';
+import 'package:pacey/features/energy/energy_provider.dart';
+import 'package:pacey/features/gamification/gamification_provider.dart';
 
 void main() {
   group('P2P Data Sync Integration Tests', () {
@@ -14,7 +16,7 @@ void main() {
 
     setUp(() async {
       // Create in-memory database for testing
-      database = AppDatabase(DatabaseConnection.memory());
+      database = AppDatabase(DatabaseConnection(NativeDatabase.memory()));
       await database.customStatement('PRAGMA foreign_keys = ON');
       
       // Initialize sync service
@@ -28,8 +30,11 @@ void main() {
     });
 
     test('Task creation broadcasts to connected peers', () async {
-      // Create a task
-      final taskActions = TaskActions(null);
+      // Create a task using Riverpod
+      final container = ProviderContainer(overrides: [
+        databaseProvider.overrideWithValue(database),
+      ]);
+      final taskActions = container.read(taskActionsProvider);
       await taskActions.addTask('Test Task', 3);
       
       // Verify task exists in database
@@ -44,9 +49,12 @@ void main() {
 
     test('Energy logging broadcasts to connected peers', () async {
       // Create an energy log
-      final energyNotifier = EnergyLevelNotifier();
-      energyNotifier.ref = TestRef();
+      // Create energy notifier using Riverpod
+      final container = ProviderContainer(overrides: [
+        databaseProvider.overrideWithValue(database),
+      ]);
       
+      final energyNotifier = container.read(energyLevelProvider.notifier);
       final result = await energyNotifier.updateLevel(7);
       expect(result, true);
       
@@ -58,8 +66,12 @@ void main() {
 
     test('Pacing stats updates broadcast to connected peers', () async {
       // Initialize pacing stats
-      final statsNotifier = PacingStatsNotifier();
-      statsNotifier.ref = TestRef();
+      // Create stats notifier using Riverpod
+      final container = ProviderContainer(overrides: [
+        databaseProvider.overrideWithValue(database),
+      ]);
+      
+      final statsNotifier = container.read(pacingStatsProvider.notifier);
       
       // Wait for initialization
       await Future.delayed(const Duration(milliseconds: 100));
@@ -74,7 +86,10 @@ void main() {
     });
 
     test('Task operations sync properly', () async {
-      final taskActions = TaskActions(null);
+      final container = ProviderContainer(overrides: [
+        databaseProvider.overrideWithValue(database),
+      ]);
+      final taskActions = container.read(taskActionsProvider);
       
       // Create task
       await taskActions.addTask('Sync Test Task', 2);
@@ -100,36 +115,4 @@ void main() {
       expect(deletedTasks.length, 0);
     });
   });
-}
-
-// Mock Ref for testing
-class TestRef {
-  T read<T>(dynamic provider) {
-    // Return mock instances for testing
-    if (provider.toString().contains('databaseProvider')) {
-      return null as T; // Will be replaced with actual database in real usage
-    }
-    if (provider.toString().contains('p2pSyncServiceProvider')) {
-      return P2PSyncService() as T;
-    }
-    if (provider.toString().contains('pacingStatsProvider')) {
-      return PacingStatsNotifier() as T;
-    }
-    return null as T;
-  }
-}
-
-// Extension to add ref property for testing
-extension RefExtension on EnergyLevelNotifier {
-  set ref(TestRef testRef) {
-    // This would require modifying the actual class to support dependency injection
-    // For now, this demonstrates the testing approach
-  }
-}
-
-extension StatsRefExtension on PacingStatsNotifier {
-  set ref(TestRef testRef) {
-    // This would require modifying the actual class to support dependency injection
-    // For now, this demonstrates the testing approach
-  }
 }

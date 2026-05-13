@@ -7,6 +7,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   # Generate code and prepare source
   prepare-build:
@@ -19,6 +23,17 @@ jobs:
         uses: subosito/flutter-action@main
         with:
           channel: 'stable'
+          cache: true
+
+      - name: Cache pub dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
 
       - name: Get Flutter dependencies
         run: flutter pub get
@@ -40,6 +55,7 @@ jobs:
   build-windows:
     needs: prepare-build
     runs-on: windows-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     steps:
       - name: Download source artifacts
         uses: actions/download-artifact@main
@@ -51,6 +67,10 @@ jobs:
         uses: subosito/flutter-action@main
         with:
           channel: 'stable'
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Build Windows executable
         run: flutter build windows --release
@@ -66,6 +86,7 @@ jobs:
   build-macos:
     needs: prepare-build
     runs-on: macos-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     steps:
       - name: Download source artifacts
         uses: actions/download-artifact@main
@@ -77,6 +98,10 @@ jobs:
         uses: subosito/flutter-action@main
         with:
           channel: 'stable'
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@master
@@ -102,13 +127,21 @@ jobs:
   build-linux:
     needs: prepare-build
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     steps:
       - name: Install Linux dependencies
         run: |
           sudo apt-get update --fix-missing || true
-          sudo apt-get install -y --fix-missing clang cmake ninja-build pkg-config libgtk-3-dev libpng-dev libjpeg-dev libtiff-dev fuse2 libfuse2 || true
+          sudo apt-get install -y --fix-missing clang cmake ninja-build pkg-config libgtk-3-dev libpng-dev libjpeg-dev libtiff-dev fuse2 libfuse2 imagemagick || true
           # Fallback installation if some packages fail
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev || sudo apt-get install -y clang cmake ninja-build pkg-config 
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev imagemagick || sudo apt-get install -y clang cmake ninja-build pkg-config imagemagick
+
+      - name: Cache AppImage tool
+        uses: actions/cache@v3
+        with:
+          path: appimagetool-x86_64.AppImage
+          key: appimagetool-${{ hashFiles('**/build.yml') }}
+          restore-keys: appimagetool-
 
       - name: Download source artifacts
         uses: actions/download-artifact@main
@@ -120,15 +153,21 @@ jobs:
         uses: subosito/flutter-action@main
         with:
           channel: 'stable'
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Build Linux executable
         run: flutter build linux --release
 
       - name: Create AppImage
         run: |
-          # Download appimagetool
-          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-          chmod +x appimagetool-x86_64.AppImage
+          # Download appimagetool if not cached
+          if [ ! -f appimagetool-x86_64.AppImage ]; then
+            wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+            chmod +x appimagetool-x86_64.AppImage
+          fi
           
           # Extract AppImage to avoid FUSE issues
           ./appimagetool-x86_64.AppImage --appimage-extract
@@ -163,16 +202,12 @@ jobs:
           EOF
           chmod +x AppImageDir/AppRun
           
-          # Create a simple icon file using ImageMagick if available, otherwise create a minimal PNG
-          if command -v convert &> /dev/null; then
-            convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/pacey.png
-          else
-            # Install ImageMagick and create icon
-            sudo apt-get update && sudo apt-get install -y imagemagick
-            convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/pacey.png || \
-            # Final fallback: copy AppRun as PNG (will work for AppImageTool even if not a valid image)
-            cp AppImageDir/AppRun AppImageDir/pacey.png
-          fi
+          # Create icon using ImageMagick (now pre-installed)
+          convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/pacey.png || \
+          # Fallback: create a simple colored square
+          convert -size 256x256 xc:blue AppImageDir/pacey.png || \
+          # Final fallback: copy AppRun as placeholder
+          cp AppImageDir/AppRun AppImageDir/pacey.png
           
           # Build AppImage using extracted tool
           ./appimagetool/AppRun AppImageDir Pacey-x86_64.AppImage
@@ -205,21 +240,32 @@ jobs:
         uses: subosito/flutter-action@main
         with:
           channel: 'stable'
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Build Android APK
-        run: flutter build apk --profile --tree-shake-icons --no-pub --split-debug-info=build/debug-info
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            flutter build apk --debug --tree-shake-icons
+          else
+            flutter build apk --profile --tree-shake-icons --split-debug-info=build/debug-info
+          fi
 
       - name: Upload Android artifact
         uses: actions/upload-artifact@main
         with:
           name: pacey-android
-          path: build/app/outputs/flutter-apk/app-profile.apk
+          path: |
+            ${{ github.event_name == 'pull_request' && 'build/app/outputs/flutter-apk/app-debug.apk' || 'build/app/outputs/flutter-apk/app-profile.apk' }}
           retention-days: 7
 
   # Build for iOS (only on macOS)
   build-ios:
     needs: prepare-build
     runs-on: macos-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Download source artifacts
         uses: actions/download-artifact@main
@@ -231,6 +277,10 @@ jobs:
         uses: subosito/flutter-action@main
         with:
           channel: 'stable'
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@master
@@ -240,11 +290,16 @@ jobs:
       - name: Build iOS app
         run: flutter build ios --release --no-codesign
 
+      - name: Rename iOS app
+        run: |
+          cd build/ios/iphoneos
+          mv Runner.app Pacey.app
+
       - name: Upload iOS artifact
         uses: actions/upload-artifact@main
         with:
           name: pacey-ios
-          path: build/ios/iphoneos/Runner.app
+          path: build/ios/iphoneos/Pacey.app
           retention-days: 7
 
   # Create release with all artifacts
@@ -265,10 +320,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # Delete existing nightly tag if it exists
           git tag -d nightly || true
-          git push origin :nightly || true
+          git push origin --delete nightly || true
           # Create new nightly tag
-          git tag nightly
-          git push origin nightly
+          git tag nightly -m "Nightly build"
+          git push origin nightly --force
 
       - name: Download all artifacts
         uses: actions/download-artifact@main
@@ -282,8 +337,8 @@ jobs:
             artifacts/pacey-windows/pacey.exe
             artifacts/pacey-macos/pacey-macos.zip
             artifacts/pacey-linux-appimage/Pacey-x86_64.AppImage
-            artifacts/pacey-linux-flatpak/Pacey.flatpak
-            artifacts/pacey-android/app-debug.apk
+            artifacts/pacey-android/app-profile.apk
+            artifacts/pacey-ios/Pacey.app
           generate_release_notes: true
           draft: false
           prerelease: false

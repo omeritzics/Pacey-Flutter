@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'connection/connection.dart' as impl;
 
 part 'database.g.dart';
 
@@ -30,7 +29,7 @@ class PacingStats extends Table {
 
 @DriftDatabase(tables: [Tasks, EnergyLogs, PacingStats])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(impl.openConnection());
+  AppDatabase(super.executor);
 
   @override
   int get schemaVersion => 2;
