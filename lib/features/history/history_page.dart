@@ -35,7 +35,7 @@ class HistoryPage extends ConsumerWidget {
 
           final logs = snapshot.data!.reversed.toList();
 
-          return Padding(
+          return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
@@ -75,7 +75,8 @@ class HistoryPage extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                Expanded(
+                SizedBox(
+                  height: 400, // Fixed height for the list to prevent overflow
                   child: ListView.builder(
                     itemCount: logs.length,
                     itemBuilder: (context, index) {

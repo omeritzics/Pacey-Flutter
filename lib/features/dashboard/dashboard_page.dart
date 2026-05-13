@@ -141,26 +141,28 @@ class DashboardPage extends ConsumerWidget {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           title: Text(l10n.addTask),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: InputDecoration(labelText: l10n.taskTitle),
-                autofocus: true,
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.energyCost),
-              Slider(
-                value: selectedEnergy.toDouble(),
-                min: 1,
-                max: 10,
-                divisions: 9,
-                label: '$selectedEnergy',
-                onChanged: (value) =>
-                    setState(() => selectedEnergy = value.toInt()),
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(labelText: l10n.taskTitle),
+                  autofocus: true,
+                ),
+                const SizedBox(height: 16),
+                Text(l10n.energyCost),
+                Slider(
+                  value: selectedEnergy.toDouble(),
+                  min: 1,
+                  max: 10,
+                  divisions: 9,
+                  label: '$selectedEnergy',
+                  onChanged: (value) =>
+                      setState(() => selectedEnergy = value.toInt()),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -290,26 +292,28 @@ class _TaskTile extends ConsumerWidget {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           title: Text(l10n.editTask),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: InputDecoration(labelText: l10n.taskTitle),
-                autofocus: true,
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.energyCost),
-              Slider(
-                value: selectedEnergy.toDouble(),
-                min: 1,
-                max: 10,
-                divisions: 9,
-                label: '$selectedEnergy',
-                onChanged: (value) =>
-                    setState(() => selectedEnergy = value.toInt()),
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(labelText: l10n.taskTitle),
+                  autofocus: true,
+                ),
+                const SizedBox(height: 16),
+                Text(l10n.energyCost),
+                Slider(
+                  value: selectedEnergy.toDouble(),
+                  min: 1,
+                  max: 10,
+                  divisions: 9,
+                  label: '$selectedEnergy',
+                  onChanged: (value) =>
+                      setState(() => selectedEnergy = value.toInt()),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
