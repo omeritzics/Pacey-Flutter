@@ -397,6 +397,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Initializing...'**
   String get initializing;
+
+  /// No description provided for @connectedDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected Devices'**
+  String get connectedDevices;
+
+  /// No description provided for @noDevicesConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'No devices connected'**
+  String get noDevicesConnected;
+
+  /// No description provided for @connectDevicesToSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect devices to start syncing data'**
+  String get connectDevicesToSync;
+
+  /// No description provided for @online.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get online;
+
+  /// No description provided for @peerIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Peer ID: {peerId}'**
+  String peerIdLabel(String peerId);
+
+  /// No description provided for @copyPeerId.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Peer ID'**
+  String get copyPeerId;
+
+  /// No description provided for @disconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get disconnect;
+
+  /// No description provided for @disconnectDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect Device'**
+  String get disconnectDevice;
+
+  /// No description provided for @confirmDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to disconnect from {peerId}?'**
+  String confirmDisconnect(String peerId);
+
+  /// No description provided for @deviceDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected from {peerId}'**
+  String deviceDisconnected(String peerId);
 }
 
 class _AppLocalizationsDelegate

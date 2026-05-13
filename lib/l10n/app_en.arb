@@ -62,5 +62,36 @@
   "connectionRejected": "Connection from {peerId} rejected",
   "connectedTo": "Connected to {peerId}",
   "cameraPermissionRequired": "Camera permission is required to scan QR codes",
-  "initializing": "Initializing..."
+  "initializing": "Initializing...",
+  "connectedDevices": "Connected Devices",
+  "noDevicesConnected": "No devices connected",
+  "connectDevicesToSync": "Connect devices to start syncing data",
+  "online": "Online",
+  "peerIdLabel": "Peer ID: {peerId}",
+  "@peerIdLabel": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  },
+  "copyPeerId": "Copy Peer ID",
+  "disconnect": "Disconnect",
+  "disconnectDevice": "Disconnect Device",
+  "confirmDisconnect": "Are you sure you want to disconnect from {peerId}?",
+  "@confirmDisconnect": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceDisconnected": "Disconnected from {peerId}",
+  "@deviceDisconnected": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  }
 }

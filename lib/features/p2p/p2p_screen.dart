@@ -5,6 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pacey/l10n/app_localizations.dart';
 import '../../core/p2p/p2p_sync_provider.dart';
 import 'qr_scanner_screen.dart';
+import 'connected_devices_list.dart';
 
 class P2PScreen extends ConsumerStatefulWidget {
   const P2PScreen({super.key});
@@ -102,7 +103,6 @@ class _P2PScreenState extends ConsumerState<P2PScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final connectionState = ref.watch(p2pConnectionStateProvider);
-    final connectedPeers = ref.watch(connectedPeersProvider);
     final localPeerId = ref.watch(localPeerIdProvider);
     final syncService = ref.watch(p2pSyncServiceProvider);
 
@@ -263,45 +263,8 @@ class _P2PScreenState extends ConsumerState<P2PScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Connected Peers
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${l10n.connectedPeers} (${connectedPeers.length})',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (connectedPeers.isEmpty)
-                      Text(l10n.noPeersConnected)
-                    else
-                      ...connectedPeers.map(
-                        (peerId) => ListTile(
-                          leading: const Icon(Icons.device_hub),
-                          title: Text(
-                            peerId,
-                            style: const TextStyle(fontFamily: 'monospace'),
-                          ),
-                          subtitle: Text(l10n.connectedToP2P),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.copy),
-                            onPressed: () {
-                              // Copy peer ID to clipboard
-                              // You might want to add a clipboard package
-                            },
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
+            // Connected Devices List
+            const ConnectedDevicesList(),
           ],
         ),
       ),

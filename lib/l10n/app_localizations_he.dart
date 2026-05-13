@@ -168,4 +168,40 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get initializing => 'בתהליך אתחול...';
+
+  @override
+  String get connectedDevices => 'התקנים מחוברים';
+
+  @override
+  String get noDevicesConnected => 'אין מכשירים מחוברים';
+
+  @override
+  String get connectDevicesToSync => 'חבר מכשירים כדי להתחיל לסנכרן נתונים';
+
+  @override
+  String get online => 'באינטרנט';
+
+  @override
+  String peerIdLabel(String peerId) {
+    return 'מזהה עמית: $peerId';
+  }
+
+  @override
+  String get copyPeerId => 'העתק את מזהה עמיתים';
+
+  @override
+  String get disconnect => 'לְנַתֵק';
+
+  @override
+  String get disconnectDevice => 'נתק מכשיר';
+
+  @override
+  String confirmDisconnect(String peerId) {
+    return 'האם אתה בטוח שברצונך להתנתק מ-$peerId?';
+  }
+
+  @override
+  String deviceDisconnected(String peerId) {
+    return 'מנותק מ-$peerId';
+  }
 }
