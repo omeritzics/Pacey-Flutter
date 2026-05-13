@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' hide Column;
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
-
+import '../../core/p2p/p2p_sync_provider.dart';
 import '../gamification/gamification_provider.dart';
 
 final energyLevelProvider = NotifierProvider<EnergyLevelNotifier, int>(() {
@@ -68,11 +68,15 @@ class EnergyLevelNotifier extends Notifier<int> {
 
     state = newLevel;
 
-    await db
+    final energyLog = await db
         .into(db.energyLogs)
-        .insert(
+        .insertReturning(
           EnergyLogsCompanion.insert(level: newLevel, timestamp: Value(now)),
         );
+
+    // Broadcast energy log to connected peers
+    final syncService = ref.read(p2pSyncServiceProvider);
+    syncService.broadcastEnergyLogCreated(energyLog);
 
     // Gamification Rewards
     if (logsToday.isEmpty) {
