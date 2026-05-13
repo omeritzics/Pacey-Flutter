@@ -7,6 +7,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   # Generate code and prepare source
   prepare-build:
@@ -352,10 +356,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # Delete existing nightly tag if it exists
           git tag -d nightly || true
-          git push origin :nightly || true
+          git push origin --delete nightly || true
           # Create new nightly tag
-          git tag nightly
-          git push origin nightly
+          git tag nightly -m "Nightly build"
+          git push origin nightly --force
 
       - name: Download all artifacts
         uses: actions/download-artifact@main
