@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "energy_pacing" "\0"
+            VALUE "FileDescription", "pacey" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "energy_pacing" "\0"
+            VALUE "InternalName", "pacey" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "energy_pacing.exe" "\0"
-            VALUE "ProductName", "energy_pacing" "\0"
+            VALUE "OriginalFilename", "pacey.exe" "\0"
+            VALUE "ProductName", "pacey" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

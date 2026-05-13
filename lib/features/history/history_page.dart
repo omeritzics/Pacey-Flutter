@@ -6,7 +6,7 @@ import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
 import 'package:intl/intl.dart';
 
-import 'package:energy_pacing/l10n/app_localizations.dart';
+import 'package:pacey/l10n/app_localizations.dart';
 
 class HistoryPage extends ConsumerWidget {
   const HistoryPage({super.key});

@@ -1,4 +1,4 @@
-package com.example.energy_pacing
+package com.example.pacey
 
 import io.flutter.embedding.android.FlutterActivity
 

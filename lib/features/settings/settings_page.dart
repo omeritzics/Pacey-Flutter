@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:energy_pacing/l10n/app_localizations.dart';
+import 'package:pacey/l10n/app_localizations.dart';
 import '../../core/localization/locale_provider.dart';
 import '../p2p/p2p_screen.dart';
 

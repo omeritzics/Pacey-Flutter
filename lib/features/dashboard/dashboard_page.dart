@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:energy_pacing/l10n/app_localizations.dart';
+import 'package:pacey/l10n/app_localizations.dart';
 import '../energy/energy_provider.dart';
 import '../tasks/task_provider.dart';
 import '../../core/database/database.dart';
