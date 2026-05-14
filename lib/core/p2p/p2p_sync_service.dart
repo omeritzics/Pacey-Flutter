@@ -15,6 +15,7 @@ class P2PSyncService {
   Stream<P2PEvent> get events => _p2pService.events;
 
   Future<void> initialize(AppDatabase database) async {
+    if (_database != null) return;
     _database = database;
     await _p2pService.initialize();
 
@@ -57,6 +58,7 @@ class P2PSyncService {
         _deleteTask(payload['id'] as String);
         break;
       case 'energy_log_created':
+      case 'energy_log_updated':
         _syncEnergyLog(payload);
         break;
       case 'pacing_stats_updated':
@@ -68,17 +70,27 @@ class P2PSyncService {
   Future<void> _syncTask(Map<String, dynamic> taskData) async {
     if (_database == null) return;
 
+    final incomingUpdatedAt = DateTime.parse(taskData['updatedAt'] as String);
+    final taskId = taskData['id'] as String;
+
+    final existingTask = await (_database!.select(_database!.tasks)
+          ..where((t) => t.id.equals(taskId)))
+        .getSingleOrNull();
+
+    if (existingTask != null &&
+        existingTask.updatedAt.isAfter(incomingUpdatedAt)) {
+      // Local version is newer, ignore incoming
+      return;
+    }
+
     final task = TasksCompanion.insert(
-      id: taskData['id'] as String,
+      id: taskId,
       title: taskData['title'] as String,
       energyCost: taskData['energyCost'] as int,
       isCompleted: Value(taskData['isCompleted'] as bool),
       createdAt: Value(DateTime.parse(taskData['createdAt'] as String)),
+      updatedAt: Value(incomingUpdatedAt),
     );
-
-    final existingTask = await (_database!.select(
-      _database!.tasks,
-    )..where((t) => t.id.equals(taskData['id'] as String))).getSingleOrNull();
 
     if (existingTask == null) {
       await _database!.into(_database!.tasks).insert(task);
@@ -98,16 +110,37 @@ class P2PSyncService {
   Future<void> _syncEnergyLog(Map<String, dynamic> logData) async {
     if (_database == null) return;
 
+    final syncId = logData['syncId'] as String;
+    final incomingUpdatedAt = DateTime.parse(logData['updatedAt'] as String);
+
+    final existingLog = await (_database!.select(_database!.energyLogs)
+          ..where((t) => t.syncId.equals(syncId)))
+        .getSingleOrNull();
+
+    if (existingLog != null &&
+        existingLog.updatedAt.isAfter(incomingUpdatedAt)) {
+      return;
+    }
+
     final log = EnergyLogsCompanion.insert(
+      syncId: syncId,
       level: logData['level'] as int,
       timestamp: Value(DateTime.parse(logData['timestamp'] as String)),
+      updatedAt: Value(incomingUpdatedAt),
     );
 
-    await _database!.into(_database!.energyLogs).insert(log);
+    if (existingLog == null) {
+      await _database!.into(_database!.energyLogs).insert(log);
+    } else {
+      final updatedLog = log.copyWith(id: Value(existingLog.id));
+      await _database!.update(_database!.energyLogs).replace(updatedLog);
+    }
   }
 
   Future<void> _syncPacingStats(Map<String, dynamic> statsData) async {
     if (_database == null) return;
+
+    final incomingUpdatedAt = DateTime.parse(statsData['updatedAt'] as String);
 
     final stats = PacingStatsCompanion.insert(
       xp: Value(statsData['xp'] as int),
@@ -116,14 +149,17 @@ class P2PSyncService {
       lastLogDate: statsData['lastLogDate'] != null
           ? Value(DateTime.parse(statsData['lastLogDate'] as String))
           : const Value.absent(),
+      updatedAt: Value(incomingUpdatedAt),
     );
 
-    final existingStats = await (_database!.select(
-      _database!.pacingStats,
-    )).get();
+    final existingStats =
+        await (_database!.select(_database!.pacingStats)).get();
     if (existingStats.isEmpty) {
       await _database!.into(_database!.pacingStats).insert(stats);
     } else {
+      if (existingStats.first.updatedAt.isAfter(incomingUpdatedAt)) {
+        return;
+      }
       final updatedStats = stats.copyWith(id: Value(existingStats.first.id));
       await _database!.update(_database!.pacingStats).replace(updatedStats);
     }
@@ -150,6 +186,12 @@ class P2PSyncService {
     final tasks = await _database!.select(_database!.tasks).get();
     for (final task in tasks) {
       _broadcastTaskUpdate(task);
+    }
+
+    // Broadcast energy logs
+    final logs = await _database!.select(_database!.energyLogs).get();
+    for (final log in logs) {
+      _broadcastEnergyLogUpdate(log);
     }
 
     // Broadcast pacing stats
@@ -183,16 +225,26 @@ class P2PSyncService {
         'energyCost': task.energyCost,
         'isCompleted': task.isCompleted,
         'createdAt': task.createdAt.toIso8601String(),
+        'updatedAt': task.updatedAt.toIso8601String(),
       },
     });
   }
 
   void broadcastEnergyLogCreated(EnergyLog log) {
+    _broadcastEnergyLogUpdate(log, 'energy_log_created');
+  }
+
+  void _broadcastEnergyLogUpdate(
+    EnergyLog log, [
+    String type = 'energy_log_updated',
+  ]) {
     _p2pService.broadcastData({
-      'type': 'energy_log_created',
+      'type': type,
       'payload': {
+        'syncId': log.syncId,
         'level': log.level,
         'timestamp': log.timestamp.toIso8601String(),
+        'updatedAt': log.updatedAt.toIso8601String(),
       },
     });
   }
@@ -212,6 +264,7 @@ class P2PSyncService {
         'healingLevel': stat.healingLevel,
         'currentStreak': stat.currentStreak,
         'lastLogDate': stat.lastLogDate?.toIso8601String(),
+        'updatedAt': stat.updatedAt.toIso8601String(),
       },
     });
   }

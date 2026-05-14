@@ -56,6 +56,18 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -74,6 +86,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     title,
     energyCost,
     isCompleted,
+    updatedAt,
     createdAt,
   ];
   @override
@@ -118,6 +131,12 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         ),
       );
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -149,6 +168,10 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_completed'],
       )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -167,12 +190,14 @@ class Task extends DataClass implements Insertable<Task> {
   final String title;
   final int energyCost;
   final bool isCompleted;
+  final DateTime updatedAt;
   final DateTime createdAt;
   const Task({
     required this.id,
     required this.title,
     required this.energyCost,
     required this.isCompleted,
+    required this.updatedAt,
     required this.createdAt,
   });
   @override
@@ -182,6 +207,7 @@ class Task extends DataClass implements Insertable<Task> {
     map['title'] = Variable<String>(title);
     map['energy_cost'] = Variable<int>(energyCost);
     map['is_completed'] = Variable<bool>(isCompleted);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
@@ -192,6 +218,7 @@ class Task extends DataClass implements Insertable<Task> {
       title: Value(title),
       energyCost: Value(energyCost),
       isCompleted: Value(isCompleted),
+      updatedAt: Value(updatedAt),
       createdAt: Value(createdAt),
     );
   }
@@ -206,6 +233,7 @@ class Task extends DataClass implements Insertable<Task> {
       title: serializer.fromJson<String>(json['title']),
       energyCost: serializer.fromJson<int>(json['energyCost']),
       isCompleted: serializer.fromJson<bool>(json['isCompleted']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -217,6 +245,7 @@ class Task extends DataClass implements Insertable<Task> {
       'title': serializer.toJson<String>(title),
       'energyCost': serializer.toJson<int>(energyCost),
       'isCompleted': serializer.toJson<bool>(isCompleted),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
@@ -226,12 +255,14 @@ class Task extends DataClass implements Insertable<Task> {
     String? title,
     int? energyCost,
     bool? isCompleted,
+    DateTime? updatedAt,
     DateTime? createdAt,
   }) => Task(
     id: id ?? this.id,
     title: title ?? this.title,
     energyCost: energyCost ?? this.energyCost,
     isCompleted: isCompleted ?? this.isCompleted,
+    updatedAt: updatedAt ?? this.updatedAt,
     createdAt: createdAt ?? this.createdAt,
   );
   Task copyWithCompanion(TasksCompanion data) {
@@ -244,6 +275,7 @@ class Task extends DataClass implements Insertable<Task> {
       isCompleted: data.isCompleted.present
           ? data.isCompleted.value
           : this.isCompleted,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -255,6 +287,7 @@ class Task extends DataClass implements Insertable<Task> {
           ..write('title: $title, ')
           ..write('energyCost: $energyCost, ')
           ..write('isCompleted: $isCompleted, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -262,7 +295,7 @@ class Task extends DataClass implements Insertable<Task> {
 
   @override
   int get hashCode =>
-      Object.hash(id, title, energyCost, isCompleted, createdAt);
+      Object.hash(id, title, energyCost, isCompleted, updatedAt, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -271,6 +304,7 @@ class Task extends DataClass implements Insertable<Task> {
           other.title == this.title &&
           other.energyCost == this.energyCost &&
           other.isCompleted == this.isCompleted &&
+          other.updatedAt == this.updatedAt &&
           other.createdAt == this.createdAt);
 }
 
@@ -279,6 +313,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   final Value<String> title;
   final Value<int> energyCost;
   final Value<bool> isCompleted;
+  final Value<DateTime> updatedAt;
   final Value<DateTime> createdAt;
   final Value<int> rowid;
   const TasksCompanion({
@@ -286,6 +321,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     this.title = const Value.absent(),
     this.energyCost = const Value.absent(),
     this.isCompleted = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -294,6 +330,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     required String title,
     required int energyCost,
     this.isCompleted = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -304,6 +341,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Expression<String>? title,
     Expression<int>? energyCost,
     Expression<bool>? isCompleted,
+    Expression<DateTime>? updatedAt,
     Expression<DateTime>? createdAt,
     Expression<int>? rowid,
   }) {
@@ -312,6 +350,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
       if (title != null) 'title': title,
       if (energyCost != null) 'energy_cost': energyCost,
       if (isCompleted != null) 'is_completed': isCompleted,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (createdAt != null) 'created_at': createdAt,
       if (rowid != null) 'rowid': rowid,
     });
@@ -322,6 +361,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Value<String>? title,
     Value<int>? energyCost,
     Value<bool>? isCompleted,
+    Value<DateTime>? updatedAt,
     Value<DateTime>? createdAt,
     Value<int>? rowid,
   }) {
@@ -330,6 +370,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
       title: title ?? this.title,
       energyCost: energyCost ?? this.energyCost,
       isCompleted: isCompleted ?? this.isCompleted,
+      updatedAt: updatedAt ?? this.updatedAt,
       createdAt: createdAt ?? this.createdAt,
       rowid: rowid ?? this.rowid,
     );
@@ -350,6 +391,9 @@ class TasksCompanion extends UpdateCompanion<Task> {
     if (isCompleted.present) {
       map['is_completed'] = Variable<bool>(isCompleted.value);
     }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -366,6 +410,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
           ..write('title: $title, ')
           ..write('energyCost: $energyCost, ')
           ..write('isCompleted: $isCompleted, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -392,6 +437,15 @@ class $EnergyLogsTable extends EnergyLogs
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
+  static const VerificationMeta _syncIdMeta = const VerificationMeta('syncId');
+  @override
+  late final GeneratedColumn<String> syncId = GeneratedColumn<String>(
+    'sync_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _levelMeta = const VerificationMeta('level');
   @override
   late final GeneratedColumn<int> level = GeneratedColumn<int>(
@@ -413,8 +467,26 @@ class $EnergyLogsTable extends EnergyLogs
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, level, timestamp];
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    syncId,
+    level,
+    timestamp,
+    updatedAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -430,6 +502,14 @@ class $EnergyLogsTable extends EnergyLogs
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
+    if (data.containsKey('sync_id')) {
+      context.handle(
+        _syncIdMeta,
+        syncId.isAcceptableOrUnknown(data['sync_id']!, _syncIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_syncIdMeta);
+    }
     if (data.containsKey('level')) {
       context.handle(
         _levelMeta,
@@ -442,6 +522,12 @@ class $EnergyLogsTable extends EnergyLogs
       context.handle(
         _timestampMeta,
         timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
     return context;
@@ -457,6 +543,10 @@ class $EnergyLogsTable extends EnergyLogs
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
+      syncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_id'],
+      )!,
       level: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}level'],
@@ -464,6 +554,10 @@ class $EnergyLogsTable extends EnergyLogs
       timestamp: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}timestamp'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
       )!,
     );
   }
@@ -476,27 +570,35 @@ class $EnergyLogsTable extends EnergyLogs
 
 class EnergyLog extends DataClass implements Insertable<EnergyLog> {
   final int id;
+  final String syncId;
   final int level;
   final DateTime timestamp;
+  final DateTime updatedAt;
   const EnergyLog({
     required this.id,
+    required this.syncId,
     required this.level,
     required this.timestamp,
+    required this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['sync_id'] = Variable<String>(syncId);
     map['level'] = Variable<int>(level);
     map['timestamp'] = Variable<DateTime>(timestamp);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
   EnergyLogsCompanion toCompanion(bool nullToAbsent) {
     return EnergyLogsCompanion(
       id: Value(id),
+      syncId: Value(syncId),
       level: Value(level),
       timestamp: Value(timestamp),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -507,8 +609,10 @@ class EnergyLog extends DataClass implements Insertable<EnergyLog> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return EnergyLog(
       id: serializer.fromJson<int>(json['id']),
+      syncId: serializer.fromJson<String>(json['syncId']),
       level: serializer.fromJson<int>(json['level']),
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -516,21 +620,33 @@ class EnergyLog extends DataClass implements Insertable<EnergyLog> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'syncId': serializer.toJson<String>(syncId),
       'level': serializer.toJson<int>(level),
       'timestamp': serializer.toJson<DateTime>(timestamp),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
-  EnergyLog copyWith({int? id, int? level, DateTime? timestamp}) => EnergyLog(
+  EnergyLog copyWith({
+    int? id,
+    String? syncId,
+    int? level,
+    DateTime? timestamp,
+    DateTime? updatedAt,
+  }) => EnergyLog(
     id: id ?? this.id,
+    syncId: syncId ?? this.syncId,
     level: level ?? this.level,
     timestamp: timestamp ?? this.timestamp,
+    updatedAt: updatedAt ?? this.updatedAt,
   );
   EnergyLog copyWithCompanion(EnergyLogsCompanion data) {
     return EnergyLog(
       id: data.id.present ? data.id.value : this.id,
+      syncId: data.syncId.present ? data.syncId.value : this.syncId,
       level: data.level.present ? data.level.value : this.level,
       timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -538,58 +654,77 @@ class EnergyLog extends DataClass implements Insertable<EnergyLog> {
   String toString() {
     return (StringBuffer('EnergyLog(')
           ..write('id: $id, ')
+          ..write('syncId: $syncId, ')
           ..write('level: $level, ')
-          ..write('timestamp: $timestamp')
+          ..write('timestamp: $timestamp, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, level, timestamp);
+  int get hashCode => Object.hash(id, syncId, level, timestamp, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is EnergyLog &&
           other.id == this.id &&
+          other.syncId == this.syncId &&
           other.level == this.level &&
-          other.timestamp == this.timestamp);
+          other.timestamp == this.timestamp &&
+          other.updatedAt == this.updatedAt);
 }
 
 class EnergyLogsCompanion extends UpdateCompanion<EnergyLog> {
   final Value<int> id;
+  final Value<String> syncId;
   final Value<int> level;
   final Value<DateTime> timestamp;
+  final Value<DateTime> updatedAt;
   const EnergyLogsCompanion({
     this.id = const Value.absent(),
+    this.syncId = const Value.absent(),
     this.level = const Value.absent(),
     this.timestamp = const Value.absent(),
+    this.updatedAt = const Value.absent(),
   });
   EnergyLogsCompanion.insert({
     this.id = const Value.absent(),
+    required String syncId,
     required int level,
     this.timestamp = const Value.absent(),
-  }) : level = Value(level);
+    this.updatedAt = const Value.absent(),
+  }) : syncId = Value(syncId),
+       level = Value(level);
   static Insertable<EnergyLog> custom({
     Expression<int>? id,
+    Expression<String>? syncId,
     Expression<int>? level,
     Expression<DateTime>? timestamp,
+    Expression<DateTime>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (syncId != null) 'sync_id': syncId,
       if (level != null) 'level': level,
       if (timestamp != null) 'timestamp': timestamp,
+      if (updatedAt != null) 'updated_at': updatedAt,
     });
   }
 
   EnergyLogsCompanion copyWith({
     Value<int>? id,
+    Value<String>? syncId,
     Value<int>? level,
     Value<DateTime>? timestamp,
+    Value<DateTime>? updatedAt,
   }) {
     return EnergyLogsCompanion(
       id: id ?? this.id,
+      syncId: syncId ?? this.syncId,
       level: level ?? this.level,
       timestamp: timestamp ?? this.timestamp,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -599,11 +734,17 @@ class EnergyLogsCompanion extends UpdateCompanion<EnergyLog> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
+    if (syncId.present) {
+      map['sync_id'] = Variable<String>(syncId.value);
+    }
     if (level.present) {
       map['level'] = Variable<int>(level.value);
     }
     if (timestamp.present) {
       map['timestamp'] = Variable<DateTime>(timestamp.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
     return map;
   }
@@ -612,8 +753,10 @@ class EnergyLogsCompanion extends UpdateCompanion<EnergyLog> {
   String toString() {
     return (StringBuffer('EnergyLogsCompanion(')
           ..write('id: $id, ')
+          ..write('syncId: $syncId, ')
           ..write('level: $level, ')
-          ..write('timestamp: $timestamp')
+          ..write('timestamp: $timestamp, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
@@ -683,6 +826,18 @@ class $PacingStatsTable extends PacingStats
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -690,6 +845,7 @@ class $PacingStatsTable extends PacingStats
     healingLevel,
     currentStreak,
     lastLogDate,
+    updatedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -736,6 +892,12 @@ class $PacingStatsTable extends PacingStats
         ),
       );
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -765,6 +927,10 @@ class $PacingStatsTable extends PacingStats
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_log_date'],
       ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
     );
   }
 
@@ -780,12 +946,14 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
   final int healingLevel;
   final int currentStreak;
   final DateTime? lastLogDate;
+  final DateTime updatedAt;
   const PacingStat({
     required this.id,
     required this.xp,
     required this.healingLevel,
     required this.currentStreak,
     this.lastLogDate,
+    required this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -797,6 +965,7 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
     if (!nullToAbsent || lastLogDate != null) {
       map['last_log_date'] = Variable<DateTime>(lastLogDate);
     }
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -809,6 +978,7 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
       lastLogDate: lastLogDate == null && nullToAbsent
           ? const Value.absent()
           : Value(lastLogDate),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -823,6 +993,7 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
       healingLevel: serializer.fromJson<int>(json['healingLevel']),
       currentStreak: serializer.fromJson<int>(json['currentStreak']),
       lastLogDate: serializer.fromJson<DateTime?>(json['lastLogDate']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -834,6 +1005,7 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
       'healingLevel': serializer.toJson<int>(healingLevel),
       'currentStreak': serializer.toJson<int>(currentStreak),
       'lastLogDate': serializer.toJson<DateTime?>(lastLogDate),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
@@ -843,12 +1015,14 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
     int? healingLevel,
     int? currentStreak,
     Value<DateTime?> lastLogDate = const Value.absent(),
+    DateTime? updatedAt,
   }) => PacingStat(
     id: id ?? this.id,
     xp: xp ?? this.xp,
     healingLevel: healingLevel ?? this.healingLevel,
     currentStreak: currentStreak ?? this.currentStreak,
     lastLogDate: lastLogDate.present ? lastLogDate.value : this.lastLogDate,
+    updatedAt: updatedAt ?? this.updatedAt,
   );
   PacingStat copyWithCompanion(PacingStatsCompanion data) {
     return PacingStat(
@@ -863,6 +1037,7 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
       lastLogDate: data.lastLogDate.present
           ? data.lastLogDate.value
           : this.lastLogDate,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -873,14 +1048,15 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
           ..write('xp: $xp, ')
           ..write('healingLevel: $healingLevel, ')
           ..write('currentStreak: $currentStreak, ')
-          ..write('lastLogDate: $lastLogDate')
+          ..write('lastLogDate: $lastLogDate, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(id, xp, healingLevel, currentStreak, lastLogDate);
+      Object.hash(id, xp, healingLevel, currentStreak, lastLogDate, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -889,7 +1065,8 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
           other.xp == this.xp &&
           other.healingLevel == this.healingLevel &&
           other.currentStreak == this.currentStreak &&
-          other.lastLogDate == this.lastLogDate);
+          other.lastLogDate == this.lastLogDate &&
+          other.updatedAt == this.updatedAt);
 }
 
 class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
@@ -898,12 +1075,14 @@ class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
   final Value<int> healingLevel;
   final Value<int> currentStreak;
   final Value<DateTime?> lastLogDate;
+  final Value<DateTime> updatedAt;
   const PacingStatsCompanion({
     this.id = const Value.absent(),
     this.xp = const Value.absent(),
     this.healingLevel = const Value.absent(),
     this.currentStreak = const Value.absent(),
     this.lastLogDate = const Value.absent(),
+    this.updatedAt = const Value.absent(),
   });
   PacingStatsCompanion.insert({
     this.id = const Value.absent(),
@@ -911,6 +1090,7 @@ class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
     this.healingLevel = const Value.absent(),
     this.currentStreak = const Value.absent(),
     this.lastLogDate = const Value.absent(),
+    this.updatedAt = const Value.absent(),
   });
   static Insertable<PacingStat> custom({
     Expression<int>? id,
@@ -918,6 +1098,7 @@ class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
     Expression<int>? healingLevel,
     Expression<int>? currentStreak,
     Expression<DateTime>? lastLogDate,
+    Expression<DateTime>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -925,6 +1106,7 @@ class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
       if (healingLevel != null) 'healing_level': healingLevel,
       if (currentStreak != null) 'current_streak': currentStreak,
       if (lastLogDate != null) 'last_log_date': lastLogDate,
+      if (updatedAt != null) 'updated_at': updatedAt,
     });
   }
 
@@ -934,6 +1116,7 @@ class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
     Value<int>? healingLevel,
     Value<int>? currentStreak,
     Value<DateTime?>? lastLogDate,
+    Value<DateTime>? updatedAt,
   }) {
     return PacingStatsCompanion(
       id: id ?? this.id,
@@ -941,6 +1124,7 @@ class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
       healingLevel: healingLevel ?? this.healingLevel,
       currentStreak: currentStreak ?? this.currentStreak,
       lastLogDate: lastLogDate ?? this.lastLogDate,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -962,6 +1146,9 @@ class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
     if (lastLogDate.present) {
       map['last_log_date'] = Variable<DateTime>(lastLogDate.value);
     }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     return map;
   }
 
@@ -972,7 +1159,8 @@ class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
           ..write('xp: $xp, ')
           ..write('healingLevel: $healingLevel, ')
           ..write('currentStreak: $currentStreak, ')
-          ..write('lastLogDate: $lastLogDate')
+          ..write('lastLogDate: $lastLogDate, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
@@ -1001,6 +1189,7 @@ typedef $$TasksTableCreateCompanionBuilder =
       required String title,
       required int energyCost,
       Value<bool> isCompleted,
+      Value<DateTime> updatedAt,
       Value<DateTime> createdAt,
       Value<int> rowid,
     });
@@ -1010,6 +1199,7 @@ typedef $$TasksTableUpdateCompanionBuilder =
       Value<String> title,
       Value<int> energyCost,
       Value<bool> isCompleted,
+      Value<DateTime> updatedAt,
       Value<DateTime> createdAt,
       Value<int> rowid,
     });
@@ -1039,6 +1229,11 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
 
   ColumnFilters<bool> get isCompleted => $composableBuilder(
     column: $table.isCompleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1077,6 +1272,11 @@ class $$TasksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -1107,6 +1307,9 @@ class $$TasksTableAnnotationComposer
     column: $table.isCompleted,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -1144,6 +1347,7 @@ class $$TasksTableTableManager
                 Value<String> title = const Value.absent(),
                 Value<int> energyCost = const Value.absent(),
                 Value<bool> isCompleted = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TasksCompanion(
@@ -1151,6 +1355,7 @@ class $$TasksTableTableManager
                 title: title,
                 energyCost: energyCost,
                 isCompleted: isCompleted,
+                updatedAt: updatedAt,
                 createdAt: createdAt,
                 rowid: rowid,
               ),
@@ -1160,6 +1365,7 @@ class $$TasksTableTableManager
                 required String title,
                 required int energyCost,
                 Value<bool> isCompleted = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TasksCompanion.insert(
@@ -1167,6 +1373,7 @@ class $$TasksTableTableManager
                 title: title,
                 energyCost: energyCost,
                 isCompleted: isCompleted,
+                updatedAt: updatedAt,
                 createdAt: createdAt,
                 rowid: rowid,
               ),
@@ -1195,14 +1402,18 @@ typedef $$TasksTableProcessedTableManager =
 typedef $$EnergyLogsTableCreateCompanionBuilder =
     EnergyLogsCompanion Function({
       Value<int> id,
+      required String syncId,
       required int level,
       Value<DateTime> timestamp,
+      Value<DateTime> updatedAt,
     });
 typedef $$EnergyLogsTableUpdateCompanionBuilder =
     EnergyLogsCompanion Function({
       Value<int> id,
+      Value<String> syncId,
       Value<int> level,
       Value<DateTime> timestamp,
+      Value<DateTime> updatedAt,
     });
 
 class $$EnergyLogsTableFilterComposer
@@ -1219,6 +1430,11 @@ class $$EnergyLogsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get syncId => $composableBuilder(
+    column: $table.syncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get level => $composableBuilder(
     column: $table.level,
     builder: (column) => ColumnFilters(column),
@@ -1226,6 +1442,11 @@ class $$EnergyLogsTableFilterComposer
 
   ColumnFilters<DateTime> get timestamp => $composableBuilder(
     column: $table.timestamp,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1244,6 +1465,11 @@ class $$EnergyLogsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get syncId => $composableBuilder(
+    column: $table.syncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get level => $composableBuilder(
     column: $table.level,
     builder: (column) => ColumnOrderings(column),
@@ -1251,6 +1477,11 @@ class $$EnergyLogsTableOrderingComposer
 
   ColumnOrderings<DateTime> get timestamp => $composableBuilder(
     column: $table.timestamp,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -1267,11 +1498,17 @@ class $$EnergyLogsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get syncId =>
+      $composableBuilder(column: $table.syncId, builder: (column) => column);
+
   GeneratedColumn<int> get level =>
       $composableBuilder(column: $table.level, builder: (column) => column);
 
   GeneratedColumn<DateTime> get timestamp =>
       $composableBuilder(column: $table.timestamp, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$EnergyLogsTableTableManager
@@ -1306,22 +1543,30 @@ class $$EnergyLogsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<String> syncId = const Value.absent(),
                 Value<int> level = const Value.absent(),
                 Value<DateTime> timestamp = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => EnergyLogsCompanion(
                 id: id,
+                syncId: syncId,
                 level: level,
                 timestamp: timestamp,
+                updatedAt: updatedAt,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                required String syncId,
                 required int level,
                 Value<DateTime> timestamp = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => EnergyLogsCompanion.insert(
                 id: id,
+                syncId: syncId,
                 level: level,
                 timestamp: timestamp,
+                updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -1352,6 +1597,7 @@ typedef $$PacingStatsTableCreateCompanionBuilder =
       Value<int> healingLevel,
       Value<int> currentStreak,
       Value<DateTime?> lastLogDate,
+      Value<DateTime> updatedAt,
     });
 typedef $$PacingStatsTableUpdateCompanionBuilder =
     PacingStatsCompanion Function({
@@ -1360,6 +1606,7 @@ typedef $$PacingStatsTableUpdateCompanionBuilder =
       Value<int> healingLevel,
       Value<int> currentStreak,
       Value<DateTime?> lastLogDate,
+      Value<DateTime> updatedAt,
     });
 
 class $$PacingStatsTableFilterComposer
@@ -1393,6 +1640,11 @@ class $$PacingStatsTableFilterComposer
 
   ColumnFilters<DateTime> get lastLogDate => $composableBuilder(
     column: $table.lastLogDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1430,6 +1682,11 @@ class $$PacingStatsTableOrderingComposer
     column: $table.lastLogDate,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$PacingStatsTableAnnotationComposer
@@ -1461,6 +1718,9 @@ class $$PacingStatsTableAnnotationComposer
     column: $table.lastLogDate,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$PacingStatsTableTableManager
@@ -1499,12 +1759,14 @@ class $$PacingStatsTableTableManager
                 Value<int> healingLevel = const Value.absent(),
                 Value<int> currentStreak = const Value.absent(),
                 Value<DateTime?> lastLogDate = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => PacingStatsCompanion(
                 id: id,
                 xp: xp,
                 healingLevel: healingLevel,
                 currentStreak: currentStreak,
                 lastLogDate: lastLogDate,
+                updatedAt: updatedAt,
               ),
           createCompanionCallback:
               ({
@@ -1513,12 +1775,14 @@ class $$PacingStatsTableTableManager
                 Value<int> healingLevel = const Value.absent(),
                 Value<int> currentStreak = const Value.absent(),
                 Value<DateTime?> lastLogDate = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => PacingStatsCompanion.insert(
                 id: id,
                 xp: xp,
                 healingLevel: healingLevel,
                 currentStreak: currentStreak,
                 lastLogDate: lastLogDate,
+                updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

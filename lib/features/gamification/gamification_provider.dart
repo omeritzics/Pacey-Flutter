@@ -29,6 +29,7 @@ class PacingStatsNotifier extends Notifier<PacingStat?> {
         xp: const Value(0),
         healingLevel: const Value(1),
         currentStreak: const Value(0),
+        updatedAt: Value(DateTime.now()),
       );
       await _db.into(_db.pacingStats).insert(newStats);
       state = await (_db.select(_db.pacingStats)..limit(1)).getSingle();
@@ -43,7 +44,11 @@ class PacingStatsNotifier extends Notifier<PacingStat?> {
     final newXp = state!.xp + amount;
     final newLevel = _calculateLevel(newXp);
 
-    final updated = state!.copyWith(xp: newXp, healingLevel: newLevel);
+    final updated = state!.copyWith(
+      xp: newXp,
+      healingLevel: newLevel,
+      updatedAt: DateTime.now(),
+    );
     await _db.update(_db.pacingStats).replace(updated);
     state = updated;
 
@@ -58,7 +63,11 @@ class PacingStatsNotifier extends Notifier<PacingStat?> {
     final newXp = (state!.xp - amount).clamp(0, 1000000).toInt();
     final newLevel = _calculateLevel(newXp);
 
-    final updated = state!.copyWith(xp: newXp, healingLevel: newLevel);
+    final updated = state!.copyWith(
+      xp: newXp,
+      healingLevel: newLevel,
+      updatedAt: DateTime.now(),
+    );
     await _db.update(_db.pacingStats).replace(updated);
     state = updated;
 

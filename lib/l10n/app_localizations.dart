@@ -487,6 +487,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to connect to {peerId}'**
   String connectionFailed(String peerId);
+
+  /// No description provided for @dangerZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger Zone'**
+  String get dangerZone;
+
+  /// No description provided for @resetData.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Data'**
+  String get resetData;
+
+  /// No description provided for @resetDataDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all your tasks, logs, and statistics'**
+  String get resetDataDescription;
+
+  /// No description provided for @confirmReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset All Data?'**
+  String get confirmReset;
+
+  /// No description provided for @confirmResetMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete all your data. This action cannot be undone.'**
+  String get confirmResetMessage;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// No description provided for @dataResetSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Data has been reset successfully'**
+  String get dataResetSuccessful;
 }
 
 class _AppLocalizationsDelegate

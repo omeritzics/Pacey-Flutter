@@ -93,5 +93,38 @@
   "taskTitle": "שם המשימה",
   "tasks": "משימות",
   "tasksForEnergy": "משימות עבור {energy} ⚡",
-  "yourPeerId": "מזהה המכשיר שלך"
+  "yourPeerId": "מזהה המכשיר שלך",
+  "confirmConnect": "התחבר למכשיר",
+  "confirmConnectMessage": "האם אתה בטוח שברצונך להתחבר למכשיר {peerId}?",
+  "@confirmConnectMessage": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  },
+  "connecting": "מתחבר...",
+  "connectionSuccessful": "התחברת בהצלחה ל-{peerId}",
+  "@connectionSuccessful": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  },
+  "connectionFailed": "ההתחברות ל-{peerId} נכשלה",
+  "@connectionFailed": {
+    "placeholders": {
+      "peerId": {
+        "type": "String"
+      }
+    }
+  },
+  "dangerZone": "אזור סכנה",
+  "resetData": "איפוס נתונים",
+  "resetDataDescription": "מחיקת כל המשימות, היומנים והסטטיסטיקות",
+  "confirmReset": "איפוס כל הנתונים?",
+  "confirmResetMessage": "פעולה זו תמחק לצמיתות את כל הנתונים שלך. לא ניתן לבטל פעולה זו.",
+  "reset": "איפוס",
+  "dataResetSuccessful": "הנתונים אופסו בהצלחה"
 }

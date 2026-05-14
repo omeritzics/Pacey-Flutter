@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' hide Column;
+import 'package:uuid/uuid.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
 import '../../core/p2p/p2p_sync_provider.dart';
@@ -68,10 +69,16 @@ class EnergyLevelNotifier extends Notifier<int> {
 
     state = newLevel;
 
+    final syncId = const Uuid().v4();
     final energyLog = await db
         .into(db.energyLogs)
         .insertReturning(
-          EnergyLogsCompanion.insert(level: newLevel, timestamp: Value(now)),
+          EnergyLogsCompanion.insert(
+            syncId: syncId,
+            level: newLevel,
+            timestamp: Value(now),
+            updatedAt: Value(now),
+          ),
         );
 
     // Broadcast energy log to connected peers

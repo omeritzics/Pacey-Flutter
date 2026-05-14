@@ -227,4 +227,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String connectionFailed(String peerId) {
     return 'Failed to connect to $peerId';
   }
+
+  @override
+  String get dangerZone => 'Danger Zone';
+
+  @override
+  String get resetData => 'Reset Data';
+
+  @override
+  String get resetDataDescription =>
+      'Delete all your tasks, logs, and statistics';
+
+  @override
+  String get confirmReset => 'Reset All Data?';
+
+  @override
+  String get confirmResetMessage =>
+      'This will permanently delete all your data. This action cannot be undone.';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get dataResetSuccessful => 'Data has been reset successfully';
 }

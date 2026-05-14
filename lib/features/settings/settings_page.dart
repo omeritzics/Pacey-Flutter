@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pacey/l10n/app_localizations.dart';
 import '../../core/localization/locale_provider.dart';
+import '../../core/database/database_provider.dart';
 import '../p2p/p2p_screen.dart';
+import '../gamification/gamification_provider.dart';
+import '../energy/energy_provider.dart';
+import '../tasks/task_provider.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -64,6 +68,77 @@ class SettingsPage extends ConsumerWidget {
                 MaterialPageRoute(builder: (context) => const P2PScreen()),
               );
             },
+          ),
+          const Divider(),
+
+          // Danger Zone
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text(
+              l10n.dangerZone,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ListTile(
+            title: Text(
+              l10n.resetData,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+            subtitle: Text(l10n.resetDataDescription),
+            leading: Icon(
+              Icons.delete_forever,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            onTap: () => _showResetConfirmation(context, ref, l10n),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showResetConfirmation(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.confirmReset),
+        content: Text(l10n.confirmResetMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              final db = ref.read(databaseProvider);
+              await db.transaction(() async {
+                await db.delete(db.tasks).go();
+                await db.delete(db.energyLogs).go();
+                await db.delete(db.pacingStats).go();
+              });
+
+              // Invalidate providers to refresh UI
+              ref.invalidate(pacingStatsProvider);
+              ref.invalidate(energyLevelProvider);
+              ref.invalidate(tasksProvider);
+
+              if (context.mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.dataResetSuccessful)),
+                );
+              }
+            },
+            child: Text(
+              l10n.reset,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ),
         ],
       ),

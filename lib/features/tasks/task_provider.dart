@@ -36,6 +36,7 @@ class TaskActions {
     final syncService = _ref.read(p2pSyncServiceProvider);
     
     final taskId = _uuid.v4();
+    final now = DateTime.now();
     await db
         .into(db.tasks)
         .insert(
@@ -43,6 +44,7 @@ class TaskActions {
             id: taskId,
             title: title,
             energyCost: energyCost,
+            updatedAt: Value(now),
           ),
         );
     
@@ -59,7 +61,10 @@ class TaskActions {
     final isNowCompleted = !task.isCompleted;
 
     await (db.update(db.tasks)..where((t) => t.id.equals(task.id))).write(
-      TasksCompanion(isCompleted: Value(isNowCompleted)),
+      TasksCompanion(
+        isCompleted: Value(isNowCompleted),
+        updatedAt: Value(DateTime.now()),
+      ),
     );
 
     // Broadcast task update to connected peers
@@ -94,6 +99,7 @@ class TaskActions {
       TasksCompanion(
         title: Value(title),
         energyCost: Value(energyCost),
+        updatedAt: Value(DateTime.now()),
       ),
     );
     
