@@ -119,5 +119,12 @@
         "type": "String"
       }
     }
-  }
+  },
+  "dangerZone": "Danger Zone",
+  "resetData": "Reset Data",
+  "resetDataDescription": "Delete all your tasks, logs, and statistics",
+  "confirmReset": "Reset All Data?",
+  "confirmResetMessage": "This will permanently delete all your data. This action cannot be undone.",
+  "reset": "Reset",
+  "dataResetSuccessful": "Data has been reset successfully"
 }

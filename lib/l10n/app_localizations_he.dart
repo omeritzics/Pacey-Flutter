@@ -206,23 +206,45 @@ class AppLocalizationsHe extends AppLocalizations {
   }
 
   @override
-  String get confirmConnect => 'Connect to Device';
+  String get confirmConnect => 'התחבר למכשיר';
 
   @override
   String confirmConnectMessage(String peerId) {
-    return 'Are you sure you want to connect to device $peerId?';
+    return 'האם אתה בטוח שברצונך להתחבר למכשיר $peerId?';
   }
 
   @override
-  String get connecting => 'Connecting...';
+  String get connecting => 'מתחבר...';
 
   @override
   String connectionSuccessful(String peerId) {
-    return 'Successfully connected to $peerId';
+    return 'התחברת בהצלחה ל-$peerId';
   }
 
   @override
   String connectionFailed(String peerId) {
-    return 'Failed to connect to $peerId';
+    return 'ההתחברות ל-$peerId נכשלה';
   }
+
+  @override
+  String get dangerZone => 'אזור סכנה';
+
+  @override
+  String get resetData => 'איפוס נתונים';
+
+  @override
+  String get resetDataDescription => 'מחיקת כל המשימות, היומנים והסטטיסטיקות';
+
+  @override
+  String get confirmReset => 'איפוס כל הנתונים?';
+
+  @override
+  String get confirmResetMessage =>
+      'פעולה זו תמחק לצמיתות את כל הנתונים שלך. לא ניתן לבטל פעולה זו.';
+
+  @override
+  String get reset => 'איפוס';
+
+  @override
+  String get dataResetSuccessful => 'הנתונים אופסו בהצלחה';
 }

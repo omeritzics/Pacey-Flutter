@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:peer_rtc/peer_rtc.dart';
 import 'package:uuid/uuid.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'dart:io';
 
 class P2PService {
   static final P2PService _instance = P2PService._internal();
@@ -29,10 +31,13 @@ class P2PService {
     );
 
     // Create local device info
+    final deviceName = await _getDeviceName();
+    final deviceType = _getDeviceType();
+
     _localDeviceInfo = DeviceInfo(
       peerId: _peerId!,
-      deviceName: _getDeviceName(),
-      deviceType: _getDeviceType(),
+      deviceName: deviceName,
+      deviceType: deviceType,
       connectedAt: DateTime.now(),
     );
 
@@ -177,22 +182,35 @@ class P2PService {
     }
   }
 
-  String _getDeviceName() {
-    // Try to get a meaningful device name
+  Future<String> _getDeviceName() async {
+    final deviceInfo = DeviceInfoPlugin();
     try {
-      return 'Pacey Device';
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        return '${androidInfo.manufacturer} ${androidInfo.model}';
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        return iosInfo.name;
+      } else if (Platform.isWindows) {
+        final windowsInfo = await deviceInfo.windowsInfo;
+        return windowsInfo.computerName;
+      } else if (Platform.isMacOS) {
+        final macosInfo = await deviceInfo.macOsInfo;
+        return macosInfo.computerName;
+      } else if (Platform.isLinux) {
+        final linuxInfo = await deviceInfo.linuxInfo;
+        return linuxInfo.name;
+      }
     } catch (e) {
-      return 'Unknown Device';
+      // Fallback
     }
+    return 'Pacey Device';
   }
 
   String _getDeviceType() {
-    // Determine device type based on platform
-    try {
-      return 'Mobile';
-    } catch (e) {
-      return 'Unknown';
-    }
+    if (Platform.isAndroid || Platform.isIOS) return 'Mobile';
+    if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) return 'Desktop';
+    return 'Unknown';
   }
 }
 
