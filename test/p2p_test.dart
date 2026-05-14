@@ -38,10 +38,9 @@ void main() {
 
   group('P2P Sync Integration Tests', () {
     test('Sync service handles task data correctly', () {
-      // Test data structure
-      final taskData = {
+      final taskData = <String, Object?>{
         'type': 'task_created',
-        'payload': {
+        'payload': <String, Object?>{
           'id': 'test-task-1',
           'title': 'Test Task',
           'energyCost': 5,
@@ -51,12 +50,9 @@ void main() {
       };
 
       expect(taskData['type'], 'task_created');
-      expect(taskData['payload']?['id'], 'test-task-1');
-      expect(taskData['payload']!['title'], 'Test Task');
+      final payload = taskData['payload'] as Map<String, Object?>;
+      expect(payload['id'], 'test-task-1');
+      expect(payload['title'], 'Test Task');
     });
   });
-}
-
-extension on Object {
-  Null operator [](String other) => null;
 }

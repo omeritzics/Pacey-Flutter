@@ -5,16 +5,18 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pacey/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('App loads smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: EnergyPacingApp()));
+    await tester.pump();
+    expect(find.text('Pacey'), findsOneWidget);
 
-    // Verify that our app has loaded (check for the title)
-    expect(find.text('My Energy'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(days: 1));
   });
 }

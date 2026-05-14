@@ -41,6 +41,41 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _priorityMeta = const VerificationMeta(
+    'priority',
+  );
+  @override
+  late final GeneratedColumn<int> priority = GeneratedColumn<int>(
+    'priority',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(4),
+  );
+  static const VerificationMeta _repeatIntervalMeta = const VerificationMeta(
+    'repeatInterval',
+  );
+  @override
+  late final GeneratedColumn<int> repeatInterval = GeneratedColumn<int>(
+    'repeat_interval',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _nextAllowedCompletionAtMeta =
+      const VerificationMeta('nextAllowedCompletionAt');
+  @override
+  late final GeneratedColumn<DateTime> nextAllowedCompletionAt =
+      GeneratedColumn<DateTime>(
+        'next_allowed_completion_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _isCompletedMeta = const VerificationMeta(
     'isCompleted',
   );
@@ -63,10 +98,9 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
     'updated_at',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -85,6 +119,9 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     id,
     title,
     energyCost,
+    priority,
+    repeatInterval,
+    nextAllowedCompletionAt,
     isCompleted,
     updatedAt,
     createdAt,
@@ -121,6 +158,30 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
       );
     } else if (isInserting) {
       context.missing(_energyCostMeta);
+    }
+    if (data.containsKey('priority')) {
+      context.handle(
+        _priorityMeta,
+        priority.isAcceptableOrUnknown(data['priority']!, _priorityMeta),
+      );
+    }
+    if (data.containsKey('repeat_interval')) {
+      context.handle(
+        _repeatIntervalMeta,
+        repeatInterval.isAcceptableOrUnknown(
+          data['repeat_interval']!,
+          _repeatIntervalMeta,
+        ),
+      );
+    }
+    if (data.containsKey('next_allowed_completion_at')) {
+      context.handle(
+        _nextAllowedCompletionAtMeta,
+        nextAllowedCompletionAt.isAcceptableOrUnknown(
+          data['next_allowed_completion_at']!,
+          _nextAllowedCompletionAtMeta,
+        ),
+      );
     }
     if (data.containsKey('is_completed')) {
       context.handle(
@@ -164,6 +225,18 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         DriftSqlType.int,
         data['${effectivePrefix}energy_cost'],
       )!,
+      priority: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}priority'],
+      )!,
+      repeatInterval: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}repeat_interval'],
+      )!,
+      nextAllowedCompletionAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_allowed_completion_at'],
+      ),
       isCompleted: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_completed'],
@@ -171,7 +244,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
-      )!,
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -189,15 +262,23 @@ class Task extends DataClass implements Insertable<Task> {
   final String id;
   final String title;
   final int energyCost;
+  final int priority;
+
+  /// 0 = off, 1 = daily, 2 = weekly, 3 = monthly
+  final int repeatInterval;
+  final DateTime? nextAllowedCompletionAt;
   final bool isCompleted;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   final DateTime createdAt;
   const Task({
     required this.id,
     required this.title,
     required this.energyCost,
+    required this.priority,
+    required this.repeatInterval,
+    this.nextAllowedCompletionAt,
     required this.isCompleted,
-    required this.updatedAt,
+    this.updatedAt,
     required this.createdAt,
   });
   @override
@@ -206,8 +287,17 @@ class Task extends DataClass implements Insertable<Task> {
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     map['energy_cost'] = Variable<int>(energyCost);
+    map['priority'] = Variable<int>(priority);
+    map['repeat_interval'] = Variable<int>(repeatInterval);
+    if (!nullToAbsent || nextAllowedCompletionAt != null) {
+      map['next_allowed_completion_at'] = Variable<DateTime>(
+        nextAllowedCompletionAt,
+      );
+    }
     map['is_completed'] = Variable<bool>(isCompleted);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
@@ -217,8 +307,15 @@ class Task extends DataClass implements Insertable<Task> {
       id: Value(id),
       title: Value(title),
       energyCost: Value(energyCost),
+      priority: Value(priority),
+      repeatInterval: Value(repeatInterval),
+      nextAllowedCompletionAt: nextAllowedCompletionAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextAllowedCompletionAt),
       isCompleted: Value(isCompleted),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
       createdAt: Value(createdAt),
     );
   }
@@ -232,8 +329,13 @@ class Task extends DataClass implements Insertable<Task> {
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       energyCost: serializer.fromJson<int>(json['energyCost']),
+      priority: serializer.fromJson<int>(json['priority']),
+      repeatInterval: serializer.fromJson<int>(json['repeatInterval']),
+      nextAllowedCompletionAt: serializer.fromJson<DateTime?>(
+        json['nextAllowedCompletionAt'],
+      ),
       isCompleted: serializer.fromJson<bool>(json['isCompleted']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -244,8 +346,13 @@ class Task extends DataClass implements Insertable<Task> {
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'energyCost': serializer.toJson<int>(energyCost),
+      'priority': serializer.toJson<int>(priority),
+      'repeatInterval': serializer.toJson<int>(repeatInterval),
+      'nextAllowedCompletionAt': serializer.toJson<DateTime?>(
+        nextAllowedCompletionAt,
+      ),
       'isCompleted': serializer.toJson<bool>(isCompleted),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
@@ -254,15 +361,23 @@ class Task extends DataClass implements Insertable<Task> {
     String? id,
     String? title,
     int? energyCost,
+    int? priority,
+    int? repeatInterval,
+    Value<DateTime?> nextAllowedCompletionAt = const Value.absent(),
     bool? isCompleted,
-    DateTime? updatedAt,
+    Value<DateTime?> updatedAt = const Value.absent(),
     DateTime? createdAt,
   }) => Task(
     id: id ?? this.id,
     title: title ?? this.title,
     energyCost: energyCost ?? this.energyCost,
+    priority: priority ?? this.priority,
+    repeatInterval: repeatInterval ?? this.repeatInterval,
+    nextAllowedCompletionAt: nextAllowedCompletionAt.present
+        ? nextAllowedCompletionAt.value
+        : this.nextAllowedCompletionAt,
     isCompleted: isCompleted ?? this.isCompleted,
-    updatedAt: updatedAt ?? this.updatedAt,
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
     createdAt: createdAt ?? this.createdAt,
   );
   Task copyWithCompanion(TasksCompanion data) {
@@ -272,6 +387,13 @@ class Task extends DataClass implements Insertable<Task> {
       energyCost: data.energyCost.present
           ? data.energyCost.value
           : this.energyCost,
+      priority: data.priority.present ? data.priority.value : this.priority,
+      repeatInterval: data.repeatInterval.present
+          ? data.repeatInterval.value
+          : this.repeatInterval,
+      nextAllowedCompletionAt: data.nextAllowedCompletionAt.present
+          ? data.nextAllowedCompletionAt.value
+          : this.nextAllowedCompletionAt,
       isCompleted: data.isCompleted.present
           ? data.isCompleted.value
           : this.isCompleted,
@@ -286,6 +408,9 @@ class Task extends DataClass implements Insertable<Task> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('energyCost: $energyCost, ')
+          ..write('priority: $priority, ')
+          ..write('repeatInterval: $repeatInterval, ')
+          ..write('nextAllowedCompletionAt: $nextAllowedCompletionAt, ')
           ..write('isCompleted: $isCompleted, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('createdAt: $createdAt')
@@ -294,8 +419,17 @@ class Task extends DataClass implements Insertable<Task> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, title, energyCost, isCompleted, updatedAt, createdAt);
+  int get hashCode => Object.hash(
+    id,
+    title,
+    energyCost,
+    priority,
+    repeatInterval,
+    nextAllowedCompletionAt,
+    isCompleted,
+    updatedAt,
+    createdAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -303,6 +437,9 @@ class Task extends DataClass implements Insertable<Task> {
           other.id == this.id &&
           other.title == this.title &&
           other.energyCost == this.energyCost &&
+          other.priority == this.priority &&
+          other.repeatInterval == this.repeatInterval &&
+          other.nextAllowedCompletionAt == this.nextAllowedCompletionAt &&
           other.isCompleted == this.isCompleted &&
           other.updatedAt == this.updatedAt &&
           other.createdAt == this.createdAt);
@@ -312,14 +449,20 @@ class TasksCompanion extends UpdateCompanion<Task> {
   final Value<String> id;
   final Value<String> title;
   final Value<int> energyCost;
+  final Value<int> priority;
+  final Value<int> repeatInterval;
+  final Value<DateTime?> nextAllowedCompletionAt;
   final Value<bool> isCompleted;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   final Value<DateTime> createdAt;
   final Value<int> rowid;
   const TasksCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.energyCost = const Value.absent(),
+    this.priority = const Value.absent(),
+    this.repeatInterval = const Value.absent(),
+    this.nextAllowedCompletionAt = const Value.absent(),
     this.isCompleted = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -329,6 +472,9 @@ class TasksCompanion extends UpdateCompanion<Task> {
     required String id,
     required String title,
     required int energyCost,
+    this.priority = const Value.absent(),
+    this.repeatInterval = const Value.absent(),
+    this.nextAllowedCompletionAt = const Value.absent(),
     this.isCompleted = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -340,6 +486,9 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Expression<String>? id,
     Expression<String>? title,
     Expression<int>? energyCost,
+    Expression<int>? priority,
+    Expression<int>? repeatInterval,
+    Expression<DateTime>? nextAllowedCompletionAt,
     Expression<bool>? isCompleted,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? createdAt,
@@ -349,6 +498,10 @@ class TasksCompanion extends UpdateCompanion<Task> {
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (energyCost != null) 'energy_cost': energyCost,
+      if (priority != null) 'priority': priority,
+      if (repeatInterval != null) 'repeat_interval': repeatInterval,
+      if (nextAllowedCompletionAt != null)
+        'next_allowed_completion_at': nextAllowedCompletionAt,
       if (isCompleted != null) 'is_completed': isCompleted,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (createdAt != null) 'created_at': createdAt,
@@ -360,8 +513,11 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Value<String>? id,
     Value<String>? title,
     Value<int>? energyCost,
+    Value<int>? priority,
+    Value<int>? repeatInterval,
+    Value<DateTime?>? nextAllowedCompletionAt,
     Value<bool>? isCompleted,
-    Value<DateTime>? updatedAt,
+    Value<DateTime?>? updatedAt,
     Value<DateTime>? createdAt,
     Value<int>? rowid,
   }) {
@@ -369,6 +525,10 @@ class TasksCompanion extends UpdateCompanion<Task> {
       id: id ?? this.id,
       title: title ?? this.title,
       energyCost: energyCost ?? this.energyCost,
+      priority: priority ?? this.priority,
+      repeatInterval: repeatInterval ?? this.repeatInterval,
+      nextAllowedCompletionAt:
+          nextAllowedCompletionAt ?? this.nextAllowedCompletionAt,
       isCompleted: isCompleted ?? this.isCompleted,
       updatedAt: updatedAt ?? this.updatedAt,
       createdAt: createdAt ?? this.createdAt,
@@ -387,6 +547,17 @@ class TasksCompanion extends UpdateCompanion<Task> {
     }
     if (energyCost.present) {
       map['energy_cost'] = Variable<int>(energyCost.value);
+    }
+    if (priority.present) {
+      map['priority'] = Variable<int>(priority.value);
+    }
+    if (repeatInterval.present) {
+      map['repeat_interval'] = Variable<int>(repeatInterval.value);
+    }
+    if (nextAllowedCompletionAt.present) {
+      map['next_allowed_completion_at'] = Variable<DateTime>(
+        nextAllowedCompletionAt.value,
+      );
     }
     if (isCompleted.present) {
       map['is_completed'] = Variable<bool>(isCompleted.value);
@@ -409,6 +580,9 @@ class TasksCompanion extends UpdateCompanion<Task> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('energyCost: $energyCost, ')
+          ..write('priority: $priority, ')
+          ..write('repeatInterval: $repeatInterval, ')
+          ..write('nextAllowedCompletionAt: $nextAllowedCompletionAt, ')
           ..write('isCompleted: $isCompleted, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('createdAt: $createdAt, ')
@@ -442,9 +616,9 @@ class $EnergyLogsTable extends EnergyLogs
   late final GeneratedColumn<String> syncId = GeneratedColumn<String>(
     'sync_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _levelMeta = const VerificationMeta('level');
   @override
@@ -474,10 +648,9 @@ class $EnergyLogsTable extends EnergyLogs
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
     'updated_at',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -507,8 +680,6 @@ class $EnergyLogsTable extends EnergyLogs
         _syncIdMeta,
         syncId.isAcceptableOrUnknown(data['sync_id']!, _syncIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_syncIdMeta);
     }
     if (data.containsKey('level')) {
       context.handle(
@@ -546,7 +717,7 @@ class $EnergyLogsTable extends EnergyLogs
       syncId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}sync_id'],
-      )!,
+      ),
       level: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}level'],
@@ -558,7 +729,7 @@ class $EnergyLogsTable extends EnergyLogs
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
-      )!,
+      ),
     );
   }
 
@@ -570,35 +741,43 @@ class $EnergyLogsTable extends EnergyLogs
 
 class EnergyLog extends DataClass implements Insertable<EnergyLog> {
   final int id;
-  final String syncId;
+  final String? syncId;
   final int level;
   final DateTime timestamp;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const EnergyLog({
     required this.id,
-    required this.syncId,
+    this.syncId,
     required this.level,
     required this.timestamp,
-    required this.updatedAt,
+    this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['sync_id'] = Variable<String>(syncId);
+    if (!nullToAbsent || syncId != null) {
+      map['sync_id'] = Variable<String>(syncId);
+    }
     map['level'] = Variable<int>(level);
     map['timestamp'] = Variable<DateTime>(timestamp);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     return map;
   }
 
   EnergyLogsCompanion toCompanion(bool nullToAbsent) {
     return EnergyLogsCompanion(
       id: Value(id),
-      syncId: Value(syncId),
+      syncId: syncId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncId),
       level: Value(level),
       timestamp: Value(timestamp),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -609,10 +788,10 @@ class EnergyLog extends DataClass implements Insertable<EnergyLog> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return EnergyLog(
       id: serializer.fromJson<int>(json['id']),
-      syncId: serializer.fromJson<String>(json['syncId']),
+      syncId: serializer.fromJson<String?>(json['syncId']),
       level: serializer.fromJson<int>(json['level']),
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -620,25 +799,25 @@ class EnergyLog extends DataClass implements Insertable<EnergyLog> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'syncId': serializer.toJson<String>(syncId),
+      'syncId': serializer.toJson<String?>(syncId),
       'level': serializer.toJson<int>(level),
       'timestamp': serializer.toJson<DateTime>(timestamp),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
   EnergyLog copyWith({
     int? id,
-    String? syncId,
+    Value<String?> syncId = const Value.absent(),
     int? level,
     DateTime? timestamp,
-    DateTime? updatedAt,
+    Value<DateTime?> updatedAt = const Value.absent(),
   }) => EnergyLog(
     id: id ?? this.id,
-    syncId: syncId ?? this.syncId,
+    syncId: syncId.present ? syncId.value : this.syncId,
     level: level ?? this.level,
     timestamp: timestamp ?? this.timestamp,
-    updatedAt: updatedAt ?? this.updatedAt,
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
   );
   EnergyLog copyWithCompanion(EnergyLogsCompanion data) {
     return EnergyLog(
@@ -677,10 +856,10 @@ class EnergyLog extends DataClass implements Insertable<EnergyLog> {
 
 class EnergyLogsCompanion extends UpdateCompanion<EnergyLog> {
   final Value<int> id;
-  final Value<String> syncId;
+  final Value<String?> syncId;
   final Value<int> level;
   final Value<DateTime> timestamp;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   const EnergyLogsCompanion({
     this.id = const Value.absent(),
     this.syncId = const Value.absent(),
@@ -690,12 +869,11 @@ class EnergyLogsCompanion extends UpdateCompanion<EnergyLog> {
   });
   EnergyLogsCompanion.insert({
     this.id = const Value.absent(),
-    required String syncId,
+    this.syncId = const Value.absent(),
     required int level,
     this.timestamp = const Value.absent(),
     this.updatedAt = const Value.absent(),
-  }) : syncId = Value(syncId),
-       level = Value(level);
+  }) : level = Value(level);
   static Insertable<EnergyLog> custom({
     Expression<int>? id,
     Expression<String>? syncId,
@@ -714,10 +892,10 @@ class EnergyLogsCompanion extends UpdateCompanion<EnergyLog> {
 
   EnergyLogsCompanion copyWith({
     Value<int>? id,
-    Value<String>? syncId,
+    Value<String?>? syncId,
     Value<int>? level,
     Value<DateTime>? timestamp,
-    Value<DateTime>? updatedAt,
+    Value<DateTime?>? updatedAt,
   }) {
     return EnergyLogsCompanion(
       id: id ?? this.id,
@@ -833,10 +1011,9 @@ class $PacingStatsTable extends PacingStats
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
     'updated_at',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -930,7 +1107,7 @@ class $PacingStatsTable extends PacingStats
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
-      )!,
+      ),
     );
   }
 
@@ -946,14 +1123,14 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
   final int healingLevel;
   final int currentStreak;
   final DateTime? lastLogDate;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const PacingStat({
     required this.id,
     required this.xp,
     required this.healingLevel,
     required this.currentStreak,
     this.lastLogDate,
-    required this.updatedAt,
+    this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -965,7 +1142,9 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
     if (!nullToAbsent || lastLogDate != null) {
       map['last_log_date'] = Variable<DateTime>(lastLogDate);
     }
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     return map;
   }
 
@@ -978,7 +1157,9 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
       lastLogDate: lastLogDate == null && nullToAbsent
           ? const Value.absent()
           : Value(lastLogDate),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -993,7 +1174,7 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
       healingLevel: serializer.fromJson<int>(json['healingLevel']),
       currentStreak: serializer.fromJson<int>(json['currentStreak']),
       lastLogDate: serializer.fromJson<DateTime?>(json['lastLogDate']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -1005,7 +1186,7 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
       'healingLevel': serializer.toJson<int>(healingLevel),
       'currentStreak': serializer.toJson<int>(currentStreak),
       'lastLogDate': serializer.toJson<DateTime?>(lastLogDate),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
@@ -1015,14 +1196,14 @@ class PacingStat extends DataClass implements Insertable<PacingStat> {
     int? healingLevel,
     int? currentStreak,
     Value<DateTime?> lastLogDate = const Value.absent(),
-    DateTime? updatedAt,
+    Value<DateTime?> updatedAt = const Value.absent(),
   }) => PacingStat(
     id: id ?? this.id,
     xp: xp ?? this.xp,
     healingLevel: healingLevel ?? this.healingLevel,
     currentStreak: currentStreak ?? this.currentStreak,
     lastLogDate: lastLogDate.present ? lastLogDate.value : this.lastLogDate,
-    updatedAt: updatedAt ?? this.updatedAt,
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
   );
   PacingStat copyWithCompanion(PacingStatsCompanion data) {
     return PacingStat(
@@ -1075,7 +1256,7 @@ class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
   final Value<int> healingLevel;
   final Value<int> currentStreak;
   final Value<DateTime?> lastLogDate;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   const PacingStatsCompanion({
     this.id = const Value.absent(),
     this.xp = const Value.absent(),
@@ -1116,7 +1297,7 @@ class PacingStatsCompanion extends UpdateCompanion<PacingStat> {
     Value<int>? healingLevel,
     Value<int>? currentStreak,
     Value<DateTime?>? lastLogDate,
-    Value<DateTime>? updatedAt,
+    Value<DateTime?>? updatedAt,
   }) {
     return PacingStatsCompanion(
       id: id ?? this.id,
@@ -1188,8 +1369,11 @@ typedef $$TasksTableCreateCompanionBuilder =
       required String id,
       required String title,
       required int energyCost,
+      Value<int> priority,
+      Value<int> repeatInterval,
+      Value<DateTime?> nextAllowedCompletionAt,
       Value<bool> isCompleted,
-      Value<DateTime> updatedAt,
+      Value<DateTime?> updatedAt,
       Value<DateTime> createdAt,
       Value<int> rowid,
     });
@@ -1198,8 +1382,11 @@ typedef $$TasksTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> title,
       Value<int> energyCost,
+      Value<int> priority,
+      Value<int> repeatInterval,
+      Value<DateTime?> nextAllowedCompletionAt,
       Value<bool> isCompleted,
-      Value<DateTime> updatedAt,
+      Value<DateTime?> updatedAt,
       Value<DateTime> createdAt,
       Value<int> rowid,
     });
@@ -1224,6 +1411,21 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
 
   ColumnFilters<int> get energyCost => $composableBuilder(
     column: $table.energyCost,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get priority => $composableBuilder(
+    column: $table.priority,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get repeatInterval => $composableBuilder(
+    column: $table.repeatInterval,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get nextAllowedCompletionAt => $composableBuilder(
+    column: $table.nextAllowedCompletionAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1267,6 +1469,21 @@ class $$TasksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get priority => $composableBuilder(
+    column: $table.priority,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get repeatInterval => $composableBuilder(
+    column: $table.repeatInterval,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get nextAllowedCompletionAt => $composableBuilder(
+    column: $table.nextAllowedCompletionAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isCompleted => $composableBuilder(
     column: $table.isCompleted,
     builder: (column) => ColumnOrderings(column),
@@ -1300,6 +1517,19 @@ class $$TasksTableAnnotationComposer
 
   GeneratedColumn<int> get energyCost => $composableBuilder(
     column: $table.energyCost,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get priority =>
+      $composableBuilder(column: $table.priority, builder: (column) => column);
+
+  GeneratedColumn<int> get repeatInterval => $composableBuilder(
+    column: $table.repeatInterval,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get nextAllowedCompletionAt => $composableBuilder(
+    column: $table.nextAllowedCompletionAt,
     builder: (column) => column,
   );
 
@@ -1346,14 +1576,20 @@ class $$TasksTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<int> energyCost = const Value.absent(),
+                Value<int> priority = const Value.absent(),
+                Value<int> repeatInterval = const Value.absent(),
+                Value<DateTime?> nextAllowedCompletionAt = const Value.absent(),
                 Value<bool> isCompleted = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TasksCompanion(
                 id: id,
                 title: title,
                 energyCost: energyCost,
+                priority: priority,
+                repeatInterval: repeatInterval,
+                nextAllowedCompletionAt: nextAllowedCompletionAt,
                 isCompleted: isCompleted,
                 updatedAt: updatedAt,
                 createdAt: createdAt,
@@ -1364,14 +1600,20 @@ class $$TasksTableTableManager
                 required String id,
                 required String title,
                 required int energyCost,
+                Value<int> priority = const Value.absent(),
+                Value<int> repeatInterval = const Value.absent(),
+                Value<DateTime?> nextAllowedCompletionAt = const Value.absent(),
                 Value<bool> isCompleted = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TasksCompanion.insert(
                 id: id,
                 title: title,
                 energyCost: energyCost,
+                priority: priority,
+                repeatInterval: repeatInterval,
+                nextAllowedCompletionAt: nextAllowedCompletionAt,
                 isCompleted: isCompleted,
                 updatedAt: updatedAt,
                 createdAt: createdAt,
@@ -1402,18 +1644,18 @@ typedef $$TasksTableProcessedTableManager =
 typedef $$EnergyLogsTableCreateCompanionBuilder =
     EnergyLogsCompanion Function({
       Value<int> id,
-      required String syncId,
+      Value<String?> syncId,
       required int level,
       Value<DateTime> timestamp,
-      Value<DateTime> updatedAt,
+      Value<DateTime?> updatedAt,
     });
 typedef $$EnergyLogsTableUpdateCompanionBuilder =
     EnergyLogsCompanion Function({
       Value<int> id,
-      Value<String> syncId,
+      Value<String?> syncId,
       Value<int> level,
       Value<DateTime> timestamp,
-      Value<DateTime> updatedAt,
+      Value<DateTime?> updatedAt,
     });
 
 class $$EnergyLogsTableFilterComposer
@@ -1543,10 +1785,10 @@ class $$EnergyLogsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<String> syncId = const Value.absent(),
+                Value<String?> syncId = const Value.absent(),
                 Value<int> level = const Value.absent(),
                 Value<DateTime> timestamp = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
               }) => EnergyLogsCompanion(
                 id: id,
                 syncId: syncId,
@@ -1557,10 +1799,10 @@ class $$EnergyLogsTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required String syncId,
+                Value<String?> syncId = const Value.absent(),
                 required int level,
                 Value<DateTime> timestamp = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
               }) => EnergyLogsCompanion.insert(
                 id: id,
                 syncId: syncId,
@@ -1597,7 +1839,7 @@ typedef $$PacingStatsTableCreateCompanionBuilder =
       Value<int> healingLevel,
       Value<int> currentStreak,
       Value<DateTime?> lastLogDate,
-      Value<DateTime> updatedAt,
+      Value<DateTime?> updatedAt,
     });
 typedef $$PacingStatsTableUpdateCompanionBuilder =
     PacingStatsCompanion Function({
@@ -1606,7 +1848,7 @@ typedef $$PacingStatsTableUpdateCompanionBuilder =
       Value<int> healingLevel,
       Value<int> currentStreak,
       Value<DateTime?> lastLogDate,
-      Value<DateTime> updatedAt,
+      Value<DateTime?> updatedAt,
     });
 
 class $$PacingStatsTableFilterComposer
@@ -1759,7 +2001,7 @@ class $$PacingStatsTableTableManager
                 Value<int> healingLevel = const Value.absent(),
                 Value<int> currentStreak = const Value.absent(),
                 Value<DateTime?> lastLogDate = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
               }) => PacingStatsCompanion(
                 id: id,
                 xp: xp,
@@ -1775,7 +2017,7 @@ class $$PacingStatsTableTableManager
                 Value<int> healingLevel = const Value.absent(),
                 Value<int> currentStreak = const Value.absent(),
                 Value<DateTime?> lastLogDate = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
               }) => PacingStatsCompanion.insert(
                 id: id,
                 xp: xp,

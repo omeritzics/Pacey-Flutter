@@ -78,15 +78,31 @@ class P2PSyncService {
         .getSingleOrNull();
 
     if (existingTask != null &&
-        existingTask.updatedAt.isAfter(incomingUpdatedAt)) {
+        existingTask.updatedAt != null &&
+        existingTask.updatedAt!.isAfter(incomingUpdatedAt)) {
       // Local version is newer, ignore incoming
       return;
+    }
+
+    final priority = ((taskData['priority'] as num?)?.toInt() ?? 4).clamp(1, 4);
+    int repeatInterval = (taskData['repeatInterval'] as num?)?.toInt() ?? 0;
+    if (repeatInterval == 0 && taskData['repeats'] == true) {
+      repeatInterval = 1;
+    }
+    repeatInterval = repeatInterval.clamp(0, 3);
+    DateTime? nextAllowedCompletionAt;
+    final nextRaw = taskData['nextAllowedCompletionAt'];
+    if (nextRaw is String && nextRaw.isNotEmpty) {
+      nextAllowedCompletionAt = DateTime.parse(nextRaw);
     }
 
     final task = TasksCompanion.insert(
       id: taskId,
       title: taskData['title'] as String,
       energyCost: taskData['energyCost'] as int,
+      priority: Value(priority),
+      repeatInterval: Value(repeatInterval),
+      nextAllowedCompletionAt: Value(nextAllowedCompletionAt),
       isCompleted: Value(taskData['isCompleted'] as bool),
       createdAt: Value(DateTime.parse(taskData['createdAt'] as String)),
       updatedAt: Value(incomingUpdatedAt),
@@ -118,12 +134,13 @@ class P2PSyncService {
         .getSingleOrNull();
 
     if (existingLog != null &&
-        existingLog.updatedAt.isAfter(incomingUpdatedAt)) {
+        existingLog.updatedAt != null &&
+        existingLog.updatedAt!.isAfter(incomingUpdatedAt)) {
       return;
     }
 
     final log = EnergyLogsCompanion.insert(
-      syncId: syncId,
+      syncId: Value(syncId),
       level: logData['level'] as int,
       timestamp: Value(DateTime.parse(logData['timestamp'] as String)),
       updatedAt: Value(incomingUpdatedAt),
@@ -157,7 +174,8 @@ class P2PSyncService {
     if (existingStats.isEmpty) {
       await _database!.into(_database!.pacingStats).insert(stats);
     } else {
-      if (existingStats.first.updatedAt.isAfter(incomingUpdatedAt)) {
+      if (existingStats.first.updatedAt != null &&
+          existingStats.first.updatedAt!.isAfter(incomingUpdatedAt)) {
         return;
       }
       final updatedStats = stats.copyWith(id: Value(existingStats.first.id));
@@ -223,9 +241,14 @@ class P2PSyncService {
         'id': task.id,
         'title': task.title,
         'energyCost': task.energyCost,
+        'priority': task.priority,
+        'repeatInterval': task.repeatInterval,
+        'nextAllowedCompletionAt':
+            task.nextAllowedCompletionAt?.toIso8601String(),
         'isCompleted': task.isCompleted,
         'createdAt': task.createdAt.toIso8601String(),
-        'updatedAt': task.updatedAt.toIso8601String(),
+        'updatedAt':
+            (task.updatedAt ?? task.createdAt).toIso8601String(),
       },
     });
   }
@@ -241,10 +264,11 @@ class P2PSyncService {
     _p2pService.broadcastData({
       'type': type,
       'payload': {
-        'syncId': log.syncId,
+        'syncId': log.syncId ?? '',
         'level': log.level,
         'timestamp': log.timestamp.toIso8601String(),
-        'updatedAt': log.updatedAt.toIso8601String(),
+        'updatedAt':
+            (log.updatedAt ?? log.timestamp).toIso8601String(),
       },
     });
   }
@@ -264,7 +288,8 @@ class P2PSyncService {
         'healingLevel': stat.healingLevel,
         'currentStreak': stat.currentStreak,
         'lastLogDate': stat.lastLogDate?.toIso8601String(),
-        'updatedAt': stat.updatedAt.toIso8601String(),
+        'updatedAt': (stat.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0))
+            .toIso8601String(),
       },
     });
   }

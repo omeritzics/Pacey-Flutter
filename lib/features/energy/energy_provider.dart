@@ -74,7 +74,7 @@ class EnergyLevelNotifier extends Notifier<int> {
         .into(db.energyLogs)
         .insertReturning(
           EnergyLogsCompanion.insert(
-            syncId: syncId,
+            syncId: Value(syncId),
             level: newLevel,
             timestamp: Value(now),
             updatedAt: Value(now),

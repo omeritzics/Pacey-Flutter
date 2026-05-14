@@ -42,6 +42,8 @@ void main() {
       expect(tasks.length, 1);
       expect(tasks.first.title, 'Test Task');
       expect(tasks.first.energyCost, 3);
+      expect(tasks.first.priority, 4);
+      expect(tasks.first.repeatInterval, 0);
       
       // Note: In a real test, we would verify the broadcast was sent
       // For integration testing, this would involve mocking the P2P service
@@ -99,10 +101,17 @@ void main() {
       final taskId = tasks.first.id;
       
       // Update task
-      await taskActions.editTask(taskId, 'Updated Task', 3);
+      await taskActions.editTask(
+        taskId,
+        'Updated Task',
+        3,
+        priority: 2,
+        repeatInterval: 0,
+      );
       final updatedTasks = await database.select(database.tasks).get();
       expect(updatedTasks.first.title, 'Updated Task');
       expect(updatedTasks.first.energyCost, 3);
+      expect(updatedTasks.first.priority, 2);
       
       // Toggle task completion
       await taskActions.toggleTask(updatedTasks.first);

@@ -25,6 +25,25 @@
   "editTask": "Edit Task",
   "taskTitle": "Task Title",
   "energyCost": "Energy Cost",
+  "taskPriority": "Priority",
+  "priorityHighest": "1 — Highest",
+  "priorityHigh": "2 — High",
+  "priorityMedium": "3 — Medium",
+  "priorityLow": "4 — Lowest",
+  "repeatCadence": "Repeat",
+  "repeatCadenceHint": "How often this task can be completed again after you finish it.",
+  "repeatOff": "Does not repeat",
+  "repeatDaily": "Daily",
+  "repeatWeekly": "Weekly",
+  "repeatMonthly": "Monthly",
+  "availableAfter": "Available after {date}",
+  "@availableAfter": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "cancel": "Cancel",
   "save": "Save",
   "alreadyLogged": "You have already logged your energy for this time block.",

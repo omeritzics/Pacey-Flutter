@@ -1,12 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:pacey/l10n/app_localizations.dart';
 import '../energy/energy_provider.dart';
 import '../tasks/task_provider.dart';
+import '../tasks/repeat_schedule.dart';
 import '../../core/database/database.dart';
 import '../history/history_page.dart';
 import '../gamification/gamification_provider.dart';
 import '../settings/settings_page.dart';
+
+String _priorityMenuLabel(AppLocalizations l10n, int level) {
+  switch (level) {
+    case 1:
+      return l10n.priorityHighest;
+    case 2:
+      return l10n.priorityHigh;
+    case 3:
+      return l10n.priorityMedium;
+    case 4:
+      return l10n.priorityLow;
+    default:
+      return level.toString();
+  }
+}
+
+String _repeatCadenceLabel(AppLocalizations l10n, int code) {
+  switch (code) {
+    case 0:
+      return l10n.repeatOff;
+    case 1:
+      return l10n.repeatDaily;
+    case 2:
+      return l10n.repeatWeekly;
+    case 3:
+      return l10n.repeatMonthly;
+    default:
+      return l10n.repeatOff;
+  }
+}
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -134,6 +166,8 @@ class DashboardPage extends ConsumerWidget {
   void _showAddTaskDialog(BuildContext context, WidgetRef ref) {
     final titleController = TextEditingController();
     int selectedEnergy = 1;
+    int selectedPriority = 4;
+    int selectedRepeat = 0;
     final l10n = AppLocalizations.of(context)!;
 
     showDialog(
@@ -151,6 +185,32 @@ class DashboardPage extends ConsumerWidget {
                   autofocus: true,
                 ),
                 const SizedBox(height: 16),
+                InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: l10n.taskPriority,
+                    contentPadding: const EdgeInsets.only(right: 8),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: selectedPriority,
+                      isExpanded: true,
+                      items: [1, 2, 3, 4]
+                          .map(
+                            (p) => DropdownMenuItem(
+                              value: p,
+                              child: Text(_priorityMenuLabel(l10n, p)),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => selectedPriority = value);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Text(l10n.energyCost),
                 Slider(
                   value: selectedEnergy.toDouble(),
@@ -160,6 +220,41 @@ class DashboardPage extends ConsumerWidget {
                   label: '$selectedEnergy',
                   onChanged: (value) =>
                       setState(() => selectedEnergy = value.toInt()),
+                ),
+                const SizedBox(height: 16),
+                InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: l10n.repeatCadence,
+                    contentPadding: const EdgeInsets.only(right: 8),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: selectedRepeat,
+                      isExpanded: true,
+                      items: [0, 1, 2, 3]
+                          .map(
+                            (c) => DropdownMenuItem(
+                              value: c,
+                              child: Text(_repeatCadenceLabel(l10n, c)),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => selectedRepeat = value);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    l10n.repeatCadenceHint,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                  ),
                 ),
               ],
             ),
@@ -172,9 +267,12 @@ class DashboardPage extends ConsumerWidget {
             TextButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty) {
-                  ref
-                      .read(taskActionsProvider)
-                      .addTask(titleController.text, selectedEnergy);
+                  ref.read(taskActionsProvider).addTask(
+                        titleController.text,
+                        selectedEnergy,
+                        priority: selectedPriority,
+                        repeatInterval: selectedRepeat,
+                      );
                   Navigator.pop(context);
                 }
               },
@@ -244,12 +342,30 @@ class _TaskTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final now = DateTime.now();
+    final gated = isTaskCompletionGated(
+      isCompleted: task.isCompleted,
+      repeatInterval: task.repeatInterval,
+      nextAllowedCompletionAt: task.nextAllowedCompletionAt,
+      now: now,
+    );
+    String? subtitleText;
+    if (gated && task.nextAllowedCompletionAt != null) {
+      final formatted = DateFormat.yMMMd(
+        Localizations.localeOf(context).toLanguageTag(),
+      ).format(task.nextAllowedCompletionAt!);
+      subtitleText = l10n.availableAfter(formatted);
+    }
+
     return ListTile(
       leading: Checkbox(
         value: task.isCompleted,
-        onChanged: (_) {
-          ref.read(taskActionsProvider).toggleTask(task);
-        },
+        onChanged: gated
+            ? null
+            : (_) {
+                ref.read(taskActionsProvider).toggleTask(task);
+              },
       ),
       title: Text(
         task.title,
@@ -258,6 +374,14 @@ class _TaskTile extends ConsumerWidget {
           color: task.isCompleted ? Colors.grey : null,
         ),
       ),
+      subtitle: subtitleText != null
+          ? Text(
+              subtitleText,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+            )
+          : null,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -268,6 +392,14 @@ class _TaskTile extends ConsumerWidget {
               style: TextStyle(fontSize: 20, fontFamily: 'Noto Color Emoji'),
             ),
           ),
+          if (task.repeatInterval != 0) ...[
+            const SizedBox(width: 4),
+            Icon(
+              Icons.repeat,
+              size: 20,
+              color: Theme.of(context).colorScheme.outline,
+            ),
+          ],
           const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.edit_outlined, size: 20),
@@ -285,6 +417,8 @@ class _TaskTile extends ConsumerWidget {
   void _showEditTaskDialog(BuildContext context, WidgetRef ref, Task task) {
     final titleController = TextEditingController(text: task.title);
     int selectedEnergy = task.energyCost;
+    int selectedPriority = task.priority;
+    int selectedRepeat = task.repeatInterval;
     final l10n = AppLocalizations.of(context)!;
 
     showDialog(
@@ -302,6 +436,32 @@ class _TaskTile extends ConsumerWidget {
                   autofocus: true,
                 ),
                 const SizedBox(height: 16),
+                InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: l10n.taskPriority,
+                    contentPadding: const EdgeInsets.only(right: 8),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: selectedPriority,
+                      isExpanded: true,
+                      items: [1, 2, 3, 4]
+                          .map(
+                            (p) => DropdownMenuItem(
+                              value: p,
+                              child: Text(_priorityMenuLabel(l10n, p)),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => selectedPriority = value);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Text(l10n.energyCost),
                 Slider(
                   value: selectedEnergy.toDouble(),
@@ -311,6 +471,41 @@ class _TaskTile extends ConsumerWidget {
                   label: '$selectedEnergy',
                   onChanged: (value) =>
                       setState(() => selectedEnergy = value.toInt()),
+                ),
+                const SizedBox(height: 16),
+                InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: l10n.repeatCadence,
+                    contentPadding: const EdgeInsets.only(right: 8),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: selectedRepeat,
+                      isExpanded: true,
+                      items: [0, 1, 2, 3]
+                          .map(
+                            (c) => DropdownMenuItem(
+                              value: c,
+                              child: Text(_repeatCadenceLabel(l10n, c)),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => selectedRepeat = value);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    l10n.repeatCadenceHint,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                  ),
                 ),
               ],
             ),
@@ -323,9 +518,13 @@ class _TaskTile extends ConsumerWidget {
             TextButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty) {
-                  ref
-                      .read(taskActionsProvider)
-                      .editTask(task.id, titleController.text, selectedEnergy);
+                  ref.read(taskActionsProvider).editTask(
+                        task.id,
+                        titleController.text,
+                        selectedEnergy,
+                        priority: selectedPriority,
+                        repeatInterval: selectedRepeat,
+                      );
                   Navigator.pop(context);
                 }
               },
