@@ -60,6 +60,25 @@
   "disconnected": "מנותק",
   "editTask": "עריכת משימה",
   "energyCost": "עלות אנרגיה",
+  "taskPriority": "עדיפות",
+  "priorityHighest": "1 — הגבוהה ביותר",
+  "priorityHigh": "2 — גבוהה",
+  "priorityMedium": "3 — בינונית",
+  "priorityLow": "4 — הנמוכה ביותר",
+  "repeatCadence": "חזרה",
+  "repeatCadenceHint": "באיזו תדירות ניתן לסיים את המשימה שוב לאחר השלמה.",
+  "repeatOff": "ללא חזרה",
+  "repeatDaily": "יומי",
+  "repeatWeekly": "שבועי",
+  "repeatMonthly": "חודשי",
+  "availableAfter": "זמין לאחר {date}",
+  "@availableAfter": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "energyLogs": "יומן אנרגיה",
   "energyTrend": "מגמת אנרגיה",
   "energyUpdate": "עדכון רמת אנרגיה",

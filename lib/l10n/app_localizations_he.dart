@@ -49,6 +49,45 @@ class AppLocalizationsHe extends AppLocalizations {
   String get energyCost => 'עלות אנרגיה';
 
   @override
+  String get taskPriority => 'עדיפות';
+
+  @override
+  String get priorityHighest => '1 — הגבוהה ביותר';
+
+  @override
+  String get priorityHigh => '2 — גבוהה';
+
+  @override
+  String get priorityMedium => '3 — בינונית';
+
+  @override
+  String get priorityLow => '4 — הנמוכה ביותר';
+
+  @override
+  String get repeatCadence => 'חזרה';
+
+  @override
+  String get repeatCadenceHint =>
+      'באיזו תדירות ניתן לסיים את המשימה שוב לאחר השלמה.';
+
+  @override
+  String get repeatOff => 'ללא חזרה';
+
+  @override
+  String get repeatDaily => 'יומי';
+
+  @override
+  String get repeatWeekly => 'שבועי';
+
+  @override
+  String get repeatMonthly => 'חודשי';
+
+  @override
+  String availableAfter(String date) {
+    return 'זמין לאחר $date';
+  }
+
+  @override
   String get cancel => 'ביטול';
 
   @override

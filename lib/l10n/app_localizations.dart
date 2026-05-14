@@ -170,6 +170,78 @@ abstract class AppLocalizations {
   /// **'Energy Cost'**
   String get energyCost;
 
+  /// No description provided for @taskPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get taskPriority;
+
+  /// No description provided for @priorityHighest.
+  ///
+  /// In en, this message translates to:
+  /// **'1 — Highest'**
+  String get priorityHighest;
+
+  /// No description provided for @priorityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'2 — High'**
+  String get priorityHigh;
+
+  /// No description provided for @priorityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'3 — Medium'**
+  String get priorityMedium;
+
+  /// No description provided for @priorityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'4 — Lowest'**
+  String get priorityLow;
+
+  /// No description provided for @repeatCadence.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
+  String get repeatCadence;
+
+  /// No description provided for @repeatCadenceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'How often this task can be completed again after you finish it.'**
+  String get repeatCadenceHint;
+
+  /// No description provided for @repeatOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Does not repeat'**
+  String get repeatOff;
+
+  /// No description provided for @repeatDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get repeatDaily;
+
+  /// No description provided for @repeatWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get repeatWeekly;
+
+  /// No description provided for @repeatMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get repeatMonthly;
+
+  /// No description provided for @availableAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'Available after {date}'**
+  String availableAfter(String date);
+
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
