@@ -4,6 +4,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pacey/l10n/app_localizations.dart';
 import 'package:pacey/core/localization/locale_provider.dart';
+import 'package:pacey/core/theme/theme_provider.dart';
 import 'features/dashboard/dashboard_page.dart';
 
 void main() async {
@@ -19,6 +20,7 @@ class EnergyPacingApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final localeNotifier = ref.watch(localeProvider.notifier);
     final locale = localeNotifier.getEffectiveLocale();
+    final themeMode = ref.watch(themeProvider);
 
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
@@ -48,6 +50,7 @@ class EnergyPacingApp extends ConsumerWidget {
             useMaterial3: true,
             colorScheme: darkColorScheme,
           ),
+          themeMode: themeMode.themeMode,
           localizationsDelegates: [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,

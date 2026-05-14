@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pacey/l10n/app_localizations.dart';
 import '../../core/localization/locale_provider.dart';
 import '../../core/database/database_provider.dart';
+import '../../core/theme/theme_provider.dart';
 import '../p2p/p2p_screen.dart';
 import '../gamification/gamification_provider.dart';
 import '../energy/energy_provider.dart';
@@ -32,19 +33,21 @@ class SettingsPage extends ConsumerWidget {
             ),
             leading: const Icon(Icons.language),
             trailing: DropdownButton<Locale>(
-              value: currentLocale,
+              value: currentLocale.languageCode == "system"
+                  ? const Locale("system")
+                  : currentLocale,
               items: [
                 DropdownMenuItem(
-                  value: const Locale('system'),
+                  value: const Locale("system"),
                   child: Text(l10n.followSystem),
                 ),
                 DropdownMenuItem(
-                  value: const Locale('en'),
-                  child: Text('English'),
+                  value: const Locale("en"),
+                  child: Text("English"),
                 ),
                 DropdownMenuItem(
-                  value: const Locale('he'),
-                  child: Text('עברית'),
+                  value: const Locale("he"),
+                  child: Text("עברית"),
                 ),
               ],
               onChanged: (Locale? newLocale) {
@@ -55,7 +58,37 @@ class SettingsPage extends ConsumerWidget {
             ),
           ),
           const Divider(),
-          
+
+          // Theme Section
+          ListTile(
+            title: Text(l10n.darkMode),
+            subtitle: Text(l10n.lightMode),
+            leading: const Icon(Icons.dark_mode),
+            trailing: DropdownButton<AppThemeMode>(
+              value: ref.watch(themeProvider),
+              items: [
+                DropdownMenuItem(
+                  value: AppThemeMode.system,
+                  child: Text(l10n.followSystem),
+                ),
+                DropdownMenuItem(
+                  value: AppThemeMode.light,
+                  child: Text(l10n.lightMode),
+                ),
+                DropdownMenuItem(
+                  value: AppThemeMode.dark,
+                  child: Text(l10n.darkMode),
+                ),
+              ],
+              onChanged: (AppThemeMode? newMode) {
+                if (newMode != null) {
+                  ref.read(themeProvider.notifier).setThemeMode(newMode);
+                }
+              },
+            ),
+          ),
+          const Divider(),
+
           // Sync Section
           ListTile(
             title: Text(l10n.p2pSync),

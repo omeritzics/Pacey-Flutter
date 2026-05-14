@@ -135,6 +135,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectLanguage => 'Select Language';
 
   @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get lightMode => 'Light Mode';
+
+  @override
   String get followSystem => 'Follow System';
 
   @override

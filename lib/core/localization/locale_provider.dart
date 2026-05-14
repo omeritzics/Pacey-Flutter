@@ -21,10 +21,10 @@ class LocaleNotifier extends Notifier<Locale> {
   }
 
   void toggleLocale() {
-    if (state == _systemLocale) {
-      state = const Locale('en');
-    } else if (state.languageCode == 'en') {
-      state = const Locale('he');
+    if (state.languageCode == _systemLocale.languageCode) {
+      state = const Locale("en");
+    } else if (state.languageCode == "en") {
+      state = const Locale("he");
     } else {
       state = _systemLocale;
     }
@@ -32,7 +32,7 @@ class LocaleNotifier extends Notifier<Locale> {
 
   /// Gets the effective locale to use (resolves system locale if needed)
   Locale getEffectiveLocale() {
-    if (state == _systemLocale) {
+    if (state.languageCode == _systemLocale.languageCode) {
       return _getSystemLocale();
     }
     return state;
@@ -45,10 +45,10 @@ class LocaleNotifier extends Notifier<Locale> {
       final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
       
       // Check if system language is supported (English or Hebrew)
-      if (systemLocale.languageCode == 'he') {
-        return const Locale('he');
-      } else if (systemLocale.languageCode == 'en') {
-        return const Locale('en');
+      if (systemLocale.languageCode == "he") {
+        return const Locale("he");
+      } else if (systemLocale.languageCode == "en") {
+        return const Locale("en");
       }
       
       // For web platform, try to get browser language
@@ -58,13 +58,13 @@ class LocaleNotifier extends Notifier<Locale> {
       }
       
       // Default to English for unsupported languages
-      return const Locale('en');
+      return const Locale("en");
     } catch (e) {
       // If there's any error getting system locale, default to English
-      return const Locale('en');
+      return const Locale("en");
     }
   }
 
   /// Checks if the current locale is following system
-  bool get isFollowingSystem => state == _systemLocale;
+  bool get isFollowingSystem => state.languageCode == _systemLocale.languageCode;
 }

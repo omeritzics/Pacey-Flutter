@@ -118,7 +118,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get settings => 'הגדרות';
 
   @override
-  String get about => 'אודות';
+  String get about => 'מידע כללי';
 
   @override
   String get aboutSubtitle => 'רישיונות והצהרות קוד פתוח';
@@ -132,6 +132,12 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get selectLanguage => 'בחירת שפה';
+
+  @override
+  String get darkMode => 'מצב כהה';
+
+  @override
+  String get lightMode => 'מצב בהיר';
 
   @override
   String get followSystem => 'לפי המערכת';

@@ -332,6 +332,18 @@ abstract class AppLocalizations {
   /// **'Select Language'**
   String get selectLanguage;
 
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @lightMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get lightMode;
+
   /// No description provided for @followSystem.
   ///
   /// In en, this message translates to:
