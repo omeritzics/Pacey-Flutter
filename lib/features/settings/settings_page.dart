@@ -70,6 +70,20 @@ class SettingsPage extends ConsumerWidget {
             },
           ),
           const Divider(),
+          ListTile(
+            title: Text(l10n.about),
+            subtitle: Text(l10n.aboutSubtitle),
+            leading: const Icon(Icons.info_outline),
+            onTap: () {
+              showAboutDialog(
+                context: context,
+                applicationName: l10n.appTitle,
+                applicationVersion: '1.0.0',
+                applicationLegalese: l10n.aboutApplicationLegalese,
+              );
+            },
+          ),
+          const Divider(),
 
           // Danger Zone
           Padding(

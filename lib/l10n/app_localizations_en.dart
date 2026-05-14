@@ -119,6 +119,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
+  String get about => 'About';
+
+  @override
+  String get aboutSubtitle => 'Licenses and open source notices';
+
+  @override
+  String get aboutApplicationLegalese =>
+      'Copyright © 2026 The Pacey authors\n\nLicensed under the Apache License, Version 2.0. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0';
+
+  @override
   String get language => 'Language';
 
   @override

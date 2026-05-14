@@ -3,3 +3,5 @@
 See: https://creativecommons.org/licenses/by-nc-nd/4.0/
 
 If you find this application helpful and you want to get an exception for commercial use, please contact me by opening an issue. You are free to fork this repository and send pull requests regardless to the license.
+
+This application is built using the Flutter framework and Material Icons, which are licensed under the Apache License 2.0.

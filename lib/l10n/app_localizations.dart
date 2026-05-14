@@ -302,6 +302,24 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settings;
 
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @aboutSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Licenses and open source notices'**
+  String get aboutSubtitle;
+
+  /// No description provided for @aboutApplicationLegalese.
+  ///
+  /// In en, this message translates to:
+  /// **'Copyright © 2026 The Pacey authors\n\nLicensed under the Apache License, Version 2.0. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0'**
+  String get aboutApplicationLegalese;
+
   /// No description provided for @language.
   ///
   /// In en, this message translates to:
