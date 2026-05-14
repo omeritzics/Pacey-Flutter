@@ -11,6 +11,7 @@ class P2PService {
 
   Peer? _peer;
   final Map<String, DataConnection> _connections = {};
+  final Map<String, DataConnection> _pendingConnections = {};
   final Map<String, DeviceInfo> _deviceInfo = {};
   final _uuid = const Uuid();
 
@@ -48,7 +49,7 @@ class P2PService {
     });
 
     _peer!.onConnection.listen((conn) {
-      _handleConnection(conn);
+      _handleIncomingConnection(conn);
     });
 
     _peer!.onDisconnected.listen((_) {
@@ -60,25 +61,38 @@ class P2PService {
     _isInitialized = true;
   }
 
-  void _handleConnection(DataConnection conn) {
+  void _handleIncomingConnection(DataConnection conn) {
     final peerId = conn.peer;
-    _connections[peerId] = conn;
+
+    // Store as pending until accepted
+    _pendingConnections[peerId] = conn;
+
+    // Emit connection request event for the UI to accept/reject
+    _eventController.add(
+      P2PEvent(type: P2PEventType.connectionRequest, data: {'peerId': peerId}),
+    );
 
     conn.onOpen.listen((_) {
-      // Share local device info when connection opens
-      if (_localDeviceInfo != null) {
-        sendDataToPeer(peerId, {
-          'type': 'device_info',
-          'payload': _localDeviceInfo!.toJson(),
-        });
+      // Connection opened - only add if still pending (not rejected)
+      if (_pendingConnections.containsKey(peerId)) {
+        // Share local device info when connection opens
+        if (_localDeviceInfo != null) {
+          sendDataToPeer(peerId, {
+            'type': 'device_info',
+            'payload': _localDeviceInfo!.toJson(),
+          });
+        }
+
+        _connections[peerId] = conn;
+        _pendingConnections.remove(peerId);
+        _eventController.add(
+          P2PEvent(type: P2PEventType.peerConnected, data: {'peerId': peerId}),
+        );
       }
-      
-      _eventController.add(
-        P2PEvent(type: P2PEventType.peerConnected, data: {'peerId': peerId}),
-      );
     });
 
     conn.onData.listen((data) {
+      if (!_connections.containsKey(peerId)) return;
       _handleIncomingData(peerId, data);
       _eventController.add(
         P2PEvent(
@@ -90,6 +104,7 @@ class P2PService {
 
     conn.onClose.listen((_) {
       _connections.remove(peerId);
+      _pendingConnections.remove(peerId);
       _deviceInfo.remove(peerId);
       _eventController.add(
         P2PEvent(type: P2PEventType.peerDisconnected, data: {'peerId': peerId}),
@@ -98,19 +113,19 @@ class P2PService {
   }
 
   void acceptConnection(String peerId) {
-    final conn = _connections[peerId];
+    final conn = _pendingConnections[peerId];
     if (conn != null) {
       _eventController.add(
         P2PEvent(type: P2PEventType.connectionAccepted, data: {'peerId': peerId}),
       );
+      // Connection stays in pending; will be moved to connections on onOpen
     }
   }
 
   void rejectConnection(String peerId) {
-    final conn = _connections[peerId];
+    final conn = _pendingConnections.remove(peerId);
     if (conn != null) {
       conn.close();
-      _connections.remove(peerId);
       _eventController.add(
         P2PEvent(type: P2PEventType.connectionRejected, data: {'peerId': peerId}),
       );
@@ -123,7 +138,40 @@ class P2PService {
     }
 
     final conn = _peer!.connect(peerId);
-    _handleConnection(conn);
+    
+    // For outgoing connections, automatically accept - user already confirmed
+    conn.onOpen.listen((_) {
+      if (_localDeviceInfo != null) {
+        sendDataToPeer(peerId, {
+          'type': 'device_info',
+          'payload': _localDeviceInfo!.toJson(),
+        });
+      }
+      
+      _connections[peerId] = conn;
+      _eventController.add(
+        P2PEvent(type: P2PEventType.peerConnected, data: {'peerId': peerId}),
+      );
+    });
+    
+    conn.onData.listen((data) {
+      _handleIncomingData(peerId, data);
+      _eventController.add(
+        P2PEvent(
+          type: P2PEventType.dataReceived,
+          data: {'peerId': peerId, 'message': data},
+        ),
+      );
+    });
+    
+    conn.onClose.listen((_) {
+      _connections.remove(peerId);
+      _deviceInfo.remove(peerId);
+      _eventController.add(
+        P2PEvent(type: P2PEventType.peerDisconnected, data: {'peerId': peerId}),
+      );
+    });
+    
     return conn;
   }
 
@@ -154,7 +202,11 @@ class P2PService {
     for (final conn in _connections.values) {
       conn.close();
     }
+    for (final conn in _pendingConnections.values) {
+      conn.close();
+    }
     _connections.clear();
+    _pendingConnections.clear();
     _deviceInfo.clear();
 
     if (_peer != null) {

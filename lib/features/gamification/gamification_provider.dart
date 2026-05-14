@@ -47,6 +47,7 @@ class PacingStatsNotifier extends Notifier<PacingStat?> {
     final updated = state!.copyWith(
       xp: newXp,
       healingLevel: newLevel,
+      lastLogDate: Value(DateTime.now()),
       updatedAt: Value(DateTime.now()),
     );
     await _db.update(_db.pacingStats).replace(updated);
@@ -66,6 +67,7 @@ class PacingStatsNotifier extends Notifier<PacingStat?> {
     final updated = state!.copyWith(
       xp: newXp,
       healingLevel: newLevel,
+      lastLogDate: Value(DateTime.now()),
       updatedAt: Value(DateTime.now()),
     );
     await _db.update(_db.pacingStats).replace(updated);

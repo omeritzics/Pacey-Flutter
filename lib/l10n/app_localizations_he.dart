@@ -137,10 +137,10 @@ class AppLocalizationsHe extends AppLocalizations {
   String get darkMode => 'מצב כהה';
 
   @override
-  String get lightMode => 'מצב בהיר';
+  String get followSystem => 'לפי המערכת';
 
   @override
-  String get followSystem => 'לפי המערכת';
+  String get lightMode => 'מצב בהיר';
 
   @override
   String get p2pSync => 'סנכרון P2P';

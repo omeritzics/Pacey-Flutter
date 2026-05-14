@@ -313,7 +313,7 @@ jobs:
   create-release:
     needs: [build-windows, build-macos, build-linux, build-android, build-ios]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     steps:
       - name: Checkout code
         uses: actions/checkout@main
@@ -325,12 +325,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Delete existing nightly tag if it exists
-          git tag -d nightly || true
-          git push origin --delete nightly || true
-          # Create new nightly tag
-          git tag nightly -m "Nightly build"
-          git push origin nightly --force
+          git tag -f nightly -m "Nightly build"
+          git push origin --force refs/tags/nightly
 
       - name: Download all artifacts
         uses: actions/download-artifact@main

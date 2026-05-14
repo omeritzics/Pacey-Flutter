@@ -138,10 +138,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get darkMode => 'Dark Mode';
 
   @override
-  String get lightMode => 'Light Mode';
+  String get followSystem => 'Follow System';
 
   @override
-  String get followSystem => 'Follow System';
+  String get lightMode => 'Light Mode';
 
   @override
   String get p2pSync => 'P2P Sync';

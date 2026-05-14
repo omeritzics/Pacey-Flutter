@@ -338,17 +338,17 @@ abstract class AppLocalizations {
   /// **'Dark Mode'**
   String get darkMode;
 
-  /// No description provided for @lightMode.
-  ///
-  /// In en, this message translates to:
-  /// **'Light Mode'**
-  String get lightMode;
-
   /// No description provided for @followSystem.
   ///
   /// In en, this message translates to:
   /// **'Follow System'**
   String get followSystem;
+
+  /// No description provided for @lightMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get lightMode;
 
   /// No description provided for @p2pSync.
   ///

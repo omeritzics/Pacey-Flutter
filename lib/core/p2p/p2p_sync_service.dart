@@ -25,7 +25,10 @@ class P2PSyncService {
   void _handleP2PEvent(P2PEvent event) {
     switch (event.type) {
       case P2PEventType.dataReceived:
-        _handleSyncData(event.data);
+        final syncData = event.data['message'] as Map<String, dynamic>?;
+        if (syncData != null) {
+          _handleSyncData(syncData);
+        }
         break;
       case P2PEventType.peerConnected:
         _onPeerConnected(event.data['peerId']);
@@ -96,6 +99,16 @@ class P2PSyncService {
       nextAllowedCompletionAt = DateTime.parse(nextRaw);
     }
 
+    DateTime createdAt;
+    if (existingTask != null) {
+      createdAt = existingTask.createdAt;
+    } else {
+      final createdAtRaw = taskData['createdAt'];
+      createdAt = createdAtRaw is String 
+          ? DateTime.parse(createdAtRaw) 
+          : incomingUpdatedAt;
+    }
+
     final task = TasksCompanion.insert(
       id: taskId,
       title: taskData['title'] as String,
@@ -104,7 +117,7 @@ class P2PSyncService {
       repeatInterval: Value(repeatInterval),
       nextAllowedCompletionAt: Value(nextAllowedCompletionAt),
       isCompleted: Value(taskData['isCompleted'] as bool),
-      createdAt: Value(DateTime.parse(taskData['createdAt'] as String)),
+      createdAt: Value(createdAt),
       updatedAt: Value(incomingUpdatedAt),
     );
 
@@ -126,8 +139,17 @@ class P2PSyncService {
   Future<void> _syncEnergyLog(Map<String, dynamic> logData) async {
     if (_database == null) return;
 
-    final syncId = logData['syncId'] as String;
-    final incomingUpdatedAt = DateTime.parse(logData['updatedAt'] as String);
+    final syncId = logData['syncId'] as String?;
+    if (syncId == null || syncId.isEmpty) return;
+
+    final timestampRaw = logData['timestamp'] as String?;
+    if (timestampRaw == null) return;
+
+    final timestamp = DateTime.parse(timestampRaw);
+    final updatedAtRaw = logData['updatedAt'] as String?;
+    final incomingUpdatedAt = updatedAtRaw != null 
+        ? DateTime.parse(updatedAtRaw) 
+        : timestamp;
 
     final existingLog = await (_database!.select(_database!.energyLogs)
           ..where((t) => t.syncId.equals(syncId)))
@@ -142,7 +164,7 @@ class P2PSyncService {
     final log = EnergyLogsCompanion.insert(
       syncId: Value(syncId),
       level: logData['level'] as int,
-      timestamp: Value(DateTime.parse(logData['timestamp'] as String)),
+      timestamp: Value(timestamp),
       updatedAt: Value(incomingUpdatedAt),
     );
 
@@ -159,28 +181,78 @@ class P2PSyncService {
 
     final incomingUpdatedAt = DateTime.parse(statsData['updatedAt'] as String);
 
-    final stats = PacingStatsCompanion.insert(
-      xp: Value(statsData['xp'] as int),
-      healingLevel: Value(statsData['healingLevel'] as int),
-      currentStreak: Value(statsData['currentStreak'] as int),
-      lastLogDate: statsData['lastLogDate'] != null
-          ? Value(DateTime.parse(statsData['lastLogDate'] as String))
-          : const Value.absent(),
-      updatedAt: Value(incomingUpdatedAt),
-    );
-
     final existingStats =
         await (_database!.select(_database!.pacingStats)).get();
+    
     if (existingStats.isEmpty) {
+      final stats = PacingStatsCompanion.insert(
+        xp: Value(statsData['xp'] as int),
+        healingLevel: Value(statsData['healingLevel'] as int),
+        currentStreak: Value(statsData['currentStreak'] as int),
+        lastLogDate: statsData['lastLogDate'] != null
+            ? Value(DateTime.parse(statsData['lastLogDate'] as String))
+            : const Value.absent(),
+        updatedAt: Value(incomingUpdatedAt),
+      );
       await _database!.into(_database!.pacingStats).insert(stats);
-    } else {
-      if (existingStats.first.updatedAt != null &&
-          existingStats.first.updatedAt!.isAfter(incomingUpdatedAt)) {
-        return;
-      }
-      final updatedStats = stats.copyWith(id: Value(existingStats.first.id));
-      await _database!.update(_database!.pacingStats).replace(updatedStats);
+      return;
     }
+
+    final localStats = existingStats.first;
+    
+    // Merge strategy: take the maximum values and most recent dates
+    final newXp = (statsData['xp'] as int).clamp(0, 1000000);
+    final mergedXp = (localStats.xp > newXp) ? localStats.xp : newXp;
+    
+    final newStreak = statsData['currentStreak'] as int;
+    final mergedStreak = (localStats.currentStreak > newStreak) 
+        ? localStats.currentStreak 
+        : newStreak;
+    
+    DateTime? incomingLastLogDate;
+    final lastLogDateRaw = statsData['lastLogDate'];
+    if (lastLogDateRaw is String && lastLogDateRaw.isNotEmpty) {
+      incomingLastLogDate = DateTime.parse(lastLogDateRaw);
+    }
+    
+    // Take the more recent lastLogDate
+    DateTime? mergedLastLogDate;
+    if (localStats.lastLogDate != null && incomingLastLogDate != null) {
+      mergedLastLogDate = localStats.lastLogDate!.isAfter(incomingLastLogDate)
+          ? localStats.lastLogDate
+          : incomingLastLogDate;
+    } else {
+      mergedLastLogDate = localStats.lastLogDate ?? incomingLastLogDate;
+    }
+    
+    // Only update if incoming is newer
+    if (localStats.updatedAt != null &&
+        localStats.updatedAt!.isAfter(incomingUpdatedAt)) {
+      return;
+    }
+    
+    // Calculate healing level from merged XP
+    final mergedHealingLevel = _calculateHealingLevel(mergedXp);
+    
+    final updatedStats = PacingStatsCompanion.insert(
+      xp: Value(mergedXp),
+      healingLevel: Value(mergedHealingLevel),
+      currentStreak: Value(mergedStreak),
+      lastLogDate: mergedLastLogDate != null 
+          ? Value(mergedLastLogDate) 
+          : const Value.absent(),
+      updatedAt: Value(incomingUpdatedAt),
+    ).copyWith(id: Value(localStats.id));
+    
+    await _database!.update(_database!.pacingStats).replace(updatedStats);
+  }
+  
+  int _calculateHealingLevel(int xp) {
+    if (xp < 200) return 1;
+    if (xp < 500) return 2;
+    if (xp < 900) return 3;
+    if (xp < 1400) return 4;
+    return (xp / 500).floor() + 1;
   }
 
   void _onPeerConnected(String peerId) {
@@ -288,7 +360,7 @@ class P2PSyncService {
         'healingLevel': stat.healingLevel,
         'currentStreak': stat.currentStreak,
         'lastLogDate': stat.lastLogDate?.toIso8601String(),
-        'updatedAt': (stat.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0))
+        'updatedAt': (stat.updatedAt ?? DateTime.now())
             .toIso8601String(),
       },
     });
