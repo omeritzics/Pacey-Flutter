@@ -82,7 +82,12 @@ class HistoryPage extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final log = logs[logs.length - 1 - index];
                       return ListTile(
-                        leading: CircleAvatar(child: Text('${log.level}')),
+                        leading: CircleAvatar(
+                          child: Text(
+                            '${log.level}',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
                         title: Text(l10n.energyUpdate),
                         subtitle: Text(
                           DateFormat(
@@ -90,10 +95,7 @@ class HistoryPage extends ConsumerWidget {
                             locale,
                           ).format(log.timestamp),
                         ),
-                        trailing: const Text(
-                          '⚡',
-                          style: TextStyle(fontSize: 20),
-                        ),
+                        trailing: const Icon(Icons.bolt, size: 24),
                       );
                     },
                   ),

@@ -137,7 +137,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksForEnergy.
   ///
   /// In en, this message translates to:
-  /// **'Tasks for {energy} ⚡'**
+  /// **'Tasks for current energy level'**
   String tasksForEnergy(int energy);
 
   /// No description provided for @noTasks.
@@ -164,11 +164,11 @@ abstract class AppLocalizations {
   /// **'Task Title'**
   String get taskTitle;
 
-  /// No description provided for @energyCost.
+  /// No description provided for @requiredEnergy.
   ///
   /// In en, this message translates to:
-  /// **'Energy Cost'**
-  String get energyCost;
+  /// **'Required Energy'**
+  String get requiredEnergy;
 
   /// No description provided for @taskPriority.
   ///
@@ -317,7 +317,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutApplicationLegalese.
   ///
   /// In en, this message translates to:
-  /// **'Copyright © 2026 The Pacey authors\n\nLicensed under the Apache License, Version 2.0. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0'**
+  /// **'Copyright © 2026 Omer I.S. (@omeritzics)'**
   String get aboutApplicationLegalese;
 
   /// No description provided for @language.
@@ -350,245 +350,71 @@ abstract class AppLocalizations {
   /// **'Light Mode'**
   String get lightMode;
 
-  /// No description provided for @p2pSync.
+  /// No description provided for @importExport.
   ///
   /// In en, this message translates to:
-  /// **'P2P Sync'**
-  String get p2pSync;
+  /// **'Import / Export'**
+  String get importExport;
 
-  /// No description provided for @syncSettings.
+  /// No description provided for @importExportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Sync Settings'**
-  String get syncSettings;
+  /// **'Back up your tasks, energy logs, and progress to a JSON file, or restore from a backup.'**
+  String get importExportDescription;
 
-  /// No description provided for @connectionStatus.
+  /// No description provided for @exportData.
   ///
   /// In en, this message translates to:
-  /// **'Connection Status'**
-  String get connectionStatus;
+  /// **'Export data'**
+  String get exportData;
 
-  /// No description provided for @connectedPeers.
+  /// No description provided for @exportDataDescription.
   ///
   /// In en, this message translates to:
-  /// **'Connected Peers'**
-  String get connectedPeers;
+  /// **'Pacey backup file'**
+  String get exportDataDescription;
 
-  /// No description provided for @connectToPeer.
+  /// No description provided for @importData.
   ///
   /// In en, this message translates to:
-  /// **'Connect to Peer'**
-  String get connectToPeer;
+  /// **'Import data'**
+  String get importData;
 
-  /// No description provided for @yourPeerId.
+  /// No description provided for @importModeDescription.
   ///
   /// In en, this message translates to:
-  /// **'Your Peer ID'**
-  String get yourPeerId;
+  /// **'Merge keeps your existing data and combines it with the backup. Replace deletes all local data before importing.'**
+  String get importModeDescription;
 
-  /// No description provided for @shareQrCode.
+  /// No description provided for @importMerge.
   ///
   /// In en, this message translates to:
-  /// **'Share this QR code or ID with other devices to connect'**
-  String get shareQrCode;
+  /// **'Merge'**
+  String get importMerge;
 
-  /// No description provided for @enterPeerId.
+  /// No description provided for @importReplace.
   ///
   /// In en, this message translates to:
-  /// **'Enter Peer ID'**
-  String get enterPeerId;
+  /// **'Replace all'**
+  String get importReplace;
 
-  /// No description provided for @pastePeerId.
+  /// No description provided for @exportFailed.
   ///
   /// In en, this message translates to:
-  /// **'Paste the peer ID here'**
-  String get pastePeerId;
+  /// **'Export failed. Please try again.'**
+  String get exportFailed;
 
-  /// No description provided for @connect.
+  /// No description provided for @importFailed.
   ///
   /// In en, this message translates to:
-  /// **'Connect'**
-  String get connect;
+  /// **'Import failed. Please check the file and try again.'**
+  String get importFailed;
 
-  /// No description provided for @scanQr.
+  /// No description provided for @importSuccessful.
   ///
   /// In en, this message translates to:
-  /// **'Scan QR'**
-  String get scanQr;
-
-  /// No description provided for @noPeersConnected.
-  ///
-  /// In en, this message translates to:
-  /// **'No peers connected'**
-  String get noPeersConnected;
-
-  /// No description provided for @disconnected.
-  ///
-  /// In en, this message translates to:
-  /// **'Disconnected'**
-  String get disconnected;
-
-  /// No description provided for @connectedToP2P.
-  ///
-  /// In en, this message translates to:
-  /// **'Connected to P2P network'**
-  String get connectedToP2P;
-
-  /// No description provided for @peerConnected.
-  ///
-  /// In en, this message translates to:
-  /// **'Peer connected'**
-  String get peerConnected;
-
-  /// No description provided for @peerDisconnected.
-  ///
-  /// In en, this message translates to:
-  /// **'Peer disconnected'**
-  String get peerDisconnected;
-
-  /// No description provided for @syncingData.
-  ///
-  /// In en, this message translates to:
-  /// **'Syncing data...'**
-  String get syncingData;
-
-  /// No description provided for @connectionRequest.
-  ///
-  /// In en, this message translates to:
-  /// **'Connection Request'**
-  String get connectionRequest;
-
-  /// No description provided for @deviceWantsToConnect.
-  ///
-  /// In en, this message translates to:
-  /// **'Device {peerId} wants to connect with you. Do you want to accept this connection?'**
-  String deviceWantsToConnect(Object peerId);
-
-  /// No description provided for @accept.
-  ///
-  /// In en, this message translates to:
-  /// **'Accept'**
-  String get accept;
-
-  /// No description provided for @reject.
-  ///
-  /// In en, this message translates to:
-  /// **'Reject'**
-  String get reject;
-
-  /// No description provided for @connectionRejected.
-  ///
-  /// In en, this message translates to:
-  /// **'Connection from {peerId} rejected'**
-  String connectionRejected(Object peerId);
-
-  /// No description provided for @connectedTo.
-  ///
-  /// In en, this message translates to:
-  /// **'Connected to {peerId}'**
-  String connectedTo(Object peerId);
-
-  /// No description provided for @cameraPermissionRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Camera permission is required to scan QR codes'**
-  String get cameraPermissionRequired;
-
-  /// No description provided for @initializing.
-  ///
-  /// In en, this message translates to:
-  /// **'Initializing...'**
-  String get initializing;
-
-  /// No description provided for @connectedDevices.
-  ///
-  /// In en, this message translates to:
-  /// **'Connected Devices'**
-  String get connectedDevices;
-
-  /// No description provided for @noDevicesConnected.
-  ///
-  /// In en, this message translates to:
-  /// **'No devices connected'**
-  String get noDevicesConnected;
-
-  /// No description provided for @connectDevicesToSync.
-  ///
-  /// In en, this message translates to:
-  /// **'Connect devices to start syncing data'**
-  String get connectDevicesToSync;
-
-  /// No description provided for @online.
-  ///
-  /// In en, this message translates to:
-  /// **'Online'**
-  String get online;
-
-  /// No description provided for @peerIdLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Peer ID: {peerId}'**
-  String peerIdLabel(String peerId);
-
-  /// No description provided for @copyPeerId.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy Peer ID'**
-  String get copyPeerId;
-
-  /// No description provided for @disconnect.
-  ///
-  /// In en, this message translates to:
-  /// **'Disconnect'**
-  String get disconnect;
-
-  /// No description provided for @disconnectDevice.
-  ///
-  /// In en, this message translates to:
-  /// **'Disconnect Device'**
-  String get disconnectDevice;
-
-  /// No description provided for @confirmDisconnect.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to disconnect from {peerId}?'**
-  String confirmDisconnect(String peerId);
-
-  /// No description provided for @deviceDisconnected.
-  ///
-  /// In en, this message translates to:
-  /// **'Disconnected from {peerId}'**
-  String deviceDisconnected(String peerId);
-
-  /// No description provided for @confirmConnect.
-  ///
-  /// In en, this message translates to:
-  /// **'Connect to Device'**
-  String get confirmConnect;
-
-  /// No description provided for @confirmConnectMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to connect to device {peerId}?'**
-  String confirmConnectMessage(String peerId);
-
-  /// No description provided for @connecting.
-  ///
-  /// In en, this message translates to:
-  /// **'Connecting...'**
-  String get connecting;
-
-  /// No description provided for @connectionSuccessful.
-  ///
-  /// In en, this message translates to:
-  /// **'Successfully connected to {peerId}'**
-  String connectionSuccessful(String peerId);
-
-  /// No description provided for @connectionFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to connect to {peerId}'**
-  String connectionFailed(String peerId);
+  /// **'Imported {tasks} tasks and {logs} energy logs.'**
+  String importSuccessful(int tasks, int logs);
 
   /// No description provided for @dangerZone.
   ///

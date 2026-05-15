@@ -1,29 +1,8 @@
 {
-  "@confirmDisconnect": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
-      }
-    }
-  },
-  "@deviceDisconnected": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
-      }
-    }
-  },
   "@healingLevel": {
     "placeholders": {
       "level": {
         "type": "int"
-      }
-    }
-  },
-  "@peerIdLabel": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
       }
     }
   },
@@ -34,32 +13,30 @@
       }
     }
   },
-  "accept": "אישור",
+  "@availableAfter": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@importSuccessful": {
+    "placeholders": {
+      "tasks": {
+        "type": "int"
+      },
+      "logs": {
+        "type": "int"
+      }
+    }
+  },
   "addTask": "הוספת משימה",
   "alreadyLogged": "כבר תיעדת את רמת האנרגיה לפרק הזמן הזה.",
   "appTitle": "Pacey",
-  "cameraPermissionRequired": "נדרשת הרשאת מצלמה כדי לסרוק קודי QR",
   "cancel": "ביטול",
-  "confirmDisconnect": "האם אתה בטוח שברצונך להתנתק מ-{peerId}?",
-  "connect": "התחברות",
-  "connectDevicesToSync": "חבר מכשירים כדי להתחיל לסנכרן נתונים",
-  "connectToPeer": "התחברות למכשיר",
-  "connectedDevices": "התקנים מחוברים",
-  "connectedPeers": "מכשירים מחוברים",
-  "connectedTo": "מחובר אל {peerId}",
-  "connectedToP2P": "מחובר לרשת P2P",
-  "connectionRejected": "החיבור מהמכשיר {peerId} נדחה",
-  "connectionRequest": "בקשת חיבור",
-  "connectionStatus": "מצב חיבור",
-  "copyPeerId": "העתק את מזהה עמיתים",
   "currentEnergy": "רמת אנרגיה נוכחית",
-  "deviceDisconnected": "מנותק מ-{peerId}",
-  "deviceWantsToConnect": "המכשיר {peerId} רוצה להתחבר למכשירך. האם ברצונך לאשר חיבור זה?",
-  "disconnect": "לְנַתֵק",
-  "disconnectDevice": "נתק מכשיר",
-  "disconnected": "מנותק",
   "editTask": "עריכת משימה",
-  "energyCost": "עלות אנרגיה",
+  "requiredEnergy": "רמת אנרגיה נדרשת",
   "taskPriority": "עדיפות",
   "priorityHighest": "1 — הגבוהה ביותר",
   "priorityHigh": "2 — גבוהה",
@@ -72,78 +49,40 @@
   "repeatWeekly": "שבועי",
   "repeatMonthly": "חודשי",
   "availableAfter": "זמין לאחר {date}",
-  "@availableAfter": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "energyLogs": "יומן אנרגיה",
   "energyTrend": "מגמת אנרגיה",
   "energyUpdate": "עדכון רמת אנרגיה",
-  "enterPeerId": "נא להכניס מזהה מכשיר",
   "expansion": "הרחבת היכולות",
   "darkMode": "מצב כהה",
   "followSystem": "לפי המערכת",
   "lightMode": "מצב בהיר",
   "healingLevel": "רמת החלמה {level}",
   "history": "היסטוריה",
-  "initializing": "בתהליך אתחול...",
   "language": "שפה",
-  "noDevicesConnected": "אין מכשירים מחוברים",
   "noHistory": "אין עדיין היסטוריה מתועדת.",
-  "noPeersConnected": "אין מכשירים מחוברים",
   "noTasks": "אין משימות עבור רמת האנרגיה הזו.",
-  "online": "באינטרנט",
-  "p2pSync": "סנכרון P2P",
-  "pastePeerId": "נא להדביק את מזהה המכשיר כאן",
-  "peerConnected": "המכשיר התחבר",
-  "peerDisconnected": "המכשיר התנתק",
-  "peerIdLabel": "מזהה עמית: {peerId}",
-  "reject": "דחייה",
+  "importExport": "ייבוא / ייצוא",
+  "importExportDescription": "גיבוי משימות, יומן אנרגיה והתקדמות לקובץ JSON, או שחזור מגיבוי.",
+  "exportData": "ייצוא נתונים",
+  "exportDataDescription": "קובץ גיבוי Pacey",
+  "importData": "ייבוא נתונים",
+  "importModeDescription": "מיזוג שומר על הנתונים המקומיים ומשלב עם הגיבוי. החלפה מוחקת את כל הנתונים המקומיים לפני הייבוא.",
+  "importMerge": "מיזוג",
+  "importReplace": "החלפת הכל",
+  "exportFailed": "הייצוא נכשל. נא לנסות שוב.",
+  "importFailed": "הייבוא נכשל. נא לבדוק את הקובץ ולנסות שוב.",
+  "importSuccessful": "יובאו {tasks} משימות ו-{logs} רשומות אנרגיה.",
   "save": "שמירה",
-  "scanQr": "סריקת קוד QR",
   "selectLanguage": "בחירת שפה",
   "settings": "הגדרות",
   "about": "מידע כללי",
   "aboutSubtitle": "רישיונות והצהרות קוד פתוח",
-  "aboutApplicationLegalese": "Copyright © 2026 The Pacey authors\n\nLicensed under the Apache License, Version 2.0. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0",
-  "shareQrCode": "אפשר לשתף קוד QR זה או מזהה עם מכשירים אחרים כדי להתחבר",
+  "aboutApplicationLegalese": "כל הזכויות שמורות© 2026 עומר א״ש (‎@omeritzics)",
   "stabilization": "התייצבות",
   "strengthening": "התחזקות",
-  "syncSettings": "הגדרות סנכרון",
-  "syncingData": "הנתונים מסתנכרנים...",
   "taskTitle": "שם המשימה",
   "tasks": "משימות",
-  "tasksForEnergy": "משימות עבור {energy} ⚡",
-  "yourPeerId": "מזהה המכשיר שלך",
-  "confirmConnect": "התחבר למכשיר",
-  "confirmConnectMessage": "האם אתה בטוח שברצונך להתחבר למכשיר {peerId}?",
-  "@confirmConnectMessage": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
-      }
-    }
-  },
-  "connecting": "מתחבר...",
-  "connectionSuccessful": "התחברת בהצלחה ל-{peerId}",
-  "@connectionSuccessful": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
-      }
-    }
-  },
-  "connectionFailed": "ההתחברות ל-{peerId} נכשלה",
-  "@connectionFailed": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
-      }
-    }
-  },
+  "tasksForEnergy": "משימות לרמת האנרגיה הנוכחית",
   "dangerZone": "אזור סכנה",
   "resetData": "איפוס נתונים",
   "resetDataDescription": "מחיקת כל המשימות, היומנים והסטטיסטיקות",

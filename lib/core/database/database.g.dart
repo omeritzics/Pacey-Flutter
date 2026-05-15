@@ -30,11 +30,11 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _energyCostMeta = const VerificationMeta(
-    'energyCost',
+  static const VerificationMeta _requiredEnergyMeta = const VerificationMeta(
+    'requiredEnergy',
   );
   @override
-  late final GeneratedColumn<int> energyCost = GeneratedColumn<int>(
+  late final GeneratedColumn<int> requiredEnergy = GeneratedColumn<int>(
     'energy_cost',
     aliasedName,
     false,
@@ -118,7 +118,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
   List<GeneratedColumn> get $columns => [
     id,
     title,
-    energyCost,
+    requiredEnergy,
     priority,
     repeatInterval,
     nextAllowedCompletionAt,
@@ -153,11 +153,14 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     }
     if (data.containsKey('energy_cost')) {
       context.handle(
-        _energyCostMeta,
-        energyCost.isAcceptableOrUnknown(data['energy_cost']!, _energyCostMeta),
+        _requiredEnergyMeta,
+        requiredEnergy.isAcceptableOrUnknown(
+          data['energy_cost']!,
+          _requiredEnergyMeta,
+        ),
       );
     } else if (isInserting) {
-      context.missing(_energyCostMeta);
+      context.missing(_requiredEnergyMeta);
     }
     if (data.containsKey('priority')) {
       context.handle(
@@ -221,7 +224,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         DriftSqlType.string,
         data['${effectivePrefix}title'],
       )!,
-      energyCost: attachedDatabase.typeMapping.read(
+      requiredEnergy: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}energy_cost'],
       )!,
@@ -261,7 +264,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
 class Task extends DataClass implements Insertable<Task> {
   final String id;
   final String title;
-  final int energyCost;
+  final int requiredEnergy;
   final int priority;
 
   /// 0 = off, 1 = daily, 2 = weekly, 3 = monthly
@@ -273,7 +276,7 @@ class Task extends DataClass implements Insertable<Task> {
   const Task({
     required this.id,
     required this.title,
-    required this.energyCost,
+    required this.requiredEnergy,
     required this.priority,
     required this.repeatInterval,
     this.nextAllowedCompletionAt,
@@ -286,7 +289,7 @@ class Task extends DataClass implements Insertable<Task> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
-    map['energy_cost'] = Variable<int>(energyCost);
+    map['energy_cost'] = Variable<int>(requiredEnergy);
     map['priority'] = Variable<int>(priority);
     map['repeat_interval'] = Variable<int>(repeatInterval);
     if (!nullToAbsent || nextAllowedCompletionAt != null) {
@@ -306,7 +309,7 @@ class Task extends DataClass implements Insertable<Task> {
     return TasksCompanion(
       id: Value(id),
       title: Value(title),
-      energyCost: Value(energyCost),
+      requiredEnergy: Value(requiredEnergy),
       priority: Value(priority),
       repeatInterval: Value(repeatInterval),
       nextAllowedCompletionAt: nextAllowedCompletionAt == null && nullToAbsent
@@ -328,7 +331,7 @@ class Task extends DataClass implements Insertable<Task> {
     return Task(
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      energyCost: serializer.fromJson<int>(json['energyCost']),
+      requiredEnergy: serializer.fromJson<int>(json['requiredEnergy']),
       priority: serializer.fromJson<int>(json['priority']),
       repeatInterval: serializer.fromJson<int>(json['repeatInterval']),
       nextAllowedCompletionAt: serializer.fromJson<DateTime?>(
@@ -345,7 +348,7 @@ class Task extends DataClass implements Insertable<Task> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
-      'energyCost': serializer.toJson<int>(energyCost),
+      'requiredEnergy': serializer.toJson<int>(requiredEnergy),
       'priority': serializer.toJson<int>(priority),
       'repeatInterval': serializer.toJson<int>(repeatInterval),
       'nextAllowedCompletionAt': serializer.toJson<DateTime?>(
@@ -360,7 +363,7 @@ class Task extends DataClass implements Insertable<Task> {
   Task copyWith({
     String? id,
     String? title,
-    int? energyCost,
+    int? requiredEnergy,
     int? priority,
     int? repeatInterval,
     Value<DateTime?> nextAllowedCompletionAt = const Value.absent(),
@@ -370,7 +373,7 @@ class Task extends DataClass implements Insertable<Task> {
   }) => Task(
     id: id ?? this.id,
     title: title ?? this.title,
-    energyCost: energyCost ?? this.energyCost,
+    requiredEnergy: requiredEnergy ?? this.requiredEnergy,
     priority: priority ?? this.priority,
     repeatInterval: repeatInterval ?? this.repeatInterval,
     nextAllowedCompletionAt: nextAllowedCompletionAt.present
@@ -384,9 +387,9 @@ class Task extends DataClass implements Insertable<Task> {
     return Task(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
-      energyCost: data.energyCost.present
-          ? data.energyCost.value
-          : this.energyCost,
+      requiredEnergy: data.requiredEnergy.present
+          ? data.requiredEnergy.value
+          : this.requiredEnergy,
       priority: data.priority.present ? data.priority.value : this.priority,
       repeatInterval: data.repeatInterval.present
           ? data.repeatInterval.value
@@ -407,7 +410,7 @@ class Task extends DataClass implements Insertable<Task> {
     return (StringBuffer('Task(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('energyCost: $energyCost, ')
+          ..write('requiredEnergy: $requiredEnergy, ')
           ..write('priority: $priority, ')
           ..write('repeatInterval: $repeatInterval, ')
           ..write('nextAllowedCompletionAt: $nextAllowedCompletionAt, ')
@@ -422,7 +425,7 @@ class Task extends DataClass implements Insertable<Task> {
   int get hashCode => Object.hash(
     id,
     title,
-    energyCost,
+    requiredEnergy,
     priority,
     repeatInterval,
     nextAllowedCompletionAt,
@@ -436,7 +439,7 @@ class Task extends DataClass implements Insertable<Task> {
       (other is Task &&
           other.id == this.id &&
           other.title == this.title &&
-          other.energyCost == this.energyCost &&
+          other.requiredEnergy == this.requiredEnergy &&
           other.priority == this.priority &&
           other.repeatInterval == this.repeatInterval &&
           other.nextAllowedCompletionAt == this.nextAllowedCompletionAt &&
@@ -448,7 +451,7 @@ class Task extends DataClass implements Insertable<Task> {
 class TasksCompanion extends UpdateCompanion<Task> {
   final Value<String> id;
   final Value<String> title;
-  final Value<int> energyCost;
+  final Value<int> requiredEnergy;
   final Value<int> priority;
   final Value<int> repeatInterval;
   final Value<DateTime?> nextAllowedCompletionAt;
@@ -459,7 +462,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   const TasksCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.energyCost = const Value.absent(),
+    this.requiredEnergy = const Value.absent(),
     this.priority = const Value.absent(),
     this.repeatInterval = const Value.absent(),
     this.nextAllowedCompletionAt = const Value.absent(),
@@ -471,7 +474,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   TasksCompanion.insert({
     required String id,
     required String title,
-    required int energyCost,
+    required int requiredEnergy,
     this.priority = const Value.absent(),
     this.repeatInterval = const Value.absent(),
     this.nextAllowedCompletionAt = const Value.absent(),
@@ -481,11 +484,11 @@ class TasksCompanion extends UpdateCompanion<Task> {
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        title = Value(title),
-       energyCost = Value(energyCost);
+       requiredEnergy = Value(requiredEnergy);
   static Insertable<Task> custom({
     Expression<String>? id,
     Expression<String>? title,
-    Expression<int>? energyCost,
+    Expression<int>? requiredEnergy,
     Expression<int>? priority,
     Expression<int>? repeatInterval,
     Expression<DateTime>? nextAllowedCompletionAt,
@@ -497,7 +500,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (energyCost != null) 'energy_cost': energyCost,
+      if (requiredEnergy != null) 'energy_cost': requiredEnergy,
       if (priority != null) 'priority': priority,
       if (repeatInterval != null) 'repeat_interval': repeatInterval,
       if (nextAllowedCompletionAt != null)
@@ -512,7 +515,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   TasksCompanion copyWith({
     Value<String>? id,
     Value<String>? title,
-    Value<int>? energyCost,
+    Value<int>? requiredEnergy,
     Value<int>? priority,
     Value<int>? repeatInterval,
     Value<DateTime?>? nextAllowedCompletionAt,
@@ -524,7 +527,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     return TasksCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      energyCost: energyCost ?? this.energyCost,
+      requiredEnergy: requiredEnergy ?? this.requiredEnergy,
       priority: priority ?? this.priority,
       repeatInterval: repeatInterval ?? this.repeatInterval,
       nextAllowedCompletionAt:
@@ -545,8 +548,8 @@ class TasksCompanion extends UpdateCompanion<Task> {
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
-    if (energyCost.present) {
-      map['energy_cost'] = Variable<int>(energyCost.value);
+    if (requiredEnergy.present) {
+      map['energy_cost'] = Variable<int>(requiredEnergy.value);
     }
     if (priority.present) {
       map['priority'] = Variable<int>(priority.value);
@@ -579,7 +582,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     return (StringBuffer('TasksCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('energyCost: $energyCost, ')
+          ..write('requiredEnergy: $requiredEnergy, ')
           ..write('priority: $priority, ')
           ..write('repeatInterval: $repeatInterval, ')
           ..write('nextAllowedCompletionAt: $nextAllowedCompletionAt, ')
@@ -1368,7 +1371,7 @@ typedef $$TasksTableCreateCompanionBuilder =
     TasksCompanion Function({
       required String id,
       required String title,
-      required int energyCost,
+      required int requiredEnergy,
       Value<int> priority,
       Value<int> repeatInterval,
       Value<DateTime?> nextAllowedCompletionAt,
@@ -1381,7 +1384,7 @@ typedef $$TasksTableUpdateCompanionBuilder =
     TasksCompanion Function({
       Value<String> id,
       Value<String> title,
-      Value<int> energyCost,
+      Value<int> requiredEnergy,
       Value<int> priority,
       Value<int> repeatInterval,
       Value<DateTime?> nextAllowedCompletionAt,
@@ -1409,8 +1412,8 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get energyCost => $composableBuilder(
-    column: $table.energyCost,
+  ColumnFilters<int> get requiredEnergy => $composableBuilder(
+    column: $table.requiredEnergy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1464,8 +1467,8 @@ class $$TasksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get energyCost => $composableBuilder(
-    column: $table.energyCost,
+  ColumnOrderings<int> get requiredEnergy => $composableBuilder(
+    column: $table.requiredEnergy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -1515,8 +1518,8 @@ class $$TasksTableAnnotationComposer
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
-  GeneratedColumn<int> get energyCost => $composableBuilder(
-    column: $table.energyCost,
+  GeneratedColumn<int> get requiredEnergy => $composableBuilder(
+    column: $table.requiredEnergy,
     builder: (column) => column,
   );
 
@@ -1575,7 +1578,7 @@ class $$TasksTableTableManager
               ({
                 Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<int> energyCost = const Value.absent(),
+                Value<int> requiredEnergy = const Value.absent(),
                 Value<int> priority = const Value.absent(),
                 Value<int> repeatInterval = const Value.absent(),
                 Value<DateTime?> nextAllowedCompletionAt = const Value.absent(),
@@ -1586,7 +1589,7 @@ class $$TasksTableTableManager
               }) => TasksCompanion(
                 id: id,
                 title: title,
-                energyCost: energyCost,
+                requiredEnergy: requiredEnergy,
                 priority: priority,
                 repeatInterval: repeatInterval,
                 nextAllowedCompletionAt: nextAllowedCompletionAt,
@@ -1599,7 +1602,7 @@ class $$TasksTableTableManager
               ({
                 required String id,
                 required String title,
-                required int energyCost,
+                required int requiredEnergy,
                 Value<int> priority = const Value.absent(),
                 Value<int> repeatInterval = const Value.absent(),
                 Value<DateTime?> nextAllowedCompletionAt = const Value.absent(),
@@ -1610,7 +1613,7 @@ class $$TasksTableTableManager
               }) => TasksCompanion.insert(
                 id: id,
                 title: title,
-                energyCost: energyCost,
+                requiredEnergy: requiredEnergy,
                 priority: priority,
                 repeatInterval: repeatInterval,
                 nextAllowedCompletionAt: nextAllowedCompletionAt,
