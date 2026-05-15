@@ -30,7 +30,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String tasksForEnergy(int energy) {
-    return 'Tasks for $energy ⚡';
+    return 'Tasks for current energy level';
   }
 
   @override
@@ -46,7 +46,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskTitle => 'Task Title';
 
   @override
-  String get energyCost => 'Energy Cost';
+  String get requiredEnergy => 'Required Energy';
 
   @override
   String get taskPriority => 'Priority';
@@ -126,7 +126,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutApplicationLegalese =>
-      'Copyright © 2026 The Pacey authors\n\nLicensed under the Apache License, Version 2.0. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0';
+      'Copyright © 2026 Omer I.S. (@omeritzics)';
 
   @override
   String get language => 'Language';
@@ -144,143 +144,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lightMode => 'Light Mode';
 
   @override
-  String get p2pSync => 'P2P Sync';
+  String get importExport => 'Import / Export';
 
   @override
-  String get syncSettings => 'Sync Settings';
+  String get importExportDescription =>
+      'Back up your tasks, energy logs, and progress to a JSON file, or restore from a backup.';
 
   @override
-  String get connectionStatus => 'Connection Status';
+  String get exportData => 'Export data';
 
   @override
-  String get connectedPeers => 'Connected Peers';
+  String get exportDataDescription => 'Pacey backup file';
 
   @override
-  String get connectToPeer => 'Connect to Peer';
+  String get importData => 'Import data';
 
   @override
-  String get yourPeerId => 'Your Peer ID';
+  String get importModeDescription =>
+      'Merge keeps your existing data and combines it with the backup. Replace deletes all local data before importing.';
 
   @override
-  String get shareQrCode =>
-      'Share this QR code or ID with other devices to connect';
+  String get importMerge => 'Merge';
 
   @override
-  String get enterPeerId => 'Enter Peer ID';
+  String get importReplace => 'Replace all';
 
   @override
-  String get pastePeerId => 'Paste the peer ID here';
+  String get exportFailed => 'Export failed. Please try again.';
 
   @override
-  String get connect => 'Connect';
+  String get importFailed =>
+      'Import failed. Please check the file and try again.';
 
   @override
-  String get scanQr => 'Scan QR';
-
-  @override
-  String get noPeersConnected => 'No peers connected';
-
-  @override
-  String get disconnected => 'Disconnected';
-
-  @override
-  String get connectedToP2P => 'Connected to P2P network';
-
-  @override
-  String get peerConnected => 'Peer connected';
-
-  @override
-  String get peerDisconnected => 'Peer disconnected';
-
-  @override
-  String get syncingData => 'Syncing data...';
-
-  @override
-  String get connectionRequest => 'Connection Request';
-
-  @override
-  String deviceWantsToConnect(Object peerId) {
-    return 'Device $peerId wants to connect with you. Do you want to accept this connection?';
-  }
-
-  @override
-  String get accept => 'Accept';
-
-  @override
-  String get reject => 'Reject';
-
-  @override
-  String connectionRejected(Object peerId) {
-    return 'Connection from $peerId rejected';
-  }
-
-  @override
-  String connectedTo(Object peerId) {
-    return 'Connected to $peerId';
-  }
-
-  @override
-  String get cameraPermissionRequired =>
-      'Camera permission is required to scan QR codes';
-
-  @override
-  String get initializing => 'Initializing...';
-
-  @override
-  String get connectedDevices => 'Connected Devices';
-
-  @override
-  String get noDevicesConnected => 'No devices connected';
-
-  @override
-  String get connectDevicesToSync => 'Connect devices to start syncing data';
-
-  @override
-  String get online => 'Online';
-
-  @override
-  String peerIdLabel(String peerId) {
-    return 'Peer ID: $peerId';
-  }
-
-  @override
-  String get copyPeerId => 'Copy Peer ID';
-
-  @override
-  String get disconnect => 'Disconnect';
-
-  @override
-  String get disconnectDevice => 'Disconnect Device';
-
-  @override
-  String confirmDisconnect(String peerId) {
-    return 'Are you sure you want to disconnect from $peerId?';
-  }
-
-  @override
-  String deviceDisconnected(String peerId) {
-    return 'Disconnected from $peerId';
-  }
-
-  @override
-  String get confirmConnect => 'Connect to Device';
-
-  @override
-  String confirmConnectMessage(String peerId) {
-    return 'Are you sure you want to connect to device $peerId?';
-  }
-
-  @override
-  String get connecting => 'Connecting...';
-
-  @override
-  String connectionSuccessful(String peerId) {
-    return 'Successfully connected to $peerId';
-  }
-
-  @override
-  String connectionFailed(String peerId) {
-    return 'Failed to connect to $peerId';
+  String importSuccessful(int tasks, int logs) {
+    return 'Imported $tasks tasks and $logs energy logs.';
   }
 
   @override

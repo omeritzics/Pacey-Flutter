@@ -186,8 +186,8 @@ jobs:
           [Desktop Entry]
           Name=Pacey
           Comment=Energy pacing application
-          Exec=pacey
-          Icon=pacey
+          Exec=Pacey
+          Icon=Pacey
           Type=Application
           Categories=Utility;
           EOF
@@ -198,7 +198,7 @@ jobs:
           HERE="$(dirname "$(readlink -f "${0}")")"
           export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
           export PATH="${HERE}/usr/bin:${PATH}"
-          exec "${HERE}/usr/bin/pacey" "$@"
+          exec "${HERE}/usr/bin/Pacey" "$@"
           EOF
           chmod +x AppImageDir/AppRun
           

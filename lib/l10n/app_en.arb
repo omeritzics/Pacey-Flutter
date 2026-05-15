@@ -12,7 +12,7 @@
   "strengthening": "Strengthening",
   "expansion": "Expansion",
   "currentEnergy": "Current Energy",
-  "tasksForEnergy": "Tasks for {energy} ⚡",
+  "tasksForEnergy": "Tasks for current energy level",
   "@tasksForEnergy": {
     "placeholders": {
       "energy": {
@@ -24,7 +24,7 @@
   "addTask": "Add Task",
   "editTask": "Edit Task",
   "taskTitle": "Task Title",
-  "energyCost": "Energy Cost",
+  "requiredEnergy": "Required Energy",
   "taskPriority": "Priority",
   "priorityHighest": "1 — Highest",
   "priorityHigh": "2 — High",
@@ -56,91 +56,30 @@
   "settings": "Settings",
   "about": "About",
   "aboutSubtitle": "Licenses and open source notices",
-  "aboutApplicationLegalese": "Copyright © 2026 The Pacey authors\n\nLicensed under the Apache License, Version 2.0. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0",
+  "aboutApplicationLegalese": "Copyright © 2026 Omer I.S. (@omeritzics)",
   "language": "Language",
   "selectLanguage": "Select Language",
   "darkMode": "Dark Mode",
   "followSystem": "Follow System",
   "lightMode": "Light Mode",
-  "p2pSync": "P2P Sync",
-  "syncSettings": "Sync Settings",
-  "connectionStatus": "Connection Status",
-  "connectedPeers": "Connected Peers",
-  "connectToPeer": "Connect to Peer",
-  "yourPeerId": "Your Peer ID",
-  "shareQrCode": "Share this QR code or ID with other devices to connect",
-  "enterPeerId": "Enter Peer ID",
-  "pastePeerId": "Paste the peer ID here",
-  "connect": "Connect",
-  "scanQr": "Scan QR",
-  "noPeersConnected": "No peers connected",
-  "disconnected": "Disconnected",
-  "connectedToP2P": "Connected to P2P network",
-  "peerConnected": "Peer connected",
-  "peerDisconnected": "Peer disconnected",
-  "syncingData": "Syncing data...",
-  "connectionRequest": "Connection Request",
-  "deviceWantsToConnect": "Device {peerId} wants to connect with you. Do you want to accept this connection?",
-  "accept": "Accept",
-  "reject": "Reject",
-  "connectionRejected": "Connection from {peerId} rejected",
-  "connectedTo": "Connected to {peerId}",
-  "cameraPermissionRequired": "Camera permission is required to scan QR codes",
-  "initializing": "Initializing...",
-  "connectedDevices": "Connected Devices",
-  "noDevicesConnected": "No devices connected",
-  "connectDevicesToSync": "Connect devices to start syncing data",
-  "online": "Online",
-  "peerIdLabel": "Peer ID: {peerId}",
-  "@peerIdLabel": {
+  "importExport": "Import / Export",
+  "importExportDescription": "Back up your tasks, energy logs, and progress to a JSON file, or restore from a backup.",
+  "exportData": "Export data",
+  "exportDataDescription": "Pacey backup file",
+  "importData": "Import data",
+  "importModeDescription": "Merge keeps your existing data and combines it with the backup. Replace deletes all local data before importing.",
+  "importMerge": "Merge",
+  "importReplace": "Replace all",
+  "exportFailed": "Export failed. Please try again.",
+  "importFailed": "Import failed. Please check the file and try again.",
+  "importSuccessful": "Imported {tasks} tasks and {logs} energy logs.",
+  "@importSuccessful": {
     "placeholders": {
-      "peerId": {
-        "type": "String"
-      }
-    }
-  },
-  "copyPeerId": "Copy Peer ID",
-  "disconnect": "Disconnect",
-  "disconnectDevice": "Disconnect Device",
-  "confirmDisconnect": "Are you sure you want to disconnect from {peerId}?",
-  "@confirmDisconnect": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
-      }
-    }
-  },
-  "deviceDisconnected": "Disconnected from {peerId}",
-  "@deviceDisconnected": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
-      }
-    }
-  },
-  "confirmConnect": "Connect to Device",
-  "confirmConnectMessage": "Are you sure you want to connect to device {peerId}?",
-  "@confirmConnectMessage": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
-      }
-    }
-  },
-  "connecting": "Connecting...",
-  "connectionSuccessful": "Successfully connected to {peerId}",
-  "@connectionSuccessful": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
-      }
-    }
-  },
-  "connectionFailed": "Failed to connect to {peerId}",
-  "@connectionFailed": {
-    "placeholders": {
-      "peerId": {
-        "type": "String"
+      "tasks": {
+        "type": "int"
+      },
+      "logs": {
+        "type": "int"
       }
     }
   },

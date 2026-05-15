@@ -30,7 +30,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String tasksForEnergy(int energy) {
-    return 'משימות עבור $energy ⚡';
+    return 'משימות לרמת האנרגיה הנוכחית';
   }
 
   @override
@@ -46,7 +46,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get taskTitle => 'שם המשימה';
 
   @override
-  String get energyCost => 'עלות אנרגיה';
+  String get requiredEnergy => 'רמת אנרגיה נדרשת';
 
   @override
   String get taskPriority => 'עדיפות';
@@ -125,7 +125,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get aboutApplicationLegalese =>
-      'Copyright © 2026 The Pacey authors\n\nLicensed under the Apache License, Version 2.0. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0';
+      'כל הזכויות שמורות© 2026 עומר א״ש (‎@omeritzics)';
 
   @override
   String get language => 'שפה';
@@ -143,142 +143,40 @@ class AppLocalizationsHe extends AppLocalizations {
   String get lightMode => 'מצב בהיר';
 
   @override
-  String get p2pSync => 'סנכרון P2P';
+  String get importExport => 'ייבוא / ייצוא';
 
   @override
-  String get syncSettings => 'הגדרות סנכרון';
+  String get importExportDescription =>
+      'גיבוי משימות, יומן אנרגיה והתקדמות לקובץ JSON, או שחזור מגיבוי.';
 
   @override
-  String get connectionStatus => 'מצב חיבור';
+  String get exportData => 'ייצוא נתונים';
 
   @override
-  String get connectedPeers => 'מכשירים מחוברים';
+  String get exportDataDescription => 'קובץ גיבוי Pacey';
 
   @override
-  String get connectToPeer => 'התחברות למכשיר';
+  String get importData => 'ייבוא נתונים';
 
   @override
-  String get yourPeerId => 'מזהה המכשיר שלך';
+  String get importModeDescription =>
+      'מיזוג שומר על הנתונים המקומיים ומשלב עם הגיבוי. החלפה מוחקת את כל הנתונים המקומיים לפני הייבוא.';
 
   @override
-  String get shareQrCode =>
-      'אפשר לשתף קוד QR זה או מזהה עם מכשירים אחרים כדי להתחבר';
+  String get importMerge => 'מיזוג';
 
   @override
-  String get enterPeerId => 'נא להכניס מזהה מכשיר';
+  String get importReplace => 'החלפת הכל';
 
   @override
-  String get pastePeerId => 'נא להדביק את מזהה המכשיר כאן';
+  String get exportFailed => 'הייצוא נכשל. נא לנסות שוב.';
 
   @override
-  String get connect => 'התחברות';
+  String get importFailed => 'הייבוא נכשל. נא לבדוק את הקובץ ולנסות שוב.';
 
   @override
-  String get scanQr => 'סריקת קוד QR';
-
-  @override
-  String get noPeersConnected => 'אין מכשירים מחוברים';
-
-  @override
-  String get disconnected => 'מנותק';
-
-  @override
-  String get connectedToP2P => 'מחובר לרשת P2P';
-
-  @override
-  String get peerConnected => 'המכשיר התחבר';
-
-  @override
-  String get peerDisconnected => 'המכשיר התנתק';
-
-  @override
-  String get syncingData => 'הנתונים מסתנכרנים...';
-
-  @override
-  String get connectionRequest => 'בקשת חיבור';
-
-  @override
-  String deviceWantsToConnect(Object peerId) {
-    return 'המכשיר $peerId רוצה להתחבר למכשירך. האם ברצונך לאשר חיבור זה?';
-  }
-
-  @override
-  String get accept => 'אישור';
-
-  @override
-  String get reject => 'דחייה';
-
-  @override
-  String connectionRejected(Object peerId) {
-    return 'החיבור מהמכשיר $peerId נדחה';
-  }
-
-  @override
-  String connectedTo(Object peerId) {
-    return 'מחובר אל $peerId';
-  }
-
-  @override
-  String get cameraPermissionRequired => 'נדרשת הרשאת מצלמה כדי לסרוק קודי QR';
-
-  @override
-  String get initializing => 'בתהליך אתחול...';
-
-  @override
-  String get connectedDevices => 'התקנים מחוברים';
-
-  @override
-  String get noDevicesConnected => 'אין מכשירים מחוברים';
-
-  @override
-  String get connectDevicesToSync => 'חבר מכשירים כדי להתחיל לסנכרן נתונים';
-
-  @override
-  String get online => 'באינטרנט';
-
-  @override
-  String peerIdLabel(String peerId) {
-    return 'מזהה עמית: $peerId';
-  }
-
-  @override
-  String get copyPeerId => 'העתק את מזהה עמיתים';
-
-  @override
-  String get disconnect => 'לְנַתֵק';
-
-  @override
-  String get disconnectDevice => 'נתק מכשיר';
-
-  @override
-  String confirmDisconnect(String peerId) {
-    return 'האם אתה בטוח שברצונך להתנתק מ-$peerId?';
-  }
-
-  @override
-  String deviceDisconnected(String peerId) {
-    return 'מנותק מ-$peerId';
-  }
-
-  @override
-  String get confirmConnect => 'התחבר למכשיר';
-
-  @override
-  String confirmConnectMessage(String peerId) {
-    return 'האם אתה בטוח שברצונך להתחבר למכשיר $peerId?';
-  }
-
-  @override
-  String get connecting => 'מתחבר...';
-
-  @override
-  String connectionSuccessful(String peerId) {
-    return 'התחברת בהצלחה ל-$peerId';
-  }
-
-  @override
-  String connectionFailed(String peerId) {
-    return 'ההתחברות ל-$peerId נכשלה';
+  String importSuccessful(int tasks, int logs) {
+    return 'יובאו $tasks משימות ו-$logs רשומות אנרגיה.';
   }
 
   @override

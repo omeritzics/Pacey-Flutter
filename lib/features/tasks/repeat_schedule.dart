@@ -25,8 +25,12 @@ DateTime _addOneCalendarMonthStartOfDay(DateTime startOfDay) {
     m = 1;
     y++;
   }
-  final lastDay = DateTime(y, m + 1, 0).day;
-  final day = startOfDay.day > lastDay ? lastDay : startOfDay.day;
+  // drift/dart DateTime(y, m+1, 0) gives the last day of month m.
+  // We want the last day of our target month 'm'.
+  final lastDayOfTargetMonth = DateTime(y, m + 1, 0).day;
+  final day = startOfDay.day > lastDayOfTargetMonth
+      ? lastDayOfTargetMonth
+      : startOfDay.day;
   return DateTime(y, m, day);
 }
 

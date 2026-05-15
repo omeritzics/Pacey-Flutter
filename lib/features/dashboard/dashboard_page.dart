@@ -211,7 +211,7 @@ class DashboardPage extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(l10n.energyCost),
+                Text(l10n.requiredEnergy),
                 Slider(
                   value: selectedEnergy.toDouble(),
                   min: 1,
@@ -252,8 +252,8 @@ class DashboardPage extends ConsumerWidget {
                   child: Text(
                     l10n.repeatCadenceHint,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                 ),
               ],
@@ -267,7 +267,9 @@ class DashboardPage extends ConsumerWidget {
             TextButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty) {
-                  ref.read(taskActionsProvider).addTask(
+                  ref
+                      .read(taskActionsProvider)
+                      .addTask(
                         titleController.text,
                         selectedEnergy,
                         priority: selectedPriority,
@@ -276,7 +278,7 @@ class DashboardPage extends ConsumerWidget {
                   Navigator.pop(context);
                 }
               },
-              child: Text(l10n.save),
+              child: Text(l10n.addTask),
             ),
           ],
         ),
@@ -305,19 +307,18 @@ class _EnergySelector extends StatelessWidget {
           runSpacing: 4.0,
           children: List.generate(10, (index) {
             final level = index + 1;
-            final isFilled = level <= currentLevel;
             return GestureDetector(
               onTap: () => onChanged(level),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                child: Text(
-                  '⚡',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontFamily: isFilled ? 'Noto Color Emoji' : 'Noto Emoji',
-                    // Fallback for visual clarity if fonts aren't perfectly distinct
-                    color: isFilled ? null : Colors.grey.withValues(alpha: 0.3),
-                  ),
+                child: Icon(
+                  Icons.bolt,
+                  size: 20,
+                  color: level <= currentLevel
+                      ? null
+                      : Theme.of(
+                          context,
+                        ).colorScheme.outline.withValues(alpha: 0.3),
                 ),
               ),
             );
@@ -378,25 +379,24 @@ class _TaskTile extends ConsumerWidget {
           ? Text(
               subtitleText,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
+                color: Theme.of(context).colorScheme.outline,
+              ),
             )
           : null,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           ...List.generate(
-            task.energyCost,
-            (_) => const Text(
-              '⚡',
-              style: TextStyle(fontSize: 20, fontFamily: 'Noto Color Emoji'),
-            ),
+            task.requiredEnergy,
+            (_) => const Icon(Icons.bolt, size: 24),
           ),
+          const SizedBox(width: 4),
+          const Icon(Icons.priority_high, size: 16),
           if (task.repeatInterval != 0) ...[
             const SizedBox(width: 4),
             Icon(
               Icons.repeat,
-              size: 20,
+              size: 8,
               color: Theme.of(context).colorScheme.outline,
             ),
           ],
@@ -416,7 +416,7 @@ class _TaskTile extends ConsumerWidget {
 
   void _showEditTaskDialog(BuildContext context, WidgetRef ref, Task task) {
     final titleController = TextEditingController(text: task.title);
-    int selectedEnergy = task.energyCost;
+    int selectedEnergy = task.requiredEnergy;
     int selectedPriority = task.priority;
     int selectedRepeat = task.repeatInterval;
     final l10n = AppLocalizations.of(context)!;
@@ -462,7 +462,7 @@ class _TaskTile extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(l10n.energyCost),
+                Text(l10n.requiredEnergy),
                 Slider(
                   value: selectedEnergy.toDouble(),
                   min: 1,
@@ -503,8 +503,8 @@ class _TaskTile extends ConsumerWidget {
                   child: Text(
                     l10n.repeatCadenceHint,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                 ),
               ],
@@ -518,7 +518,9 @@ class _TaskTile extends ConsumerWidget {
             TextButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty) {
-                  ref.read(taskActionsProvider).editTask(
+                  ref
+                      .read(taskActionsProvider)
+                      .editTask(
                         task.id,
                         titleController.text,
                         selectedEnergy,

@@ -4,7 +4,7 @@ import 'package:pacey/l10n/app_localizations.dart';
 import '../../core/localization/locale_provider.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/theme/theme_provider.dart';
-import '../p2p/p2p_screen.dart';
+import '../backup/data_backup_screen.dart';
 import '../gamification/gamification_provider.dart';
 import '../energy/energy_provider.dart';
 import '../tasks/task_provider.dart';
@@ -20,9 +20,7 @@ class SettingsPage extends ConsumerWidget {
     final effectiveLocale = localeNotifier.getEffectiveLocale();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settings),
-      ),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
           // Language Section
@@ -89,16 +87,16 @@ class SettingsPage extends ConsumerWidget {
           ),
           const Divider(),
 
-          // Sync Section
+          // Data backup
           ListTile(
-            title: Text(l10n.p2pSync),
-            subtitle: Text(l10n.syncSettings),
-            leading: const Icon(Icons.sync),
+            title: Text(l10n.importExport),
+            subtitle: Text(l10n.importExportDescription),
+            leading: const Icon(Icons.swap_vert),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const P2PScreen()),
+                MaterialPageRoute(builder: (context) => const DataBackupScreen()),
               );
             },
           ),
@@ -112,7 +110,6 @@ class SettingsPage extends ConsumerWidget {
                 context: context,
                 applicationName: l10n.appTitle,
                 applicationVersion: '1.0.0',
-                applicationLegalese: l10n.aboutApplicationLegalese,
               );
             },
           ),
@@ -192,9 +189,15 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  String _getLanguageDisplayText(Locale currentLocale, Locale effectiveLocale, AppLocalizations l10n) {
+  String _getLanguageDisplayText(
+    Locale currentLocale,
+    Locale effectiveLocale,
+    AppLocalizations l10n,
+  ) {
     if (currentLocale.languageCode == 'system') {
-      final effectiveLang = effectiveLocale.languageCode == 'en' ? 'English' : 'עברית';
+      final effectiveLang = effectiveLocale.languageCode == 'en'
+          ? 'English'
+          : 'עברית';
       return '${l10n.followSystem} ($effectiveLang)';
     } else {
       return currentLocale.languageCode == 'en' ? 'English' : 'עברית';

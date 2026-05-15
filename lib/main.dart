@@ -18,7 +18,8 @@ class EnergyPacingApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final localeNotifier = ref.watch(localeProvider.notifier);
+    ref.watch(localeProvider);
+    final localeNotifier = ref.read(localeProvider.notifier);
     final locale = localeNotifier.getEffectiveLocale();
     final themeMode = ref.watch(themeProvider);
 
@@ -42,6 +43,7 @@ class EnergyPacingApp extends ConsumerWidget {
         }
 
         return MaterialApp(
+          key: ValueKey(locale),
           onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
           locale: locale,
           debugShowCheckedModeBanner: false,

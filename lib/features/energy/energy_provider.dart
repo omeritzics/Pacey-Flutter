@@ -3,7 +3,6 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:uuid/uuid.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
-import '../../core/p2p/p2p_sync_provider.dart';
 import '../gamification/gamification_provider.dart';
 
 final energyLevelProvider = NotifierProvider<EnergyLevelNotifier, int>(() {
@@ -70,20 +69,14 @@ class EnergyLevelNotifier extends Notifier<int> {
     state = newLevel;
 
     final syncId = const Uuid().v4();
-    final energyLog = await db
-        .into(db.energyLogs)
-        .insertReturning(
-          EnergyLogsCompanion.insert(
-            syncId: Value(syncId),
-            level: newLevel,
-            timestamp: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
-
-    // Broadcast energy log to connected peers
-    final syncService = ref.read(p2pSyncServiceProvider);
-    syncService.broadcastEnergyLogCreated(energyLog);
+    await db.into(db.energyLogs).insert(
+      EnergyLogsCompanion.insert(
+        syncId: Value(syncId),
+        level: newLevel,
+        timestamp: Value(now),
+        updatedAt: Value(now),
+      ),
+    );
 
     // Gamification Rewards
     if (logsToday.isEmpty) {
