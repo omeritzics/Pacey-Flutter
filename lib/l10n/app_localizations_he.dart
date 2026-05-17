@@ -150,6 +150,16 @@ class AppLocalizationsHe extends AppLocalizations {
       'גיבוי משימות, יומן אנרגיה והתקדמות לקובץ JSON, או שחזור מגיבוי.';
 
   @override
+  String get autoExport => 'ייצוא אוטומטי';
+
+  @override
+  String get autoExportDescription =>
+      'ייצוא קובץ גיבוי אוטומטי בעת שינוי נתונים';
+
+  @override
+  String get selectDirectory => 'בחירת תיקייה';
+
+  @override
   String get exportData => 'ייצוא נתונים';
 
   @override
@@ -170,6 +180,9 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get exportFailed => 'הייצוא נכשל. נא לנסות שוב.';
+
+  @override
+  String get exportSuccessful => 'הנתונים יוצאו בהצלחה.';
 
   @override
   String get importFailed => 'הייבוא נכשל. נא לבדוק את הקובץ ולנסות שוב.';

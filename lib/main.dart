@@ -5,12 +5,23 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pacey/l10n/app_localizations.dart';
 import 'package:pacey/core/localization/locale_provider.dart';
 import 'package:pacey/core/theme/theme_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'core/backup/backup_settings_provider.dart';
 import 'features/dashboard/dashboard_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const ProviderScope(child: EnergyPacingApp()));
+  final prefs = await SharedPreferences.getInstance();
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: const EnergyPacingApp(),
+    ),
+  );
 }
 
 class EnergyPacingApp extends ConsumerWidget {

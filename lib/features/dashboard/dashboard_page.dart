@@ -62,7 +62,7 @@ class DashboardPage extends ConsumerWidget {
               );
             },
             icon: const Icon(Icons.settings),
-            tooltip: 'Settings',
+            tooltip: l10n.settings,
           ),
         ],
       ),

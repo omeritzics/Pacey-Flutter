@@ -4,10 +4,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pacey/l10n/app_localizations.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../core/backup/backup_provider.dart';
+import '../../core/backup/backup_settings_provider.dart';
 import '../../core/backup/backup_service.dart';
 import '../../core/database/database_provider.dart';
 import '../energy/energy_provider.dart';
@@ -33,16 +32,24 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
       final backupService = ref.read(backupServiceProvider);
       final json = await backupService.exportData(appDb);
 
-      final tempDir = await getTemporaryDirectory();
       final timestamp = DateTime.now().toUtc().toIso8601String().replaceAll(':', '-');
-      final file = File('${tempDir.path}/pacey-backup-$timestamp.json');
+      final fileName = 'pacey-backup-$timestamp.json';
+
+      final outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: l10n.exportData,
+        fileName: fileName,
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+
+      if (outputFile == null) return;
+
+      final file = File(outputFile);
       await file.writeAsString(json);
 
       if (!mounted) return;
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        subject: l10n.exportData,
-        text: l10n.exportDataDescription,
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.exportSuccessful)),
       );
     } on BackupException catch (e) {
       if (mounted) _showError(e.message);
@@ -172,6 +179,46 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
           if (_isWorking) ...[
             const SizedBox(height: 24),
             const Center(child: CircularProgressIndicator()),
+          ],
+          const SizedBox(height: 32),
+          const Divider(),
+          SwitchListTile(
+            title: Text(l10n.autoExport),
+            subtitle: Text(l10n.autoExportDescription),
+            value: ref.watch(backupSettingsProvider).isAutoExportEnabled,
+            onChanged: (value) {
+              ref.read(backupSettingsProvider.notifier).setAutoExportEnabled(value);
+            },
+            contentPadding: EdgeInsets.zero,
+          ),
+          if (ref.watch(backupSettingsProvider).isAutoExportEnabled) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    ref.watch(backupSettingsProvider).autoExportPath ?? 'Default Directory',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final directory = await FilePicker.platform.getDirectoryPath();
+                    if (directory != null) {
+                      final path = '$directory/pacey_auto_backup.json';
+                      await ref.read(backupSettingsProvider.notifier).setAutoExportPath(path);
+                      if (context.mounted) {
+                        ref.read(backupServiceProvider).autoExport(
+                              ref.read(databaseProvider),
+                              path: path,
+                            );
+                      }
+                    }
+                  },
+                  child: Text(l10n.selectDirectory),
+                ),
+              ],
+            ),
           ],
         ],
       ),

@@ -151,6 +151,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Back up your tasks, energy logs, and progress to a JSON file, or restore from a backup.';
 
   @override
+  String get autoExport => 'Auto-Export';
+
+  @override
+  String get autoExportDescription =>
+      'Automatically export a backup file when data changes';
+
+  @override
+  String get selectDirectory => 'Select Directory';
+
+  @override
   String get exportData => 'Export data';
 
   @override
@@ -171,6 +181,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportFailed => 'Export failed. Please try again.';
+
+  @override
+  String get exportSuccessful => 'Data exported successfully.';
 
   @override
   String get importFailed =>

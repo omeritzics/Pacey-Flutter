@@ -1,6 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import '../../core/backup/backup_settings_provider.dart';
+import '../../core/backup/backup_provider.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
 import '../energy/energy_provider.dart';
@@ -85,6 +88,13 @@ class TaskActions {
       'updated_at': now.millisecondsSinceEpoch,
       'created_at': now.millisecondsSinceEpoch,
     });
+    final settings = _ref.read(backupSettingsProvider);
+    if (settings.isAutoExportEnabled) {
+      _ref.read(backupServiceProvider).autoExport(
+            _ref.read(databaseProvider),
+            path: settings.autoExportPath,
+          );
+    }
   }
 
   Future<void> toggleTask(Task task) async {
@@ -139,6 +149,14 @@ class TaskActions {
         'updated_at': now.millisecondsSinceEpoch,
       });
 
+      final settings = _ref.read(backupSettingsProvider);
+      if (settings.isAutoExportEnabled) {
+        _ref.read(backupServiceProvider).autoExport(
+              _ref.read(databaseProvider),
+              path: settings.autoExportPath,
+            );
+      }
+
       return;
     }
 
@@ -163,6 +181,14 @@ class TaskActions {
       if (task.requiredEnergy <= currentEnergy) {
         await _ref.read(pacingStatsProvider.notifier).deductXp(20);
       }
+    }
+
+    final settings = _ref.read(backupSettingsProvider);
+    if (settings.isAutoExportEnabled) {
+      _ref.read(backupServiceProvider).autoExport(
+            _ref.read(databaseProvider),
+            path: settings.autoExportPath,
+          );
     }
   }
 
@@ -195,10 +221,26 @@ class TaskActions {
       where: 'id = ?',
       whereArgs: [id],
     );
+
+    final settings = _ref.read(backupSettingsProvider);
+    if (settings.isAutoExportEnabled) {
+      _ref.read(backupServiceProvider).autoExport(
+            _ref.read(databaseProvider),
+            path: settings.autoExportPath,
+          );
+    }
   }
 
   Future<void> deleteTask(String id) async {
     final db = await _ref.read(databaseProvider).database;
     await db.delete('tasks', where: 'id = ?', whereArgs: [id]);
+
+    final settings = _ref.read(backupSettingsProvider);
+    if (settings.isAutoExportEnabled) {
+      _ref.read(backupServiceProvider).autoExport(
+            _ref.read(databaseProvider),
+            path: settings.autoExportPath,
+          );
+    }
   }
 }

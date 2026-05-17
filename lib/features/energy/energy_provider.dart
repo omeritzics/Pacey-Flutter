@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import '../../core/backup/backup_provider.dart';
+import '../../core/backup/backup_settings_provider.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
 import '../gamification/gamification_provider.dart';
@@ -85,6 +87,14 @@ class EnergyLevelNotifier extends Notifier<int> {
     } else if (logsToday.length == 2) {
       // Third and final block log of the day
       await ref.read(pacingStatsProvider.notifier).addXp(50);
+    }
+
+    final settings = ref.read(backupSettingsProvider);
+    if (settings.isAutoExportEnabled) {
+      ref.read(backupServiceProvider).autoExport(
+            ref.read(databaseProvider),
+            path: settings.autoExportPath,
+          );
     }
 
     return true;

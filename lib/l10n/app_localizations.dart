@@ -362,6 +362,24 @@ abstract class AppLocalizations {
   /// **'Back up your tasks, energy logs, and progress to a JSON file, or restore from a backup.'**
   String get importExportDescription;
 
+  /// No description provided for @autoExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Export'**
+  String get autoExport;
+
+  /// No description provided for @autoExportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically export a backup file when data changes'**
+  String get autoExportDescription;
+
+  /// No description provided for @selectDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Directory'**
+  String get selectDirectory;
+
   /// No description provided for @exportData.
   ///
   /// In en, this message translates to:
@@ -403,6 +421,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export failed. Please try again.'**
   String get exportFailed;
+
+  /// No description provided for @exportSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Data exported successfully.'**
+  String get exportSuccessful;
 
   /// No description provided for @importFailed.
   ///

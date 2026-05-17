@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
 
 import '../../core/database/database.dart';
 
@@ -248,4 +251,23 @@ class BackupService {
     }
     return true;
   }
+
+  Future<void> autoExport(AppDatabase appDb, {String? path}) async {
+    try {
+      final json = await exportData(appDb);
+      
+      late final File file;
+      if (path != null) {
+        file = File(path);
+      } else {
+        final dir = await getApplicationDocumentsDirectory();
+        file = File('${dir.path}/pacey_auto_backup.json');
+      }
+      
+      await file.writeAsString(json);
+    } catch (e) {
+      // ignore
+    }
+  }
 }
+
