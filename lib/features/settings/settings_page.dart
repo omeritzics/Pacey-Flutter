@@ -5,7 +5,7 @@ import '../../core/localization/locale_provider.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/theme/theme_provider.dart';
 import '../backup/data_backup_screen.dart';
-import '../gamification/gamification_provider.dart';
+
 import '../energy/energy_provider.dart';
 import '../tasks/task_provider.dart';
 
@@ -160,15 +160,14 @@ class SettingsPage extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () async {
-              final db = ref.read(databaseProvider);
-              await db.transaction(() async {
-                await db.delete(db.tasks).go();
-                await db.delete(db.energyLogs).go();
-                await db.delete(db.pacingStats).go();
+              final appDb = ref.read(databaseProvider);
+              final db = await appDb.database;
+              await db.transaction((txn) async {
+                await txn.delete('tasks');
+                await txn.delete('energy_logs');
               });
 
               // Invalidate providers to refresh UI
-              ref.invalidate(pacingStatsProvider);
               ref.invalidate(energyLevelProvider);
               ref.invalidate(tasksProvider);
 

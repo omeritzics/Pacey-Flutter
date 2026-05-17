@@ -11,7 +11,7 @@ import '../../core/backup/backup_provider.dart';
 import '../../core/backup/backup_service.dart';
 import '../../core/database/database_provider.dart';
 import '../energy/energy_provider.dart';
-import '../gamification/gamification_provider.dart';
+
 import '../tasks/task_provider.dart';
 
 class DataBackupScreen extends ConsumerStatefulWidget {
@@ -29,9 +29,9 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
     setState(() => _isWorking = true);
 
     try {
-      final db = ref.read(databaseProvider);
+      final appDb = ref.read(databaseProvider);
       final backupService = ref.read(backupServiceProvider);
-      final json = await backupService.exportData(db);
+      final json = await backupService.exportData(appDb);
 
       final tempDir = await getTemporaryDirectory();
       final timestamp = DateTime.now().toUtc().toIso8601String().replaceAll(':', '-');
@@ -78,15 +78,15 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
           ? String.fromCharCodes(bytes)
           : await File(file.path!).readAsString();
 
-      final db = ref.read(databaseProvider);
+      final appDb = ref.read(databaseProvider);
       final backupService = ref.read(backupServiceProvider);
       final importResult = await backupService.importData(
-        db,
+        appDb,
         jsonString,
         mode: mode,
       );
 
-      ref.invalidate(pacingStatsProvider);
+
       ref.invalidate(energyLevelProvider);
       ref.invalidate(tasksProvider);
 

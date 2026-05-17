@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:drift/drift.dart' hide Column;
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
 import 'package:intl/intl.dart';
@@ -11,20 +10,26 @@ import 'package:pacey/l10n/app_localizations.dart';
 class HistoryPage extends ConsumerWidget {
   const HistoryPage({super.key});
 
+  Future<List<EnergyLog>> _fetchLogs(AppDatabase appDb) async {
+    final db = await appDb.database;
+    final rows = await db.query(
+      'energy_logs',
+      orderBy: 'timestamp DESC',
+      limit: 50,
+    );
+    return rows.map(EnergyLog.fromMap).toList();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final db = ref.watch(databaseProvider);
+    final appDb = ref.watch(databaseProvider);
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).toString();
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.history), centerTitle: true),
       body: FutureBuilder<List<EnergyLog>>(
-        future:
-            (db.select(db.energyLogs)
-                  ..orderBy([(t) => OrderingTerm.desc(t.timestamp)])
-                  ..limit(50))
-                .get(),
+        future: _fetchLogs(appDb),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -95,7 +100,7 @@ class HistoryPage extends ConsumerWidget {
                             locale,
                           ).format(log.timestamp),
                         ),
-                        trailing: const Icon(Icons.bolt, size: 24),
+                        trailing: const Icon(Icons.bolt, size: 28),
                       );
                     },
                   ),

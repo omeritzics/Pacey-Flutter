@@ -7,7 +7,7 @@ import '../tasks/task_provider.dart';
 import '../tasks/repeat_schedule.dart';
 import '../../core/database/database.dart';
 import '../history/history_page.dart';
-import '../gamification/gamification_provider.dart';
+
 import '../settings/settings_page.dart';
 
 String _priorityMenuLabel(AppLocalizations l10n, int level) {
@@ -67,12 +67,6 @@ class DashboardPage extends ConsumerWidget {
       ),
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: const _HealingProgress(),
-            ),
-          ),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -388,25 +382,23 @@ class _TaskTile extends ConsumerWidget {
         children: [
           ...List.generate(
             task.requiredEnergy,
-            (_) => const Icon(Icons.bolt, size: 24),
+            (_) => const Icon(Icons.bolt, size: 16),
           ),
-          const SizedBox(width: 4),
-          const Icon(Icons.priority_high, size: 16),
           if (task.repeatInterval != 0) ...[
             const SizedBox(width: 4),
             Icon(
               Icons.repeat,
-              size: 8,
+              size: 16,
               color: Theme.of(context).colorScheme.outline,
             ),
           ],
           const SizedBox(width: 8),
           IconButton(
-            icon: const Icon(Icons.edit_outlined, size: 20),
+            icon: const Icon(Icons.edit_outlined, size: 24),
             onPressed: () => _showEditTaskDialog(context, ref, task),
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline, size: 20),
+            icon: const Icon(Icons.delete_outline, size: 24),
             onPressed: () => ref.read(taskActionsProvider).deleteTask(task.id),
           ),
         ],
@@ -535,72 +527,6 @@ class _TaskTile extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _HealingProgress extends ConsumerWidget {
-  const _HealingProgress();
-
-  String _getLevelName(BuildContext context, int level) {
-    final l10n = AppLocalizations.of(context)!;
-    if (level <= 5) return l10n.stabilization;
-    if (level <= 15) return l10n.strengthening;
-    return l10n.expansion;
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final stats = ref.watch(pacingStatsProvider);
-    final notifier = ref.read(pacingStatsProvider.notifier);
-    final l10n = AppLocalizations.of(context)!;
-
-    if (stats == null) return const SizedBox.shrink();
-
-    final progress = notifier.getLevelProgress(stats.xp);
-    final levelName = _getLevelName(context, stats.healingLevel);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              l10n.healingLevel(stats.healingLevel),
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              levelName,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: LinearProgressIndicator(
-            value: progress,
-            minHeight: 12,
-            backgroundColor: Theme.of(
-              context,
-            ).colorScheme.surfaceContainerHighest,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            '${stats.xp} XP',
-            style: Theme.of(context).textTheme.labelSmall,
-          ),
-        ),
-      ],
     );
   }
 }

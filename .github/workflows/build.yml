@@ -182,7 +182,7 @@ jobs:
           cp -r build/linux/x64/release/bundle/* AppImageDir/usr/bin/
           
           # Create desktop file
-          cat > AppImageDir/pacey.desktop << EOF
+          cat > AppImageDir/Pacey.desktop << EOF
           [Desktop Entry]
           Name=Pacey
           Comment=Energy pacing application

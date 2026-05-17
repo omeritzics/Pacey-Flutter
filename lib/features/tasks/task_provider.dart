@@ -1,15 +1,34 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import 'package:drift/drift.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
 import '../energy/energy_provider.dart';
-import '../gamification/gamification_provider.dart';
 import 'repeat_schedule.dart';
 
+/// Polls the tasks table and emits updates.
 final tasksProvider = StreamProvider<List<Task>>((ref) {
-  final db = ref.watch(databaseProvider);
-  return db.select(db.tasks).watch();
+  final appDb = ref.watch(databaseProvider);
+  // sqflite has no built-in watch(); poll every 500ms.
+  final controller = StreamController<List<Task>>();
+
+  Timer? timer;
+
+  Future<void> fetch() async {
+    final db = await appDb.database;
+    final rows = await db.query('tasks');
+    controller.add(rows.map(Task.fromMap).toList());
+  }
+
+  fetch(); // initial load
+  timer = Timer.periodic(const Duration(milliseconds: 500), (_) => fetch());
+
+  ref.onDispose(() {
+    timer?.cancel();
+    controller.close();
+  });
+
+  return controller.stream;
 });
 
 final filteredTasksProvider = Provider<List<Task>>((ref) {
@@ -48,29 +67,27 @@ class TaskActions {
     int priority = 4,
     int repeatInterval = 0,
   }) async {
-    final db = _ref.read(databaseProvider);
+    final db = await _ref.read(databaseProvider).database;
 
     final taskId = _uuid.v4();
     final now = DateTime.now();
     final p = _clampPriority(priority);
     final r = _clampRepeatInterval(repeatInterval);
-    await db
-        .into(db.tasks)
-        .insert(
-          TasksCompanion.insert(
-            id: taskId,
-            title: title,
-            requiredEnergy: requiredEnergy,
-            priority: Value(p),
-            repeatInterval: Value(r),
-            updatedAt: Value(now),
-          ),
-        );
 
+    await db.insert('tasks', {
+      'id': taskId,
+      'title': title,
+      'required_energy': requiredEnergy,
+      'priority': p,
+      'repeat_interval': r,
+      'is_completed': 0,
+      'updated_at': now.millisecondsSinceEpoch,
+      'created_at': now.millisecondsSinceEpoch,
+    });
   }
 
   Future<void> toggleTask(Task task) async {
-    final db = _ref.read(databaseProvider);
+    final db = await _ref.read(databaseProvider).database;
     final isNowCompleted = !task.isCompleted;
     final now = DateTime.now();
 
@@ -86,57 +103,45 @@ class TaskActions {
     }
 
     if (isNowCompleted && task.repeatInterval != 0) {
-      // Mark original as completed and update its timestamp
-      await (db.update(db.tasks)..where((t) => t.id.equals(task.id))).write(
-        TasksCompanion(isCompleted: const Value(true), updatedAt: Value(now)),
+      // Mark original as completed
+      await db.update(
+        'tasks',
+        {
+          'is_completed': 1,
+          'updated_at': now.millisecondsSinceEpoch,
+        },
+        where: 'id = ?',
+        whereArgs: [task.id],
       );
-
-      // Award XP
-      final currentEnergy = _ref.read(energyLevelProvider);
-      if (task.requiredEnergy <= currentEnergy) {
-        await _ref.read(pacingStatsProvider.notifier).addXp(20);
-      } else {
-        await _ref.read(pacingStatsProvider.notifier).deductXp(30);
-      }
 
       // Create the NEXT occurrence of this task
       final newId = _uuid.v4();
       final nextAt = nextBoundaryAfterCompletion(now, task.repeatInterval);
-      await db
-          .into(db.tasks)
-          .insert(
-            TasksCompanion.insert(
-              id: newId,
-              title: task.title,
-              requiredEnergy: task.requiredEnergy,
-              priority: Value(task.priority),
-              repeatInterval: Value(task.repeatInterval),
-              nextAllowedCompletionAt: Value(nextAt),
-              isCompleted: const Value(false),
-              createdAt: Value(now),
-              updatedAt: Value(now),
-            ),
-          );
+
+      await db.insert('tasks', {
+        'id': newId,
+        'title': task.title,
+        'required_energy': task.requiredEnergy,
+        'priority': task.priority,
+        'repeat_interval': task.repeatInterval,
+        'next_allowed_completion_at': nextAt?.millisecondsSinceEpoch,
+        'is_completed': 0,
+        'created_at': now.millisecondsSinceEpoch,
+        'updated_at': now.millisecondsSinceEpoch,
+      });
 
       return;
     }
 
-    await (db.update(db.tasks)..where((t) => t.id.equals(task.id))).write(
-      TasksCompanion(isCompleted: Value(isNowCompleted), updatedAt: Value(now)),
+    await db.update(
+      'tasks',
+      {
+        'is_completed': isNowCompleted ? 1 : 0,
+        'updated_at': now.millisecondsSinceEpoch,
+      },
+      where: 'id = ?',
+      whereArgs: [task.id],
     );
-
-    final currentEnergy = _ref.read(energyLevelProvider);
-    if (isNowCompleted) {
-      if (task.requiredEnergy <= currentEnergy) {
-        await _ref.read(pacingStatsProvider.notifier).addXp(20);
-      } else {
-        await _ref.read(pacingStatsProvider.notifier).deductXp(30);
-      }
-    } else {
-      if (task.requiredEnergy <= currentEnergy) {
-        await _ref.read(pacingStatsProvider.notifier).deductXp(20);
-      }
-    }
   }
 
   Future<void> editTask(
@@ -146,29 +151,32 @@ class TaskActions {
     required int priority,
     required int repeatInterval,
   }) async {
-    final db = _ref.read(databaseProvider);
+    final db = await _ref.read(databaseProvider).database;
     final p = _clampPriority(priority);
     final r = _clampRepeatInterval(repeatInterval);
     final now = DateTime.now();
 
-    await (db.update(db.tasks)..where((t) => t.id.equals(id))).write(
-      TasksCompanion(
-        title: Value(title),
-        requiredEnergy: Value(requiredEnergy),
-        priority: Value(p),
-        repeatInterval: Value(r),
-        nextAllowedCompletionAt: r == 0
-            ? const Value(null)
-            : const Value.absent(),
-        updatedAt: Value(now),
-      ),
-    );
+    final values = <String, dynamic>{
+      'title': title,
+      'required_energy': requiredEnergy,
+      'priority': p,
+      'repeat_interval': r,
+      'updated_at': now.millisecondsSinceEpoch,
+    };
+    if (r == 0) {
+      values['next_allowed_completion_at'] = null;
+    }
 
+    await db.update(
+      'tasks',
+      values,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<void> deleteTask(String id) async {
-    final db = _ref.read(databaseProvider);
-
-    await (db.delete(db.tasks)..where((t) => t.id.equals(id))).go();
+    final db = await _ref.read(databaseProvider).database;
+    await db.delete('tasks', where: 'id = ?', whereArgs: [id]);
   }
 }
