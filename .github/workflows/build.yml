@@ -38,9 +38,6 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
-      - name: Generate code
-        run: flutter packages pub run build_runner build --delete-conflicting-outputs
-
       - name: Upload source artifacts
         uses: actions/upload-artifact@main
         with:
@@ -344,7 +341,7 @@ jobs:
             artifacts/pacey-ios/Pacey.app
           generate_release_notes: true
           draft: false
-          prerelease: false
+          prerelease: true
           replace_existing_tag: true
           fail_on_unmatched_files: false
         env:
