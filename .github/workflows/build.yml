@@ -200,11 +200,11 @@ jobs:
           chmod +x AppImageDir/AppRun
           
           # Create icon using ImageMagick (now pre-installed)
-          convert -size 256x256 xc:blue -fill white -gravity center -pointsize 32 -annotate +0+0 "Pacey" AppImageDir/pacey.png || \
+          convert -size 256x256 xc:blue -fill white -gravity center -pointsize 48 -annotate +0+0 "Pacey" AppImageDir/Pacey.png || \
           # Fallback: create a simple colored square
-          convert -size 256x256 xc:blue AppImageDir/pacey.png || \
+          convert -size 256x256 xc:blue AppImageDir/Pacey.png || \
           # Final fallback: copy AppRun as placeholder
-          cp AppImageDir/AppRun AppImageDir/pacey.png
+          cp AppImageDir/AppRun AppImageDir/Pacey.png
           
           # Build AppImage using extracted tool
           ./appimagetool/AppRun AppImageDir Pacey-x86_64.AppImage
