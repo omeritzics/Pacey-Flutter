@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
 import '../energy/energy_provider.dart';
+import '../gamification/gamification_provider.dart';
 import 'repeat_schedule.dart';
 
 /// Polls the tasks table and emits updates.
@@ -114,6 +115,14 @@ class TaskActions {
         whereArgs: [task.id],
       );
 
+      // Award XP
+      final currentEnergy = _ref.read(energyLevelProvider);
+      if (task.requiredEnergy <= currentEnergy) {
+        await _ref.read(pacingStatsProvider.notifier).addXp(20);
+      } else {
+        await _ref.read(pacingStatsProvider.notifier).deductXp(30);
+      }
+
       // Create the NEXT occurrence of this task
       final newId = _uuid.v4();
       final nextAt = nextBoundaryAfterCompletion(now, task.repeatInterval);
@@ -142,6 +151,19 @@ class TaskActions {
       where: 'id = ?',
       whereArgs: [task.id],
     );
+
+    final currentEnergy = _ref.read(energyLevelProvider);
+    if (isNowCompleted) {
+      if (task.requiredEnergy <= currentEnergy) {
+        await _ref.read(pacingStatsProvider.notifier).addXp(20);
+      } else {
+        await _ref.read(pacingStatsProvider.notifier).deductXp(30);
+      }
+    } else {
+      if (task.requiredEnergy <= currentEnergy) {
+        await _ref.read(pacingStatsProvider.notifier).deductXp(20);
+      }
+    }
   }
 
   Future<void> editTask(

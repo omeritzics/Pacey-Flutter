@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 // ---------------------------------------------------------------------------
 // Schema version – increment whenever the on-disk schema changes.
 // ---------------------------------------------------------------------------
-const kCurrentSchemaVersion = 6;
+const kCurrentSchemaVersion = 7;
 
 // ---------------------------------------------------------------------------
 // Model classes
@@ -138,6 +138,67 @@ class EnergyLog {
   }
 }
 
+class PacingStats {
+  final int id;
+  final int xp;
+  final int healingLevel;
+  final int currentStreak;
+  final DateTime? lastLogDate;
+  final DateTime? updatedAt;
+
+  const PacingStats({
+    required this.id,
+    this.xp = 0,
+    this.healingLevel = 1,
+    this.currentStreak = 0,
+    this.lastLogDate,
+    this.updatedAt,
+  });
+
+  factory PacingStats.fromMap(Map<String, dynamic> map) {
+    return PacingStats(
+      id: map['id'] as int,
+      xp: map['xp'] as int,
+      healingLevel: map['healing_level'] as int,
+      currentStreak: map['current_streak'] as int,
+      lastLogDate: map['last_log_date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['last_log_date'] as int)
+          : null,
+      updatedAt: map['updated_at'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['updated_at'] as int)
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'xp': xp,
+      'healing_level': healingLevel,
+      'current_streak': currentStreak,
+      'last_log_date': lastLogDate?.millisecondsSinceEpoch,
+      'updated_at': updatedAt?.millisecondsSinceEpoch,
+    };
+  }
+
+  PacingStats copyWith({
+    int? xp,
+    int? healingLevel,
+    int? currentStreak,
+    DateTime? lastLogDate,
+    DateTime? updatedAt,
+  }) {
+    return PacingStats(
+      id: id,
+      xp: xp ?? this.xp,
+      healingLevel: healingLevel ?? this.healingLevel,
+      currentStreak: currentStreak ?? this.currentStreak,
+      lastLogDate: lastLogDate ?? this.lastLogDate,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Database
 // ---------------------------------------------------------------------------
@@ -193,6 +254,16 @@ class AppDatabase {
             updated_at INTEGER
           )
         ''');
+        await db.execute('''
+          CREATE TABLE pacing_stats (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            xp INTEGER NOT NULL DEFAULT 0,
+            healing_level INTEGER NOT NULL DEFAULT 1,
+            current_streak INTEGER NOT NULL DEFAULT 0,
+            last_log_date INTEGER,
+            updated_at INTEGER
+          )
+        ''');
       },
       onUpgrade: (db, from, to) async {
         if (from < 3) {
@@ -212,8 +283,21 @@ class AppDatabase {
               db, 'tasks', 'next_allowed_completion_at', 'INTEGER');
         }
         if (from < 6) {
-          // v6: Dropped PacingStats table (gamification removed).
+          // v6: Dropped PacingStats table (gamification removed) - but we restore it in v7!
           await db.execute('DROP TABLE IF EXISTS pacing_stats');
+        }
+        if (from < 7) {
+          // v7: Restored PacingStats table!
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS pacing_stats (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              xp INTEGER NOT NULL DEFAULT 0,
+              healing_level INTEGER NOT NULL DEFAULT 1,
+              current_streak INTEGER NOT NULL DEFAULT 0,
+              last_log_date INTEGER,
+              updated_at INTEGER
+            )
+          ''');
         }
       },
       onOpen: (db) async {

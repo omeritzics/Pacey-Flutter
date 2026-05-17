@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
+import '../gamification/gamification_provider.dart';
 
 final energyLevelProvider = NotifierProvider<EnergyLevelNotifier, int>(() {
   return EnergyLevelNotifier();
@@ -76,6 +77,15 @@ class EnergyLevelNotifier extends Notifier<int> {
       'timestamp': now.millisecondsSinceEpoch,
       'updated_at': now.millisecondsSinceEpoch,
     });
+
+    // Gamification Rewards
+    if (logsToday.isEmpty) {
+      // First log of the day (Morning or whenever they wake up)
+      await ref.read(pacingStatsProvider.notifier).addXp(10);
+    } else if (logsToday.length == 2) {
+      // Third and final block log of the day
+      await ref.read(pacingStatsProvider.notifier).addXp(50);
+    }
 
     return true;
   }
