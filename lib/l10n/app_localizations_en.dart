@@ -158,6 +158,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Automatically export a backup file when data changes';
 
   @override
+  String get autoImport => 'Auto-Import';
+
+  @override
+  String get autoImportDescription =>
+      'Automatically import data from a backup file when the app is opened';
+
+  @override
   String get selectDirectory => 'Select Directory';
 
   @override

@@ -66,6 +66,8 @@
   "importExportDescription": "Back up your tasks, energy logs, and progress to a JSON file, or restore from a backup.",
   "autoExport": "Auto-Export",
   "autoExportDescription": "Automatically export a backup file when data changes",
+  "autoImport": "Auto-Import",
+  "autoImportDescription": "Automatically import data from a backup file when the app is opened",
   "selectDirectory": "Select Directory",
   "exportData": "Export data",
   "exportDataDescription": "Pacey backup file",

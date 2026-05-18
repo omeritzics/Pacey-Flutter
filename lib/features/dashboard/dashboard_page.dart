@@ -6,6 +6,9 @@ import '../energy/energy_provider.dart';
 import '../tasks/task_provider.dart';
 import '../tasks/repeat_schedule.dart';
 import '../../core/database/database.dart';
+import '../../core/backup/backup_provider.dart';
+import '../../core/backup/backup_settings_provider.dart';
+import '../../core/database/database_provider.dart';
 import '../history/history_page.dart';
 import '../gamification/gamification_provider.dart';
 
@@ -41,11 +44,50 @@ String _repeatCadenceLabel(AppLocalizations l10n, int code) {
   }
 }
 
-class DashboardPage extends ConsumerWidget {
+class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends ConsumerState<DashboardPage> {
+  Future<void> _maybeAutoImport(BuildContext context) async {
+    final settings = ref.read(backupSettingsProvider);
+    if (!settings.isAutoImportEnabled) return;
+
+    final path = settings.autoImportPath;
+    final appDb = ref.read(databaseProvider);
+    final service = ref.read(backupServiceProvider);
+    final result = await service.importFromFolder(appDb, path: path);
+
+    if (!context.mounted || result == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final bool imported = (result.tasksImported + result.energyLogsImported) != 0;
+
+    if (imported) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.importSuccessful(
+              result.tasksImported,
+              result.energyLogsImported,
+            ),
+          ),
+        ),
+      );
+      ref.invalidate(energyLevelProvider);
+      ref.invalidate(tasksProvider);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _maybeAutoImport(context);
+    });
+
     final energyLevel = ref.watch(energyLevelProvider);
     final tasks = ref.watch(filteredTasksProvider);
     final l10n = AppLocalizations.of(context)!;
@@ -312,9 +354,9 @@ class _EnergySelector extends StatelessWidget {
               onTap: () => onChanged(level),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                child: Icon(
+                 child: Icon(
                   Icons.bolt,
-                  size: 20,
+                  size: 32,
                   color: level <= currentLevel
                       ? null
                       : Theme.of(

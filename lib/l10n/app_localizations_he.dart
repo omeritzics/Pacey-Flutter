@@ -157,6 +157,13 @@ class AppLocalizationsHe extends AppLocalizations {
       'ייצוא קובץ גיבוי אוטומטי בעת שינוי נתונים';
 
   @override
+  String get autoImport => 'Auto-Import';
+
+  @override
+  String get autoImportDescription =>
+      'Automatically import data from a backup file when the app is opened';
+
+  @override
   String get selectDirectory => 'בחירת תיקייה';
 
   @override

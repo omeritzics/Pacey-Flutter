@@ -374,6 +374,18 @@ abstract class AppLocalizations {
   /// **'Automatically export a backup file when data changes'**
   String get autoExportDescription;
 
+  /// No description provided for @autoImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Import'**
+  String get autoImport;
+
+  /// No description provided for @autoImportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically import data from a backup file when the app is opened'**
+  String get autoImportDescription;
+
   /// No description provided for @selectDirectory.
   ///
   /// In en, this message translates to:

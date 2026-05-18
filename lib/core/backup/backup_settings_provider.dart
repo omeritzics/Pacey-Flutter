@@ -8,22 +8,33 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 class BackupSettings {
   final bool isAutoExportEnabled;
   final String? autoExportPath;
+  final bool isAutoImportEnabled;
+  final String? autoImportPath;
 
   const BackupSettings({
     this.isAutoExportEnabled = false,
     this.autoExportPath,
+    this.isAutoImportEnabled = false,
+    this.autoImportPath,
   });
 
   BackupSettings copyWith({
     bool? isAutoExportEnabled,
     String? autoExportPath,
     bool clearAutoExportPath = false,
+    bool? isAutoImportEnabled,
+    String? autoImportPath,
+    bool clearAutoImportPath = false,
   }) {
     return BackupSettings(
       isAutoExportEnabled: isAutoExportEnabled ?? this.isAutoExportEnabled,
       autoExportPath: clearAutoExportPath
           ? null
           : (autoExportPath ?? this.autoExportPath),
+      isAutoImportEnabled: isAutoImportEnabled ?? this.isAutoImportEnabled,
+      autoImportPath: clearAutoImportPath
+          ? null
+          : (autoImportPath ?? this.autoImportPath),
     );
   }
 }
@@ -31,6 +42,8 @@ class BackupSettings {
 class BackupSettingsNotifier extends Notifier<BackupSettings> {
   static const _keyEnabled = 'autoExportEnabled';
   static const _keyPath = 'autoExportPath';
+  static const _keyAutoImportEnabled = 'autoImportEnabled';
+  static const _keyAutoImportPath = 'autoImportPath';
 
   @override
   BackupSettings build() {
@@ -38,6 +51,8 @@ class BackupSettingsNotifier extends Notifier<BackupSettings> {
     return BackupSettings(
       isAutoExportEnabled: prefs.getBool(_keyEnabled) ?? false,
       autoExportPath: prefs.getString(_keyPath),
+      isAutoImportEnabled: prefs.getBool(_keyAutoImportEnabled) ?? false,
+      autoImportPath: prefs.getString(_keyAutoImportPath),
     );
   }
 
@@ -55,6 +70,23 @@ class BackupSettingsNotifier extends Notifier<BackupSettings> {
     } else {
       await prefs.setString(_keyPath, path);
       state = state.copyWith(autoExportPath: path);
+    }
+  }
+
+  Future<void> setAutoImportEnabled(bool enabled) async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    await prefs.setBool(_keyAutoImportEnabled, enabled);
+    state = state.copyWith(isAutoImportEnabled: enabled);
+  }
+
+  Future<void> setAutoImportPath(String? path) async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    if (path == null) {
+      await prefs.remove(_keyAutoImportPath);
+      state = state.copyWith(clearAutoImportPath: true);
+    } else {
+      await prefs.setString(_keyAutoImportPath, path);
+      state = state.copyWith(autoImportPath: path);
     }
   }
 }

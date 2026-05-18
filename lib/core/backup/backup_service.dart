@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../core/database/database.dart';
@@ -273,8 +274,27 @@ class BackupService {
       await file.writeAsString(json);
     } catch (e) {
       // Log the error for debugging
-      print('Auto export failed: $e');
+      if (kDebugMode) print('Auto export failed: $e');
     }
+  }
+
+  Future<BackupImportResult?> importFromFolder(
+    AppDatabase appDb, {
+    String? path,
+    ImportMode mode = ImportMode.merge,
+  }) async {
+    late final File file;
+    if (path != null) {
+      file = File(path);
+    } else {
+      final dir = await getApplicationDocumentsDirectory();
+      file = File('${dir.path}/pacey_auto_backup.json');
+    }
+
+    if (!await file.exists()) return null;
+
+    final jsonString = await file.readAsString();
+    return importData(appDb, jsonString, mode: mode);
   }
 }
 

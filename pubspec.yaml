@@ -9,8 +9,10 @@ environment:
 flutter_launcher_icons:
   android: true
   ios: true
-  macos: true
-  windows: true
+  macos:
+    enabled: true
+  windows:
+    enabled: true
   image_path: "assets/images/icon_master_flat.png"
   adaptive_icon_background: "#ffffff"
   adaptive_icon_foreground: "assets/images/icon_foreground.png"

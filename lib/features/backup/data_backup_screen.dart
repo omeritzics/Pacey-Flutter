@@ -220,6 +220,40 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
               ],
             ),
           ],
+          const SizedBox(height: 16),
+          SwitchListTile(
+            title: Text(l10n.autoImport),
+            subtitle: Text(l10n.autoImportDescription),
+            value: ref.watch(backupSettingsProvider).isAutoImportEnabled,
+            onChanged: (value) {
+              ref.read(backupSettingsProvider.notifier).setAutoImportEnabled(value);
+            },
+            contentPadding: EdgeInsets.zero,
+          ),
+          if (ref.watch(backupSettingsProvider).isAutoImportEnabled) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    ref.watch(backupSettingsProvider).autoImportPath ??
+                        'Default Directory',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final directory = await FilePicker.platform.getDirectoryPath();
+                    if (directory != null) {
+                      final path = '$directory/pacey_auto_backup.json';
+                      await ref.read(backupSettingsProvider.notifier).setAutoImportPath(path);
+                    }
+                  },
+                  child: Text(l10n.selectDirectory),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
