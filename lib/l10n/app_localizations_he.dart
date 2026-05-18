@@ -109,7 +109,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get tasks => 'משימות';
 
   @override
-  String get noHistory => 'אין עדיין היסטוריה מתועדת.';
+  String get noHistory => 'עדיין אין היסטוריה מתועדת.';
 
   @override
   String get energyUpdate => 'עדכון רמת אנרגיה';
@@ -150,6 +150,26 @@ class AppLocalizationsHe extends AppLocalizations {
       'גיבוי משימות, יומן אנרגיה והתקדמות לקובץ JSON, או שחזור מגיבוי.';
 
   @override
+  String get hideCompletedTasks => 'הסתרת משימות שהושלמו';
+
+  @override
+  String get hideCompletedTasksDescription =>
+      'הימנעות מהצגת משימות שהושלמו בלוח המחוונים';
+
+  @override
+  String get hideUnavailableTasks => 'הסתרת משימות שאינן זמינות';
+
+  @override
+  String get hideUnavailableTasksDescription =>
+      'הימנעות מהצגת משימות חוזרות של יום אחר';
+
+  @override
+  String get repeatDays => 'ימים לחזרה';
+
+  @override
+  String get selectWeekDays => 'בחירת ימים בשבוע';
+
+  @override
   String get autoExport => 'ייצוא אוטומטי';
 
   @override
@@ -170,7 +190,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get exportData => 'ייצוא נתונים';
 
   @override
-  String get exportDataDescription => 'קובץ גיבוי Pacey';
+  String get exportDataDescription => 'קובץ גיבוי של Pacey';
 
   @override
   String get importData => 'ייבוא נתונים';
@@ -209,7 +229,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get resetDataDescription => 'מחיקת כל המשימות, היומנים והסטטיסטיקות';
 
   @override
-  String get confirmReset => 'איפוס כל הנתונים?';
+  String get confirmReset => 'לאפס את כל הנתונים?';
 
   @override
   String get confirmResetMessage =>

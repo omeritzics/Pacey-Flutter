@@ -362,6 +362,42 @@ abstract class AppLocalizations {
   /// **'Back up your tasks, energy logs, and progress to a JSON file, or restore from a backup.'**
   String get importExportDescription;
 
+  /// No description provided for @hideCompletedTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide completed tasks'**
+  String get hideCompletedTasks;
+
+  /// No description provided for @hideCompletedTasksDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not show completed tasks on the dashboard'**
+  String get hideCompletedTasksDescription;
+
+  /// No description provided for @hideUnavailableTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide unavailable tasks'**
+  String get hideUnavailableTasks;
+
+  /// No description provided for @hideUnavailableTasksDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not show repeating tasks of another day'**
+  String get hideUnavailableTasksDescription;
+
+  /// No description provided for @repeatDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat Days'**
+  String get repeatDays;
+
+  /// No description provided for @selectWeekDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Select weekdays'**
+  String get selectWeekDays;
+
   /// No description provided for @autoExport.
   ///
   /// In en, this message translates to:

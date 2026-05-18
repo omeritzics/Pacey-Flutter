@@ -1,5 +1,5 @@
 name: pacey
-description: "A pacing app"
+description: "A simple energy management application for people with CFS/ME."
 publish_to: 'none'
 version: 1.0.0+1
 

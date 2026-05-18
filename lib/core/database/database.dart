@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 // ---------------------------------------------------------------------------
 // Schema version – increment whenever the on-disk schema changes.
 // ---------------------------------------------------------------------------
-const kCurrentSchemaVersion = 7;
+const kCurrentSchemaVersion = 8;
 
 // ---------------------------------------------------------------------------
 // Model classes
@@ -23,6 +23,7 @@ class Task {
   final bool isCompleted;
   final DateTime? updatedAt;
   final DateTime createdAt;
+  final String? repeatDays;
 
   const Task({
     required this.id,
@@ -34,6 +35,7 @@ class Task {
     this.isCompleted = false,
     this.updatedAt,
     required this.createdAt,
+    this.repeatDays,
   });
 
   factory Task.fromMap(Map<String, dynamic> map) {
@@ -53,6 +55,7 @@ class Task {
           : null,
       createdAt:
           DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
+      repeatDays: map['repeat_days'] as String?,
     );
   }
 
@@ -68,6 +71,7 @@ class Task {
       'is_completed': isCompleted ? 1 : 0,
       'updated_at': updatedAt?.millisecondsSinceEpoch,
       'created_at': createdAt.millisecondsSinceEpoch,
+      'repeat_days': repeatDays,
     };
   }
 
@@ -82,6 +86,8 @@ class Task {
     bool? isCompleted,
     DateTime? updatedAt,
     DateTime? createdAt,
+    String? repeatDays,
+    bool clearRepeatDays = false,
   }) {
     return Task(
       id: id ?? this.id,
@@ -95,6 +101,7 @@ class Task {
       isCompleted: isCompleted ?? this.isCompleted,
       updatedAt: updatedAt ?? this.updatedAt,
       createdAt: createdAt ?? this.createdAt,
+      repeatDays: clearRepeatDays ? null : (repeatDays ?? this.repeatDays),
     );
   }
 }
@@ -242,7 +249,8 @@ class AppDatabase {
             next_allowed_completion_at INTEGER,
             is_completed INTEGER NOT NULL DEFAULT 0,
             updated_at INTEGER,
-            created_at INTEGER NOT NULL
+            created_at INTEGER NOT NULL,
+            repeat_days TEXT
           )
         ''');
         await db.execute('''
@@ -298,6 +306,9 @@ class AppDatabase {
               updated_at INTEGER
             )
           ''');
+        }
+        if (from < 8) {
+          await _addColumnIfMissing(db, 'tasks', 'repeat_days', 'TEXT');
         }
       },
       onOpen: (db) async {

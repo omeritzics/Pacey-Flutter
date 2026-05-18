@@ -45,6 +45,28 @@ String _repeatCadenceLabel(AppLocalizations l10n, int code) {
   }
 }
 
+String _getDayLabel(BuildContext context, int weekday) {
+  final isHe = Localizations.localeOf(context).languageCode == 'he';
+  switch (weekday) {
+    case DateTime.sunday:
+      return isHe ? 'א' : 'S';
+    case DateTime.monday:
+      return isHe ? 'ב' : 'M';
+    case DateTime.tuesday:
+      return isHe ? 'ג' : 'T';
+    case DateTime.wednesday:
+      return isHe ? 'ד' : 'W';
+    case DateTime.thursday:
+      return isHe ? 'ה' : 'T';
+    case DateTime.friday:
+      return isHe ? 'ו' : 'F';
+    case DateTime.saturday:
+      return isHe ? 'ש' : 'S';
+    default:
+      return '';
+  }
+}
+
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
@@ -251,6 +273,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     int selectedEnergy = 1;
     int selectedPriority = 4;
     int selectedRepeat = 0;
+    final selectedDays = <int>{DateTime.now().weekday};
     final l10n = AppLocalizations.of(context)!;
 
     showDialog(
@@ -330,6 +353,76 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     ),
                   ),
                 ),
+                if (selectedRepeat == 2) ...[
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      l10n.selectWeekDays,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      DateTime.sunday,
+                      DateTime.monday,
+                      DateTime.tuesday,
+                      DateTime.wednesday,
+                      DateTime.thursday,
+                      DateTime.friday,
+                      DateTime.saturday,
+                    ].map((day) {
+                      final isSelected = selectedDays.contains(day);
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              if (selectedDays.length > 1) {
+                                selectedDays.remove(day);
+                              }
+                            } else {
+                              selectedDays.add(day);
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
+                            border: Border.all(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .outline
+                                      .withValues(alpha: 0.5),
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            _getDayLabel(context, day),
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
@@ -350,6 +443,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             TextButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty) {
+                  final repeatDaysStr = selectedRepeat == 2
+                      ? selectedDays.join(',')
+                      : null;
                   ref
                       .read(taskActionsProvider)
                       .addTask(
@@ -357,6 +453,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         selectedEnergy,
                         priority: selectedPriority,
                         repeatInterval: selectedRepeat,
+                        repeatDays: repeatDaysStr,
                       );
                   Navigator.pop(context);
                 }
@@ -500,6 +597,18 @@ class _TaskTile extends ConsumerWidget {
     int selectedEnergy = task.requiredEnergy;
     int selectedPriority = task.priority;
     int selectedRepeat = task.repeatInterval;
+    final selectedDays = <int>{};
+    if (task.repeatDays != null && task.repeatDays!.isNotEmpty) {
+      selectedDays.addAll(
+        task.repeatDays!
+            .split(',')
+            .map((s) => int.tryParse(s.trim()))
+            .whereType<int>(),
+      );
+    }
+    if (selectedDays.isEmpty) {
+      selectedDays.add(DateTime.now().weekday);
+    }
     final l10n = AppLocalizations.of(context)!;
 
     showDialog(
@@ -579,6 +688,76 @@ class _TaskTile extends ConsumerWidget {
                     ),
                   ),
                 ),
+                if (selectedRepeat == 2) ...[
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      l10n.selectWeekDays,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      DateTime.sunday,
+                      DateTime.monday,
+                      DateTime.tuesday,
+                      DateTime.wednesday,
+                      DateTime.thursday,
+                      DateTime.friday,
+                      DateTime.saturday,
+                    ].map((day) {
+                      final isSelected = selectedDays.contains(day);
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              if (selectedDays.length > 1) {
+                                selectedDays.remove(day);
+                              }
+                            } else {
+                              selectedDays.add(day);
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
+                            border: Border.all(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .outline
+                                      .withValues(alpha: 0.5),
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            _getDayLabel(context, day),
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
@@ -599,6 +778,9 @@ class _TaskTile extends ConsumerWidget {
             TextButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty) {
+                  final repeatDaysStr = selectedRepeat == 2
+                      ? selectedDays.join(',')
+                      : null;
                   ref
                       .read(taskActionsProvider)
                       .editTask(
@@ -607,6 +789,7 @@ class _TaskTile extends ConsumerWidget {
                         selectedEnergy,
                         priority: selectedPriority,
                         repeatInterval: selectedRepeat,
+                        repeatDays: repeatDaysStr,
                       );
                   Navigator.pop(context);
                 }

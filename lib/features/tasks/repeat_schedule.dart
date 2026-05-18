@@ -1,15 +1,28 @@
-DateTime _startOfLocalDay(DateTime d) => DateTime(d.year, d.month, d.day);
-
 /// Next moment the user may complete a repeating task again (local midnight rules).
 /// Returns `null` when [repeatInterval] is 0 (no repeat) or unknown.
-DateTime? nextBoundaryAfterCompletion(DateTime now, int repeatInterval) {
-  final start = _startOfLocalDay(now);
+DateTime? nextBoundaryAfterCompletion(DateTime now, int repeatInterval, {String? repeatDays}) {
+  final start = DateTime(now.year, now.month, now.day);
   switch (repeatInterval) {
     case 0:
       return null;
     case 1:
       return start.add(const Duration(days: 1));
     case 2:
+      if (repeatDays != null && repeatDays.isNotEmpty) {
+        final days = repeatDays
+            .split(',')
+            .map((s) => int.tryParse(s.trim()))
+            .whereType<int>()
+            .toList();
+        if (days.isNotEmpty) {
+          for (int i = 1; i <= 7; i++) {
+            final nextDay = start.add(Duration(days: i));
+            if (days.contains(nextDay.weekday)) {
+              return nextDay;
+            }
+          }
+        }
+      }
       return start.add(const Duration(days: 7));
     case 3:
       return _addOneCalendarMonthStartOfDay(start);
@@ -25,8 +38,6 @@ DateTime _addOneCalendarMonthStartOfDay(DateTime startOfDay) {
     m = 1;
     y++;
   }
-  // drift/dart DateTime(y, m+1, 0) gives the last day of month m.
-  // We want the last day of our target month 'm'.
   final lastDayOfTargetMonth = DateTime(y, m + 1, 0).day;
   final day = startOfDay.day > lastDayOfTargetMonth
       ? lastDayOfTargetMonth

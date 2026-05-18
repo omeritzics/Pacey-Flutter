@@ -4,6 +4,7 @@ import 'package:pacey/l10n/app_localizations.dart';
 import '../../core/localization/locale_provider.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/theme/theme_provider.dart';
+import '../../core/settings/app_settings_provider.dart';
 import '../backup/data_backup_screen.dart';
 import '../gamification/gamification_provider.dart';
 
@@ -85,6 +86,30 @@ class SettingsPage extends ConsumerWidget {
                 }
               },
             ),
+          ),
+          const Divider(),
+
+          // Hide Completed Tasks Toggle
+          SwitchListTile(
+            title: Text(l10n.hideCompletedTasks),
+            subtitle: Text(l10n.hideCompletedTasksDescription),
+            value: ref.watch(appSettingsProvider).hideCompletedTasks,
+            onChanged: (bool value) {
+              ref.read(appSettingsProvider.notifier).setHideCompletedTasks(value);
+            },
+            secondary: const Icon(Icons.done_all),
+          ),
+          const Divider(),
+
+          // Hide Unavailable Tasks Toggle
+          SwitchListTile(
+            title: Text(l10n.hideUnavailableTasks),
+            subtitle: Text(l10n.hideUnavailableTasksDescription),
+            value: ref.watch(appSettingsProvider).hideUnavailableTasks,
+            onChanged: (bool value) {
+              ref.read(appSettingsProvider.notifier).setHideUnavailableTasks(value);
+            },
+            secondary: const Icon(Icons.schedule),
           ),
           const Divider(),
 

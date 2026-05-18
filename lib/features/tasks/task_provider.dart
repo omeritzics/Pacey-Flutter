@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/backup/backup_settings_provider.dart';
+import '../../core/settings/app_settings_provider.dart';
 import '../../core/backup/backup_provider.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
@@ -38,8 +39,20 @@ final tasksProvider = StreamProvider<List<Task>>((ref) {
 final filteredTasksProvider = Provider<List<Task>>((ref) {
   final allTasks = ref.watch(tasksProvider).value ?? [];
   final energyLevel = ref.watch(energyLevelProvider);
+  final settings = ref.watch(appSettingsProvider);
+  final hideCompleted = settings.hideCompletedTasks;
+  final hideUnavailable = settings.hideUnavailableTasks;
 
   final list = allTasks.where((task) {
+    if (hideCompleted && task.isCompleted) {
+      return false;
+    }
+    final now = DateTime.now();
+    if (hideUnavailable &&
+        task.nextAllowedCompletionAt != null &&
+        now.isBefore(task.nextAllowedCompletionAt!)) {
+      return false;
+    }
     return task.isCompleted || task.requiredEnergy <= energyLevel;
   }).toList();
 
@@ -70,6 +83,7 @@ class TaskActions {
     int requiredEnergy, {
     int priority = 4,
     int repeatInterval = 0,
+    String? repeatDays,
   }) async {
     final db = await _ref.read(databaseProvider).database;
 
@@ -87,6 +101,7 @@ class TaskActions {
       'is_completed': 0,
       'updated_at': now.millisecondsSinceEpoch,
       'created_at': now.millisecondsSinceEpoch,
+      'repeat_days': r == 2 ? repeatDays : null,
     });
     final settings = _ref.read(backupSettingsProvider);
     if (settings.isAutoExportEnabled) {
@@ -135,7 +150,7 @@ class TaskActions {
 
       // Create the NEXT occurrence of this task
       final newId = _uuid.v4();
-      final nextAt = nextBoundaryAfterCompletion(now, task.repeatInterval);
+      final nextAt = nextBoundaryAfterCompletion(now, task.repeatInterval, repeatDays: task.repeatDays);
 
       await db.insert('tasks', {
         'id': newId,
@@ -147,6 +162,7 @@ class TaskActions {
         'is_completed': 0,
         'created_at': now.millisecondsSinceEpoch,
         'updated_at': now.millisecondsSinceEpoch,
+        'repeat_days': task.repeatDays,
       });
 
       final settings = _ref.read(backupSettingsProvider);
@@ -198,6 +214,7 @@ class TaskActions {
     int requiredEnergy, {
     required int priority,
     required int repeatInterval,
+    String? repeatDays,
   }) async {
     final db = await _ref.read(databaseProvider).database;
     final p = _clampPriority(priority);
@@ -210,6 +227,7 @@ class TaskActions {
       'priority': p,
       'repeat_interval': r,
       'updated_at': now.millisecondsSinceEpoch,
+      'repeat_days': r == 2 ? repeatDays : null,
     };
     if (r == 0) {
       values['next_allowed_completion_at'] = null;
