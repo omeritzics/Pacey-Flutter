@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -35,17 +37,21 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
       final timestamp = DateTime.now().toUtc().toIso8601String().replaceAll(':', '-');
       final fileName = 'pacey-backup-$timestamp.json';
 
+      final bytes = Uint8List.fromList(utf8.encode(json));
       final outputFile = await FilePicker.platform.saveFile(
         dialogTitle: l10n.exportData,
         fileName: fileName,
         type: FileType.custom,
         allowedExtensions: ['json'],
+        bytes: bytes,
       );
 
       if (outputFile == null) return;
 
-      final file = File(outputFile);
-      await file.writeAsString(json);
+      if (!Platform.isAndroid && !Platform.isIOS) {
+        final file = File(outputFile);
+        await file.writeAsBytes(bytes);
+      }
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
