@@ -101,6 +101,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get history => 'History';
 
   @override
+  String get last7Days => 'Last 7 days';
+
+  @override
+  String get last30Days => 'Last 30 days';
+
+  @override
+  String get allTime => 'All the times';
+
+  @override
   String get energyTrend => 'Energy Trend';
 
   @override

@@ -34,7 +34,10 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
       final backupService = ref.read(backupServiceProvider);
       final json = await backupService.exportData(appDb);
 
-      final timestamp = DateTime.now().toUtc().toIso8601String().replaceAll(':', '-');
+      final timestamp = DateTime.now().toUtc().toIso8601String().replaceAll(
+        ':',
+        '-',
+      );
       final fileName = 'pacey-backup-$timestamp.json';
 
       final bytes = Uint8List.fromList(utf8.encode(json));
@@ -54,9 +57,9 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
       }
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.exportSuccessful)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.exportSuccessful)));
     } on BackupException catch (e) {
       if (mounted) _showError(e.message);
     } catch (_) {
@@ -98,7 +101,6 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
         jsonString,
         mode: mode,
       );
-
 
       ref.invalidate(energyLevelProvider);
       ref.invalidate(tasksProvider);
@@ -152,9 +154,9 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -193,7 +195,9 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
             subtitle: Text(l10n.autoExportDescription),
             value: ref.watch(backupSettingsProvider).isAutoExportEnabled,
             onChanged: (value) {
-              ref.read(backupSettingsProvider.notifier).setAutoExportEnabled(value);
+              ref
+                  .read(backupSettingsProvider.notifier)
+                  .setAutoExportEnabled(value);
             },
             contentPadding: EdgeInsets.zero,
           ),
@@ -203,21 +207,24 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    ref.watch(backupSettingsProvider).autoExportPath ?? 'Default Directory',
+                    ref.watch(backupSettingsProvider).autoExportPath ??
+                        'Default Directory',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
                 TextButton(
                   onPressed: () async {
-                    final directory = await FilePicker.platform.getDirectoryPath();
+                    final directory = await FilePicker.platform
+                        .getDirectoryPath();
                     if (directory != null) {
                       final path = '$directory/pacey_auto_backup.json';
-                      await ref.read(backupSettingsProvider.notifier).setAutoExportPath(path);
+                      await ref
+                          .read(backupSettingsProvider.notifier)
+                          .setAutoExportPath(path);
                       if (context.mounted) {
-                        ref.read(backupServiceProvider).autoExport(
-                              ref.read(databaseProvider),
-                              path: path,
-                            );
+                        ref
+                            .read(backupServiceProvider)
+                            .autoExport(ref.read(databaseProvider), path: path);
                       }
                     }
                   },
@@ -232,7 +239,9 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
             subtitle: Text(l10n.autoImportDescription),
             value: ref.watch(backupSettingsProvider).isAutoImportEnabled,
             onChanged: (value) {
-              ref.read(backupSettingsProvider.notifier).setAutoImportEnabled(value);
+              ref
+                  .read(backupSettingsProvider.notifier)
+                  .setAutoImportEnabled(value);
             },
             contentPadding: EdgeInsets.zero,
           ),
@@ -249,10 +258,13 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
                 ),
                 TextButton(
                   onPressed: () async {
-                    final directory = await FilePicker.platform.getDirectoryPath();
+                    final directory = await FilePicker.platform
+                        .getDirectoryPath();
                     if (directory != null) {
                       final path = '$directory/pacey_auto_backup.json';
-                      await ref.read(backupSettingsProvider.notifier).setAutoImportPath(path);
+                      await ref
+                          .read(backupSettingsProvider.notifier)
+                          .setAutoImportPath(path);
                     }
                   },
                   child: Text(l10n.selectDirectory),

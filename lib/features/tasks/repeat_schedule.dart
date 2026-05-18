@@ -1,6 +1,10 @@
 /// Next moment the user may complete a repeating task again (local midnight rules).
 /// Returns `null` when [repeatInterval] is 0 (no repeat) or unknown.
-DateTime? nextBoundaryAfterCompletion(DateTime now, int repeatInterval, {String? repeatDays}) {
+DateTime? nextBoundaryAfterCompletion(
+  DateTime now,
+  int repeatInterval, {
+  String? repeatDays,
+}) {
   final start = DateTime(now.year, now.month, now.day);
   switch (repeatInterval) {
     case 0:

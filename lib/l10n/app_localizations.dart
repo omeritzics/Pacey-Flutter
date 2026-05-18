@@ -266,6 +266,24 @@ abstract class AppLocalizations {
   /// **'History'**
   String get history;
 
+  /// No description provided for @last7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get last7Days;
+
+  /// No description provided for @last30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get last30Days;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All the times'**
+  String get allTime;
+
   /// No description provided for @energyTrend.
   ///
   /// In en, this message translates to:

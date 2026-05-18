@@ -27,5 +27,4 @@ void main() async {
     await txn.delete('tasks');
     await txn.delete('energy_logs');
   });
-
 }

@@ -20,7 +20,12 @@ class PacingStatsNotifier extends Notifier<PacingStats?> {
     final db = await ref.read(databaseProvider).database;
     final rows = await db.query('pacing_stats', limit: 1);
     if (rows.isEmpty) {
-      final newStats = const PacingStats(id: 1, xp: 0, healingLevel: 1, currentStreak: 0);
+      final newStats = const PacingStats(
+        id: 1,
+        xp: 0,
+        healingLevel: 1,
+        currentStreak: 0,
+      );
       await db.insert('pacing_stats', newStats.toMap());
       state = newStats;
     } else {
@@ -41,7 +46,12 @@ class PacingStatsNotifier extends Notifier<PacingStats?> {
       lastLogDate: DateTime.now(),
       updatedAt: DateTime.now(),
     );
-    await db.update('pacing_stats', updated.toMap(), where: 'id = ?', whereArgs: [state!.id]);
+    await db.update(
+      'pacing_stats',
+      updated.toMap(),
+      where: 'id = ?',
+      whereArgs: [state!.id],
+    );
     state = updated;
   }
 
@@ -58,7 +68,12 @@ class PacingStatsNotifier extends Notifier<PacingStats?> {
       lastLogDate: DateTime.now(),
       updatedAt: DateTime.now(),
     );
-    await db.update('pacing_stats', updated.toMap(), where: 'id = ?', whereArgs: [state!.id]);
+    await db.update(
+      'pacing_stats',
+      updated.toMap(),
+      where: 'id = ?',
+      whereArgs: [state!.id],
+    );
     state = updated;
   }
 
@@ -72,7 +87,8 @@ class PacingStatsNotifier extends Notifier<PacingStats?> {
   double getLevelProgress(int xp) {
     final level = _calculateLevel(xp);
     final currentLevelThreshold = 50 * level * level + 50 * level - 100;
-    final nextLevelThreshold = 50 * (level + 1) * (level + 1) + 50 * (level + 1) - 100;
+    final nextLevelThreshold =
+        50 * (level + 1) * (level + 1) + 50 * (level + 1) - 100;
 
     final progress =
         (xp - currentLevelThreshold) /

@@ -93,5 +93,5 @@ class BackupSettingsNotifier extends Notifier<BackupSettings> {
 
 final backupSettingsProvider =
     NotifierProvider<BackupSettingsNotifier, BackupSettings>(
-  () => BackupSettingsNotifier(),
-);
+      () => BackupSettingsNotifier(),
+    );

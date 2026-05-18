@@ -91,7 +91,9 @@ class EnergyLevelNotifier extends Notifier<int> {
 
     final settings = ref.read(backupSettingsProvider);
     if (settings.isAutoExportEnabled) {
-      ref.read(backupServiceProvider).autoExport(
+      ref
+          .read(backupServiceProvider)
+          .autoExport(
             ref.read(databaseProvider),
             path: settings.autoExportPath,
           );

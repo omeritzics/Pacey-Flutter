@@ -9,7 +9,7 @@ final localeProvider = NotifierProvider<LocaleNotifier, Locale>(() {
 class LocaleNotifier extends Notifier<Locale> {
   // Special locale to indicate "Follow System"
   static const Locale _systemLocale = Locale('system');
-  
+
   @override
   Locale build() {
     // Default to follow system
@@ -43,20 +43,20 @@ class LocaleNotifier extends Notifier<Locale> {
     try {
       // Get system locale
       final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
-      
+
       // Check if system language is supported (English or Hebrew)
       if (systemLocale.languageCode == "he") {
         return const Locale("he");
       } else if (systemLocale.languageCode == "en") {
         return const Locale("en");
       }
-      
+
       // For web platform, try to get browser language
       if (kIsWeb) {
         // Web-specific locale detection could be added here
         // For now, fall back to English
       }
-      
+
       // Default to English for unsupported languages
       return const Locale("en");
     } catch (e) {
@@ -66,5 +66,6 @@ class LocaleNotifier extends Notifier<Locale> {
   }
 
   /// Checks if the current locale is following system
-  bool get isFollowingSystem => state.languageCode == _systemLocale.languageCode;
+  bool get isFollowingSystem =>
+      state.languageCode == _systemLocale.languageCode;
 }

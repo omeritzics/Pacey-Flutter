@@ -10,10 +10,7 @@ class AppSettings {
     this.hideUnavailableTasks = true,
   });
 
-  AppSettings copyWith({
-    bool? hideCompletedTasks,
-    bool? hideUnavailableTasks,
-  }) {
+  AppSettings copyWith({bool? hideCompletedTasks, bool? hideUnavailableTasks}) {
     return AppSettings(
       hideCompletedTasks: hideCompletedTasks ?? this.hideCompletedTasks,
       hideUnavailableTasks: hideUnavailableTasks ?? this.hideUnavailableTasks,

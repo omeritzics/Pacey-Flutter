@@ -100,6 +100,15 @@ class AppLocalizationsHe extends AppLocalizations {
   String get history => 'היסטוריה';
 
   @override
+  String get last7Days => '7 הימים האחרונים';
+
+  @override
+  String get last30Days => '30 הימים האחרונים';
+
+  @override
+  String get allTime => 'כל הזמנים';
+
+  @override
   String get energyTrend => 'מגמת אנרגיה';
 
   @override
@@ -177,11 +186,11 @@ class AppLocalizationsHe extends AppLocalizations {
       'ייצוא קובץ גיבוי אוטומטי בעת שינוי נתונים';
 
   @override
-  String get autoImport => 'Auto-Import';
+  String get autoImport => 'ייבוא אוטומטי';
 
   @override
   String get autoImportDescription =>
-      'Automatically import data from a backup file when the app is opened';
+      'ייבוא נתונים מקובץ גיבוי באופן אוטומטי בעת פתיחת האפליקציה';
 
   @override
   String get selectDirectory => 'בחירת תיקייה';

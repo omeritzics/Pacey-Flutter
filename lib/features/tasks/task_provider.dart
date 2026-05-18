@@ -105,7 +105,9 @@ class TaskActions {
     });
     final settings = _ref.read(backupSettingsProvider);
     if (settings.isAutoExportEnabled) {
-      _ref.read(backupServiceProvider).autoExport(
+      _ref
+          .read(backupServiceProvider)
+          .autoExport(
             _ref.read(databaseProvider),
             path: settings.autoExportPath,
           );
@@ -132,10 +134,7 @@ class TaskActions {
       // Mark original as completed
       await db.update(
         'tasks',
-        {
-          'is_completed': 1,
-          'updated_at': now.millisecondsSinceEpoch,
-        },
+        {'is_completed': 1, 'updated_at': now.millisecondsSinceEpoch},
         where: 'id = ?',
         whereArgs: [task.id],
       );
@@ -150,7 +149,11 @@ class TaskActions {
 
       // Create the NEXT occurrence of this task
       final newId = _uuid.v4();
-      final nextAt = nextBoundaryAfterCompletion(now, task.repeatInterval, repeatDays: task.repeatDays);
+      final nextAt = nextBoundaryAfterCompletion(
+        now,
+        task.repeatInterval,
+        repeatDays: task.repeatDays,
+      );
 
       await db.insert('tasks', {
         'id': newId,
@@ -167,7 +170,9 @@ class TaskActions {
 
       final settings = _ref.read(backupSettingsProvider);
       if (settings.isAutoExportEnabled) {
-        _ref.read(backupServiceProvider).autoExport(
+        _ref
+            .read(backupServiceProvider)
+            .autoExport(
               _ref.read(databaseProvider),
               path: settings.autoExportPath,
             );
@@ -201,7 +206,9 @@ class TaskActions {
 
     final settings = _ref.read(backupSettingsProvider);
     if (settings.isAutoExportEnabled) {
-      _ref.read(backupServiceProvider).autoExport(
+      _ref
+          .read(backupServiceProvider)
+          .autoExport(
             _ref.read(databaseProvider),
             path: settings.autoExportPath,
           );
@@ -233,16 +240,13 @@ class TaskActions {
       values['next_allowed_completion_at'] = null;
     }
 
-    await db.update(
-      'tasks',
-      values,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await db.update('tasks', values, where: 'id = ?', whereArgs: [id]);
 
     final settings = _ref.read(backupSettingsProvider);
     if (settings.isAutoExportEnabled) {
-      _ref.read(backupServiceProvider).autoExport(
+      _ref
+          .read(backupServiceProvider)
+          .autoExport(
             _ref.read(databaseProvider),
             path: settings.autoExportPath,
           );
@@ -255,7 +259,9 @@ class TaskActions {
 
     final settings = _ref.read(backupSettingsProvider);
     if (settings.isAutoExportEnabled) {
-      _ref.read(backupServiceProvider).autoExport(
+      _ref
+          .read(backupServiceProvider)
+          .autoExport(
             _ref.read(databaseProvider),
             path: settings.autoExportPath,
           );

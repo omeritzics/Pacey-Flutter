@@ -42,19 +42,20 @@ class Task {
     return Task(
       id: map['id'] as String,
       title: map['title'] as String,
-      requiredEnergy: (map['required_energy'] ?? map['energy_cost'] ?? 0) as int,
+      requiredEnergy:
+          (map['required_energy'] ?? map['energy_cost'] ?? 0) as int,
       priority: (map['priority'] as int?) ?? 4,
       repeatInterval: (map['repeat_interval'] as int?) ?? 0,
       nextAllowedCompletionAt: map['next_allowed_completion_at'] != null
           ? DateTime.fromMillisecondsSinceEpoch(
-              map['next_allowed_completion_at'] as int)
+              map['next_allowed_completion_at'] as int,
+            )
           : null,
       isCompleted: (map['is_completed'] as int) == 1,
       updatedAt: map['updated_at'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['updated_at'] as int)
           : null,
-      createdAt:
-          DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
       repeatDays: map['repeat_days'] as String?,
     );
   }
@@ -126,8 +127,7 @@ class EnergyLog {
       id: map['id'] as int,
       syncId: map['sync_id'] as String?,
       level: map['level'] as int,
-      timestamp:
-          DateTime.fromMillisecondsSinceEpoch(map['timestamp'] as int),
+      timestamp: DateTime.fromMillisecondsSinceEpoch(map['timestamp'] as int),
       updatedAt: map['updated_at'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['updated_at'] as int)
           : null,
@@ -282,13 +282,25 @@ class AppDatabase {
         }
         if (from < 4) {
           await _addColumnIfMissing(
-              db, 'tasks', 'priority', 'INTEGER NOT NULL DEFAULT 4');
+            db,
+            'tasks',
+            'priority',
+            'INTEGER NOT NULL DEFAULT 4',
+          );
         }
         if (from < 5) {
           await _addColumnIfMissing(
-              db, 'tasks', 'repeat_interval', 'INTEGER NOT NULL DEFAULT 0');
+            db,
+            'tasks',
+            'repeat_interval',
+            'INTEGER NOT NULL DEFAULT 0',
+          );
           await _addColumnIfMissing(
-              db, 'tasks', 'next_allowed_completion_at', 'INTEGER');
+            db,
+            'tasks',
+            'next_allowed_completion_at',
+            'INTEGER',
+          );
         }
         if (from < 6) {
           // v6: Dropped PacingStats table (gamification removed) - but we restore it in v7!
@@ -316,10 +328,14 @@ class AppDatabase {
         try {
           final info = await db.rawQuery('PRAGMA table_info(tasks)');
           final hasEnergyCost = info.any((row) => row['name'] == 'energy_cost');
-          final hasRequiredEnergy = info.any((row) => row['name'] == 'required_energy');
-          
+          final hasRequiredEnergy = info.any(
+            (row) => row['name'] == 'required_energy',
+          );
+
           if (hasEnergyCost && !hasRequiredEnergy) {
-            await db.execute('ALTER TABLE tasks RENAME COLUMN energy_cost TO required_energy');
+            await db.execute(
+              'ALTER TABLE tasks RENAME COLUMN energy_cost TO required_energy',
+            );
           }
         } catch (_) {}
       },

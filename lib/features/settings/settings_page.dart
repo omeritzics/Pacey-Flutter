@@ -95,7 +95,9 @@ class SettingsPage extends ConsumerWidget {
             subtitle: Text(l10n.hideCompletedTasksDescription),
             value: ref.watch(appSettingsProvider).hideCompletedTasks,
             onChanged: (bool value) {
-              ref.read(appSettingsProvider.notifier).setHideCompletedTasks(value);
+              ref
+                  .read(appSettingsProvider.notifier)
+                  .setHideCompletedTasks(value);
             },
             secondary: const Icon(Icons.done_all),
           ),
@@ -107,7 +109,9 @@ class SettingsPage extends ConsumerWidget {
             subtitle: Text(l10n.hideUnavailableTasksDescription),
             value: ref.watch(appSettingsProvider).hideUnavailableTasks,
             onChanged: (bool value) {
-              ref.read(appSettingsProvider.notifier).setHideUnavailableTasks(value);
+              ref
+                  .read(appSettingsProvider.notifier)
+                  .setHideUnavailableTasks(value);
             },
             secondary: const Icon(Icons.schedule),
           ),
@@ -122,7 +126,9 @@ class SettingsPage extends ConsumerWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const DataBackupScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const DataBackupScreen(),
+                ),
               );
             },
           ),
