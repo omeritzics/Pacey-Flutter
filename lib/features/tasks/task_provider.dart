@@ -11,29 +11,12 @@ import '../energy/energy_provider.dart';
 import '../gamification/gamification_provider.dart';
 import 'repeat_schedule.dart';
 
-/// Polls the tasks table and emits updates.
-final tasksProvider = StreamProvider<List<Task>>((ref) {
+/// Fetches the tasks table from the database on-demand.
+final tasksProvider = FutureProvider<List<Task>>((ref) async {
   final appDb = ref.watch(databaseProvider);
-  // sqflite has no built-in watch(); poll every 500ms.
-  final controller = StreamController<List<Task>>();
-
-  Timer? timer;
-
-  Future<void> fetch() async {
-    final db = await appDb.database;
-    final rows = await db.query('tasks');
-    controller.add(rows.map(Task.fromMap).toList());
-  }
-
-  fetch(); // initial load
-  timer = Timer.periodic(const Duration(milliseconds: 500), (_) => fetch());
-
-  ref.onDispose(() {
-    timer?.cancel();
-    controller.close();
-  });
-
-  return controller.stream;
+  final db = await appDb.database;
+  final rows = await db.query('tasks');
+  return rows.map(Task.fromMap).toList();
 });
 
 final filteredTasksProvider = Provider<List<Task>>((ref) {
@@ -103,6 +86,9 @@ class TaskActions {
       'created_at': now.millisecondsSinceEpoch,
       'repeat_days': r == 2 ? repeatDays : null,
     });
+
+    _ref.invalidate(tasksProvider);
+
     final settings = _ref.read(backupSettingsProvider);
     if (settings.isAutoExportEnabled) {
       _ref
@@ -168,6 +154,8 @@ class TaskActions {
         'repeat_days': task.repeatDays,
       });
 
+      _ref.invalidate(tasksProvider);
+
       final settings = _ref.read(backupSettingsProvider);
       if (settings.isAutoExportEnabled) {
         _ref
@@ -190,6 +178,8 @@ class TaskActions {
       where: 'id = ?',
       whereArgs: [task.id],
     );
+
+    _ref.invalidate(tasksProvider);
 
     final currentEnergy = _ref.read(energyLevelProvider);
     if (isNowCompleted) {
@@ -242,6 +232,8 @@ class TaskActions {
 
     await db.update('tasks', values, where: 'id = ?', whereArgs: [id]);
 
+    _ref.invalidate(tasksProvider);
+
     final settings = _ref.read(backupSettingsProvider);
     if (settings.isAutoExportEnabled) {
       _ref
@@ -256,6 +248,8 @@ class TaskActions {
   Future<void> deleteTask(String id) async {
     final db = await _ref.read(databaseProvider).database;
     await db.delete('tasks', where: 'id = ?', whereArgs: [id]);
+
+    _ref.invalidate(tasksProvider);
 
     final settings = _ref.read(backupSettingsProvider);
     if (settings.isAutoExportEnabled) {
