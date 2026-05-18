@@ -190,7 +190,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get autoImportDescription =>
-      'ייבוא נתונים מקובץ גיבוי באופן אוטומטי בעת פתיחת האפליקציה';
+      'ייבוא נתונים מקובץ גיבוי באופן אוטומטי בעת פתיחת היישום';
 
   @override
   String get selectDirectory => 'בחירת תיקייה';

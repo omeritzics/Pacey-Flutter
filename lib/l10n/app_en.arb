@@ -1,4 +1,5 @@
 {
+  "@@locale": "en",
   "appTitle": "Pacey",
   "healingLevel": "Healing Level {level}",
   "@healingLevel": {

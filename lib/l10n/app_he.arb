@@ -1,4 +1,6 @@
 {
+  "@@locale": "he",
+  "appTitle": "Pacey",
   "@healingLevel": {
     "placeholders": {
       "level": {
@@ -32,7 +34,6 @@
   },
   "addTask": "הוספת משימה",
   "alreadyLogged": "כבר תיעדת את רמת האנרגיה לפרק הזמן הזה.",
-  "appTitle": "Pacey",
   "cancel": "ביטול",
   "currentEnergy": "רמת אנרגיה נוכחית",
   "editTask": "עריכת משימה",
@@ -48,7 +49,7 @@
   "repeatDaily": "יומי",
   "repeatWeekly": "שבועי",
   "repeatMonthly": "חודשי",
-  "availableAfter": "זמין לאחר {date}",
+  "availableAfter": "זמינה החל מהתאריך {date}",
   "energyLogs": "יומן אנרגיה",
   "energyTrend": "מגמת אנרגיה",
   "energyUpdate": "עדכון רמת אנרגיה",
@@ -62,7 +63,7 @@
   "last30Days": "30 הימים האחרונים",
   "allTime": "כל הזמנים",
   "autoImport": "ייבוא אוטומטי",
-  "autoImportDescription": "ייבוא נתונים מקובץ גיבוי באופן אוטומטי בעת פתיחת האפליקציה",
+  "autoImportDescription": "ייבוא נתונים מקובץ גיבוי באופן אוטומטי בעת פתיחת היישום",
   "language": "שפה",
   "noHistory": "עדיין אין היסטוריה מתועדת.",
   "noTasks": "אין משימות עבור רמת האנרגיה הזו.",

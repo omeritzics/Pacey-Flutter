@@ -151,6 +151,18 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
+                      builder: (context) => const HistoryPage(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.history),
+                tooltip: l10n.history,
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
                       builder: (context) => const SettingsPage(),
                     ),
                   );
@@ -215,10 +227,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         l10n.tasksForEnergy(energyLevel),
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () => _showAddTaskDialog(context, ref),
-                      ),
                     ],
                   ),
                 ),
@@ -246,14 +254,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             ],
           ),
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const HistoryPage()),
-              );
-            },
-            label: Text(l10n.history),
-            icon: const Icon(Icons.history),
+            onPressed: () => _showAddTaskDialog(context, ref),
+            label: Text(l10n.addTask),
+            icon: const Icon(Icons.add),
           ),
         ),
         Align(
