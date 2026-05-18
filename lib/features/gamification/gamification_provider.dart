@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/database/database.dart';
@@ -62,35 +63,16 @@ class PacingStatsNotifier extends Notifier<PacingStats?> {
   }
 
   int _calculateLevel(int xp) {
-    if (xp < 200) return 1;
-    if (xp < 500) return 2;
-    if (xp < 900) return 3;
-    if (xp < 1400) return 4;
-    return (xp ~/ 500) + 1;
+    if (xp < 0) return 1;
+    final val = 2.25 + xp / 50.0;
+    final level = (-0.5 + math.sqrt(val)).floor();
+    return level < 1 ? 1 : level;
   }
 
   double getLevelProgress(int xp) {
-    int currentLevelThreshold;
-    int nextLevelThreshold;
-
-    if (xp < 200) {
-      currentLevelThreshold = 0;
-      nextLevelThreshold = 200;
-    } else if (xp < 500) {
-      currentLevelThreshold = 200;
-      nextLevelThreshold = 500;
-    } else if (xp < 900) {
-      currentLevelThreshold = 500;
-      nextLevelThreshold = 900;
-    } else if (xp < 1400) {
-      currentLevelThreshold = 900;
-      nextLevelThreshold = 1400;
-    } else {
-      // For XP >= 1400, levels increase by 500 XP each
-      final levelAbove4 = (xp - 1400) ~/ 500 + 1;
-      currentLevelThreshold = 1400 + (levelAbove4 - 1) * 500;
-      nextLevelThreshold = 1400 + levelAbove4 * 500;
-    }
+    final level = _calculateLevel(xp);
+    final currentLevelThreshold = 50 * level * level + 50 * level - 100;
+    final nextLevelThreshold = 50 * (level + 1) * (level + 1) + 50 * (level + 1) - 100;
 
     final progress =
         (xp - currentLevelThreshold) /

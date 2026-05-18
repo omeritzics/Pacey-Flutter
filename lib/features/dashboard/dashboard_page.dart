@@ -1,3 +1,4 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -52,6 +53,20 @@ class DashboardPage extends ConsumerStatefulWidget {
 }
 
 class _DashboardPageState extends ConsumerState<DashboardPage> {
+  late ConfettiController _confettiController;
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
   Future<void> _maybeAutoImport(BuildContext context) async {
     final settings = ref.read(backupSettingsProvider);
     if (!settings.isAutoImportEnabled) return;
@@ -84,6 +99,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<PacingStats?>(pacingStatsProvider, (previous, next) {
+      if (previous != null && next != null && next.healingLevel > previous.healingLevel) {
+        _confettiController.play();
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _maybeAutoImport(context);
     });
@@ -92,117 +113,136 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     final tasks = ref.watch(filteredTasksProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.appTitle),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
-            },
-            icon: const Icon(Icons.settings),
-            tooltip: l10n.settings,
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: Text(l10n.appTitle),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SettingsPage()),
+                  );
+                },
+                icon: const Icon(Icons.settings),
+                tooltip: l10n.settings,
+              ),
+            ],
           ),
-        ],
-      ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: const _HealingProgress(),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Card(
+          body: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  child: const _HealingProgress(),
+                ),
+              ),
+              SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Text(
+                            l10n.currentEnergy,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 16),
+                          _EnergySelector(
+                            key: ValueKey(energyLevel),
+                            currentLevel: energyLevel,
+                            onChanged: (level) async {
+                              final success = await ref
+                                  .read(energyLevelProvider.notifier)
+                                  .updateLevel(level);
+
+                              if (!success && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.alreadyLogged),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        l10n.currentEnergy,
-                        style: Theme.of(context).textTheme.titleMedium,
+                        l10n.tasksForEnergy(energyLevel),
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      const SizedBox(height: 16),
-                      _EnergySelector(
-                        key: ValueKey(energyLevel),
-                        currentLevel: energyLevel,
-                        onChanged: (level) async {
-                          final success = await ref
-                              .read(energyLevelProvider.notifier)
-                              .updateLevel(level);
-
-                          if (!success && context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(l10n.alreadyLogged),
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
-                          }
-                        },
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () => _showAddTaskDialog(context, ref),
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    l10n.tasksForEnergy(energyLevel),
-                    style: Theme.of(context).textTheme.titleLarge,
+              if (tasks.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Text(
+                      l10n.noTasks,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () => _showAddTaskDialog(context, ref),
+                )
+              else
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => _TaskTile(task: tasks[index]),
+                    childCount: tasks.length,
                   ),
-                ],
-              ),
-            ),
-          ),
-          if (tasks.isEmpty)
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(
-                child: Text(
-                  l10n.noTasks,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
                 ),
-              ),
-            )
-          else
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => _TaskTile(task: tasks[index]),
-                childCount: tasks.length,
-              ),
-            ),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const HistoryPage()),
-          );
-        },
-        label: Text(l10n.history),
-        icon: const Icon(Icons.history),
-      ),
+              const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HistoryPage()),
+              );
+            },
+            label: Text(l10n.history),
+            icon: const Icon(Icons.history),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            colors: const [
+              Colors.green,
+              Colors.blue,
+              Colors.pink,
+              Colors.orange,
+              Colors.purple,
+            ],
+          ),
+        ),
+      ],
     );
   }
 
