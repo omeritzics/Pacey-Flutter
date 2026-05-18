@@ -292,11 +292,6 @@ jobs:
       - name: Build iOS app
         run: flutter build ios --release --no-codesign
 
-      - name: Rename iOS app
-        run: |
-          cd build/ios/iphoneos
-          mv Runner.app Pacey.app
-
       - name: Upload iOS artifact
         uses: actions/upload-artifact@main
         with:
@@ -333,11 +328,11 @@ jobs:
         with:
           tag_name: nightly
           files: |
-            artifacts/pacey-windows/Pacey.exe
-            artifacts/pacey-macos/Pacey-macOS.zip
-            artifacts/pacey-linux-appimage/Pacey-x86_64.AppImage
-            artifacts/pacey-android/Pacey.apk
-            artifacts/pacey-ios/Pacey.app
+            artifacts/pacey-windows/*.exe
+            artifacts/pacey-macos/*.zip
+            artifacts/pacey-linux-appimage/*.AppImage
+            artifacts/pacey-android/*.apk
+            artifacts/pacey-ios/*.app
           generate_release_notes: true
           draft: false
           prerelease: true

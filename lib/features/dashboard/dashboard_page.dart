@@ -80,7 +80,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
   }
 
   @override
@@ -101,7 +103,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     if (!context.mounted || result == null) return;
 
     final l10n = AppLocalizations.of(context)!;
-    final bool imported = (result.tasksImported + result.energyLogsImported) != 0;
+    final bool imported =
+        (result.tasksImported + result.energyLogsImported) != 0;
 
     if (imported) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -122,7 +125,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     ref.listen<PacingStats?>(pacingStatsProvider, (previous, next) {
-      if (previous != null && next != null && next.healingLevel > previous.healingLevel) {
+      if (previous != null &&
+          next != null &&
+          next.healingLevel > previous.healingLevel) {
         _confettiController.play();
       }
     });
@@ -145,7 +150,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsPage(),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.settings),
@@ -360,67 +367,66 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     child: Text(
                       l10n.selectWeekDays,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      DateTime.sunday,
-                      DateTime.monday,
-                      DateTime.tuesday,
-                      DateTime.wednesday,
-                      DateTime.thursday,
-                      DateTime.friday,
-                      DateTime.saturday,
-                    ].map((day) {
-                      final isSelected = selectedDays.contains(day);
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected) {
-                              if (selectedDays.length > 1) {
-                                selectedDays.remove(day);
-                              }
-                            } else {
-                              selectedDays.add(day);
-                            }
-                          });
-                        },
-                        child: Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isSelected
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest,
-                            border: Border.all(
-                              color: isSelected
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .outline
-                                      .withValues(alpha: 0.5),
+                    children:
+                        [
+                          DateTime.sunday,
+                          DateTime.monday,
+                          DateTime.tuesday,
+                          DateTime.wednesday,
+                          DateTime.thursday,
+                          DateTime.friday,
+                          DateTime.saturday,
+                        ].map((day) {
+                          final isSelected = selectedDays.contains(day);
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (isSelected) {
+                                  if (selectedDays.length > 1) {
+                                    selectedDays.remove(day);
+                                  }
+                                } else {
+                                  selectedDays.add(day);
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.surfaceContainerHighest,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.outline
+                                            .withValues(alpha: 0.5),
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                _getDayLabel(context, day),
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            _getDayLabel(context, day),
-                            style: TextStyle(
-                              color: isSelected
-                                  ? Theme.of(context).colorScheme.onPrimary
-                                  : Theme.of(context).colorScheme.onSurface,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                          );
+                        }).toList(),
                   ),
                 ],
                 Padding(
@@ -487,24 +493,41 @@ class _EnergySelector extends StatelessWidget {
           runSpacing: 4.0,
           children: List.generate(10, (index) {
             final level = index + 1;
-            return GestureDetector(
+            final isLit = level <= currentLevel;
+
+            return InkWell(
               onTap: () => onChanged(level),
+              borderRadius: BorderRadius.circular(8),
+              splashColor: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.2),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                 child: Icon(
-                  Icons.bolt,
-                  size: 32,
-                  color: level <= currentLevel
-                      ? null
-                      : Theme.of(
-                          context,
-                        ).colorScheme.outline.withValues(alpha: 0.3),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4.0,
+                  vertical: 6.0,
+                ),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  transform: Matrix4.identity()..scale(isLit ? 1.1 : 1.0),
+                  transformAlignment: Alignment.center,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: isLit ? 1.0 : 0.4,
+                    child: Icon(
+                      Icons.bolt,
+                      size: 28,
+                      color: isLit
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
                 ),
               ),
             );
           }),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Text(
           '$currentLevel / 10',
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
@@ -695,67 +718,66 @@ class _TaskTile extends ConsumerWidget {
                     child: Text(
                       l10n.selectWeekDays,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      DateTime.sunday,
-                      DateTime.monday,
-                      DateTime.tuesday,
-                      DateTime.wednesday,
-                      DateTime.thursday,
-                      DateTime.friday,
-                      DateTime.saturday,
-                    ].map((day) {
-                      final isSelected = selectedDays.contains(day);
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected) {
-                              if (selectedDays.length > 1) {
-                                selectedDays.remove(day);
-                              }
-                            } else {
-                              selectedDays.add(day);
-                            }
-                          });
-                        },
-                        child: Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isSelected
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest,
-                            border: Border.all(
-                              color: isSelected
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .outline
-                                      .withValues(alpha: 0.5),
+                    children:
+                        [
+                          DateTime.sunday,
+                          DateTime.monday,
+                          DateTime.tuesday,
+                          DateTime.wednesday,
+                          DateTime.thursday,
+                          DateTime.friday,
+                          DateTime.saturday,
+                        ].map((day) {
+                          final isSelected = selectedDays.contains(day);
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (isSelected) {
+                                  if (selectedDays.length > 1) {
+                                    selectedDays.remove(day);
+                                  }
+                                } else {
+                                  selectedDays.add(day);
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.surfaceContainerHighest,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.outline
+                                            .withValues(alpha: 0.5),
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                _getDayLabel(context, day),
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            _getDayLabel(context, day),
-                            style: TextStyle(
-                              color: isSelected
-                                  ? Theme.of(context).colorScheme.onPrimary
-                                  : Theme.of(context).colorScheme.onSurface,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                          );
+                        }).toList(),
                   ),
                 ],
                 Padding(
