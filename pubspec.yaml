@@ -6,6 +6,15 @@ version: 1.0.0+1
 environment:
   sdk: ^3.11.5
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  macos: true
+  windows: true
+  image_path: "assets/images/icon_master_flat.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/images/icon_foreground.png"
+
 dependencies:
   flutter:
     sdk: flutter
@@ -25,6 +34,7 @@ dependencies:
   sqflite: ^2.4.2+1
   sqflite_common_ffi: ^2.4.0+3
   shared_preferences: ^2.5.5
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:

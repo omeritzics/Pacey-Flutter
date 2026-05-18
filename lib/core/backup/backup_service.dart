@@ -263,10 +263,17 @@ class BackupService {
         final dir = await getApplicationDocumentsDirectory();
         file = File('${dir.path}/pacey_auto_backup.json');
       }
-      
+
+      // Ensure the directory exists
+      final bool directoryExists = await file.parent.exists();
+      if (!directoryExists) {
+        await file.parent.create(recursive: true);
+      }
+
       await file.writeAsString(json);
     } catch (e) {
-      // ignore
+      // Log the error for debugging
+      print('Auto export failed: $e');
     }
   }
 }

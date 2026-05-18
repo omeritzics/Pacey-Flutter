@@ -38,6 +38,9 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
+      - name: Generate launcher icons
+        run: dart run flutter_launcher_icons
+
       - name: Upload source artifacts
         uses: actions/upload-artifact@main
         with:
@@ -76,7 +79,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: pacey-windows
-          path: build/windows/x64/runner/Release/pacey.exe
+          path: build/windows/x64/runner/Release/Pacey.exe
           retention-days: 7
 
   # Build for macOS
@@ -111,13 +114,13 @@ jobs:
       - name: Create macOS zip
         run: |
           cd build/macos/Build/Products/Release
-          zip -r pacey-macos.zip pacey.app
+          zip -r Pacey-macOS.zip Pacey.app
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@main
         with:
           name: pacey-macos
-          path: build/macos/Build/Products/Release/pacey-macos.zip
+          path: build/macos/Build/Products/Release/Pacey-macOS.zip
           retention-days: 7
 
   # Build for Linux
@@ -199,12 +202,7 @@ jobs:
           EOF
           chmod +x AppImageDir/AppRun
           
-          # Create icon using ImageMagick (now pre-installed)
-          convert -size 256x256 xc:blue -fill white -gravity center -pointsize 48 -annotate +0+0 "Pacey" AppImageDir/Pacey.png || \
-          # Fallback: create a simple colored square
-          convert -size 256x256 xc:blue AppImageDir/Pacey.png || \
-          # Final fallback: copy AppRun as placeholder
-          cp AppImageDir/AppRun AppImageDir/Pacey.png
+          cp assets/images/icon_foreground.png AppImageDir/Pacey.png
           
           # Build AppImage using extracted tool
           ./appimagetool/AppRun AppImageDir Pacey-x86_64.AppImage
@@ -254,7 +252,7 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" != "pull_request" ]; then
             cd build/app/outputs/flutter-apk
-            mv app-profile.apk pacey.apk
+            mv app-profile.apk Pacey.apk
           fi
 
       - name: Upload Android artifact
@@ -262,7 +260,7 @@ jobs:
         with:
           name: pacey-android
           path: |
-            ${{ github.event_name == 'pull_request' && 'build/app/outputs/flutter-apk/app-debug.apk' || 'build/app/outputs/flutter-apk/pacey.apk' }}
+            ${{ github.event_name == 'pull_request' && 'build/app/outputs/flutter-apk/app-debug.apk' || 'build/app/outputs/flutter-apk/Pacey.apk' }}
           retention-days: 7
 
   # Build for iOS (only on macOS)
@@ -334,10 +332,10 @@ jobs:
         uses: softprops/action-gh-release@master
         with:
           files: |
-            artifacts/pacey-windows/pacey.exe
-            artifacts/pacey-macos/pacey-macos.zip
+            artifacts/pacey-windows/Pacey.exe
+            artifacts/pacey-macos/Pacey-macOS.zip
             artifacts/pacey-linux-appimage/Pacey-x86_64.AppImage
-            artifacts/pacey-android/pacey.apk
+            artifacts/pacey-android/Pacey.apk
             artifacts/pacey-ios/Pacey.app
           generate_release_notes: true
           draft: false
