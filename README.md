@@ -1,5 +1,4 @@
-# Pacey
-
+# <img src="https://raw.githubusercontent.com/omeritzics/Pacey/refs/heads/main/assets/images/icon_foreground.png" width="52"> Pacey
 A simple energy management application for people with CFS/ME. I primarily made this app for my personal use and that it still isn't ready for daily usage.
 
 ## Disclaimer
