@@ -25,16 +25,6 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Cache pub dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.pub-cache
-            .dart_tool
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
       - name: Get Flutter dependencies
         run: flutter pub get
 
