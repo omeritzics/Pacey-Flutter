@@ -493,7 +493,7 @@ class _EnergySelector extends StatelessWidget {
         Wrap(
           alignment: WrapAlignment.center,
           spacing: 2.0,
-          runSpacing: 4.0,
+          runSpacing: 3.0,
           children: List.generate(10, (index) {
             final level = index + 1;
             final isLit = level <= currentLevel;
@@ -519,7 +519,7 @@ class _EnergySelector extends StatelessWidget {
                     opacity: isLit ? 1.0 : 0.4,
                     child: Icon(
                       Icons.bolt,
-                      size: 28,
+                      size: 24,
                       color: isLit
                           ? Theme.of(context).colorScheme.primary
                           : Theme.of(context).colorScheme.outline,

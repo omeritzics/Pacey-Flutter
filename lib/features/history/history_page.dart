@@ -176,7 +176,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                                 locale,
                               ).format(log.timestamp),
                             ),
-                            trailing: const Icon(Icons.bolt, size: 28),
+                            trailing: const Icon(Icons.bolt, size: 24),
                           );
                         },
                       ),
