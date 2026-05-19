@@ -6,12 +6,14 @@ import 'package:timezone/timezone.dart' as tz;
 import 'reminders_provider.dart';
 
 class NotificationService {
-  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     tz.initializeTimeZones();
     try {
-      final TimezoneInfo timeZoneInfo = await FlutterTimezone.getLocalTimezone();
+      final TimezoneInfo timeZoneInfo =
+          await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
     } catch (_) {
       // Fallback if local timezone detection fails
@@ -24,23 +26,35 @@ class NotificationService {
       requestBadgePermission: false,
       requestSoundPermission: false,
     );
+    const LinuxInitializationSettings initializationSettingsLinux =
+        LinuxInitializationSettings(defaultActionName: 'Open notification');
+    const WindowsInitializationSettings initializationSettingsWindows =
+        WindowsInitializationSettings(
+          appName: '',
+          appUserModelId: '',
+          guid: '',
+        );
     const initSettings = InitializationSettings(
       android: androidInit,
       iOS: darwinInit,
       macOS: darwinInit,
+      linux: initializationSettingsLinux,
+      windows: initializationSettingsWindows,
     );
 
-    await _plugin.initialize(
-      settings: initSettings,
-    );
+    await _plugin.initialize(settings: initSettings);
   }
 
   Future<void> requestPermissions() async {
     await _plugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.requestNotificationsPermission();
     await _plugin
-        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >()
         ?.requestPermissions(alert: true, badge: true, sound: true);
   }
 
@@ -86,7 +100,8 @@ class NotificationService {
     const androidDetails = AndroidNotificationDetails(
       'energy_reminders',
       'Energy Reminders',
-      channelDescription: 'Notifications reminding you to log your energy level',
+      channelDescription:
+          'Notifications reminding you to log your energy level',
       importance: Importance.high,
       priority: Priority.high,
     );

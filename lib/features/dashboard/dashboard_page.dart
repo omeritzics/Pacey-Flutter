@@ -83,6 +83,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     _confettiController = ConfettiController(
       duration: const Duration(seconds: 3),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _maybeAutoImport(context);
+    });
   }
 
   @override
@@ -92,8 +95,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }
 
   Future<void> _maybeAutoImport(BuildContext context) async {
+    final hasRun = ref.read(autoImportRunProvider);
+    if (hasRun) return;
+
     final settings = ref.read(backupSettingsProvider);
     if (!settings.isAutoImportEnabled) return;
+
+    // Set as executed immediately to prevent concurrency issues
+    ref.read(autoImportRunProvider.notifier).markAsRun();
 
     final path = settings.autoImportPath;
     final appDb = ref.read(databaseProvider);
@@ -130,10 +139,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           next.healingLevel > previous.healingLevel) {
         _confettiController.play();
       }
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _maybeAutoImport(context);
     });
 
     final energyLevel = ref.watch(energyLevelProvider);

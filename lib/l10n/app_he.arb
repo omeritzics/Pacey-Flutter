@@ -87,7 +87,7 @@
   "exportFailed": "הייצוא נכשל. נא לנסות שוב.",
   "exportSuccessful": "הנתונים יוצאו בהצלחה.",
   "importFailed": "הייבוא נכשל. נא לבדוק את הקובץ ולנסות שוב.",
-  "importSuccessful": "יובאו {tasks} משימות ו-{logs} רשומות אנרגיה.",
+  "importSuccessful": "יובאו {tasks} משימות ו־{logs} רשומות אנרגיה.",
   "save": "שמירה",
   "selectLanguage": "בחירת שפה",
   "settings": "הגדרות",

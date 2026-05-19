@@ -225,7 +225,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String importSuccessful(int tasks, int logs) {
-    return 'יובאו $tasks משימות ו-$logs רשומות אנרגיה.';
+    return 'יובאו $tasks משימות ו־$logs רשומות אנרגיה.';
   }
 
   @override

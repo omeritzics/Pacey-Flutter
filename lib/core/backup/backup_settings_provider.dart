@@ -95,3 +95,18 @@ final backupSettingsProvider =
     NotifierProvider<BackupSettingsNotifier, BackupSettings>(
       () => BackupSettingsNotifier(),
     );
+
+class AutoImportRunNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void markAsRun() {
+    state = true;
+  }
+}
+
+final autoImportRunProvider = NotifierProvider<AutoImportRunNotifier, bool>(
+  () => AutoImportRunNotifier(),
+);
+
+
