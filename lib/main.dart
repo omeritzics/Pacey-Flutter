@@ -9,14 +9,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/backup/backup_settings_provider.dart';
 import 'features/dashboard/dashboard_page.dart';
 
+import 'package:pacey/features/reminders/notification_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final prefs = await SharedPreferences.getInstance();
 
+  final notificationService = NotificationService();
+  await notificationService.init();
+
   runApp(
     ProviderScope(
-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        notificationServiceProvider.overrideWithValue(notificationService),
+      ],
       child: const EnergyPacingApp(),
     ),
   );

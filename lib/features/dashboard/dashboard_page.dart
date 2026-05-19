@@ -512,7 +512,7 @@ class _EnergySelector extends StatelessWidget {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOut,
-                  transform: Matrix4.identity()..scale(isLit ? 1.1 : 1.0),
+                  transform: Matrix4.diagonal3Values(isLit ? 1.1 : 1.0, isLit ? 1.1 : 1.0, 1.0),
                   transformAlignment: Alignment.center,
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 200),

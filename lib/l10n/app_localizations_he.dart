@@ -84,7 +84,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String availableAfter(String date) {
-    return 'זמין לאחר $date';
+    return 'זמינה החל מהתאריך $date';
   }
 
   @override
@@ -249,4 +249,32 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get dataResetSuccessful => 'הנתונים אופסו בהצלחה';
+
+  @override
+  String get reminders => 'תזכורות';
+
+  @override
+  String get remindersDescription => 'ניהול תזכורות להזנת רמות האנרגיה שלך';
+
+  @override
+  String get morningReminder => 'תזכורת בוקר';
+
+  @override
+  String get morningReminderDescription => 'תזכורת לתיעוד רמת האנרגיה בבוקר';
+
+  @override
+  String get afternoonReminder => 'תזכורת צהריים';
+
+  @override
+  String get afternoonReminderDescription =>
+      'תזכורת לתיעוד רמת האנרגיה בצהריים';
+
+  @override
+  String get eveningReminder => 'תזכורת ערב';
+
+  @override
+  String get eveningReminderDescription => 'תזכורת לתיעוד רמת האנרגיה בערב';
+
+  @override
+  String get reminderTime => 'שעה';
 }

@@ -105,5 +105,14 @@
   "confirmReset": "לאפס את כל הנתונים?",
   "confirmResetMessage": "פעולה זו תמחק לצמיתות את כל הנתונים שלך. לא ניתן לבטל פעולה זו.",
   "reset": "איפוס",
-  "dataResetSuccessful": "הנתונים אופסו בהצלחה"
+  "dataResetSuccessful": "הנתונים אופסו בהצלחה",
+  "reminders": "תזכורות",
+  "remindersDescription": "ניהול תזכורות להזנת רמות האנרגיה שלך",
+  "morningReminder": "תזכורת בוקר",
+  "morningReminderDescription": "תזכורת לתיעוד רמת האנרגיה בבוקר",
+  "afternoonReminder": "תזכורת צהריים",
+  "afternoonReminderDescription": "תזכורת לתיעוד רמת האנרגיה בצהריים",
+  "eveningReminder": "תזכורת ערב",
+  "eveningReminderDescription": "תזכורת לתיעוד רמת האנרגיה בערב",
+  "reminderTime": "שעה"
 }

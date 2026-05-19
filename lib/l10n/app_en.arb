@@ -105,5 +105,14 @@
   "confirmReset": "Reset All Data?",
   "confirmResetMessage": "This will permanently delete all your data. This action cannot be undone.",
   "reset": "Reset",
-  "dataResetSuccessful": "Data has been reset successfully"
+  "dataResetSuccessful": "Data has been reset successfully",
+  "reminders": "Reminders",
+  "remindersDescription": "Manage reminders to log your energy amounts",
+  "morningReminder": "Morning Reminder",
+  "morningReminderDescription": "Reminder to log morning energy level",
+  "afternoonReminder": "Afternoon Reminder",
+  "afternoonReminderDescription": "Reminder to log afternoon energy level",
+  "eveningReminder": "Evening Reminder",
+  "eveningReminderDescription": "Reminder to log evening energy level",
+  "reminderTime": "Time"
 }

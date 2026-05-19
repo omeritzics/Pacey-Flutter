@@ -7,6 +7,7 @@ import '../../core/theme/theme_provider.dart';
 import '../../core/settings/app_settings_provider.dart';
 import '../backup/data_backup_screen.dart';
 import '../gamification/gamification_provider.dart';
+import '../reminders/reminders_page.dart';
 
 import '../energy/energy_provider.dart';
 import '../tasks/task_provider.dart';
@@ -114,6 +115,23 @@ class SettingsPage extends ConsumerWidget {
                   .setHideUnavailableTasks(value);
             },
             secondary: const Icon(Icons.schedule),
+          ),
+          const Divider(),
+
+          // Reminders tile
+          ListTile(
+            title: Text(l10n.reminders),
+            subtitle: Text(l10n.remindersDescription),
+            leading: const Icon(Icons.notifications_outlined),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RemindersPage(),
+                ),
+              );
+            },
           ),
           const Divider(),
 

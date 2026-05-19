@@ -252,4 +252,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataResetSuccessful => 'Data has been reset successfully';
+
+  @override
+  String get reminders => 'Reminders';
+
+  @override
+  String get remindersDescription =>
+      'Manage reminders to log your energy amounts';
+
+  @override
+  String get morningReminder => 'Morning Reminder';
+
+  @override
+  String get morningReminderDescription =>
+      'Reminder to log morning energy level';
+
+  @override
+  String get afternoonReminder => 'Afternoon Reminder';
+
+  @override
+  String get afternoonReminderDescription =>
+      'Reminder to log afternoon energy level';
+
+  @override
+  String get eveningReminder => 'Evening Reminder';
+
+  @override
+  String get eveningReminderDescription =>
+      'Reminder to log evening energy level';
+
+  @override
+  String get reminderTime => 'Time';
 }

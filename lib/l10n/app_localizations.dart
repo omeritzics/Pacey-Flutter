@@ -547,6 +547,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Data has been reset successfully'**
   String get dataResetSuccessful;
+
+  /// No description provided for @reminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get reminders;
+
+  /// No description provided for @remindersDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage reminders to log your energy amounts'**
+  String get remindersDescription;
+
+  /// No description provided for @morningReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning Reminder'**
+  String get morningReminder;
+
+  /// No description provided for @morningReminderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder to log morning energy level'**
+  String get morningReminderDescription;
+
+  /// No description provided for @afternoonReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon Reminder'**
+  String get afternoonReminder;
+
+  /// No description provided for @afternoonReminderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder to log afternoon energy level'**
+  String get afternoonReminderDescription;
+
+  /// No description provided for @eveningReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening Reminder'**
+  String get eveningReminder;
+
+  /// No description provided for @eveningReminderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder to log evening energy level'**
+  String get eveningReminderDescription;
+
+  /// No description provided for @reminderTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get reminderTime;
 }
 
 class _AppLocalizationsDelegate
