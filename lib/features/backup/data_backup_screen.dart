@@ -41,7 +41,7 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
       final fileName = 'pacey-backup-$timestamp.json';
 
       final bytes = Uint8List.fromList(utf8.encode(json));
-      final outputFile = await FilePicker.platform.saveFile(
+      final outputFile = await FilePicker.saveFile(
         dialogTitle: l10n.exportData,
         fileName: fileName,
         type: FileType.custom,
@@ -74,7 +74,7 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
     final mode = await _showImportModeDialog();
     if (mode == null || !mounted) return;
 
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['json'],
       withData: true,
@@ -214,7 +214,7 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
                 ),
                 TextButton(
                   onPressed: () async {
-                    final directory = await FilePicker.platform
+                    final directory = await FilePicker
                         .getDirectoryPath();
                     if (directory != null) {
                       final path = '$directory/pacey_auto_backup.json';
@@ -258,7 +258,7 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
                 ),
                 TextButton(
                   onPressed: () async {
-                    final directory = await FilePicker.platform
+                    final directory = await FilePicker
                         .getDirectoryPath();
                     if (directory != null) {
                       final path = '$directory/pacey_auto_backup.json';
