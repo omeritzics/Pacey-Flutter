@@ -114,5 +114,10 @@
   "afternoonReminderDescription": "Reminder to log afternoon energy level",
   "eveningReminder": "Evening Reminder",
   "eveningReminderDescription": "Reminder to log evening energy level",
-  "reminderTime": "Time"
+  "reminderTime": "Time",
+  "desktopSettings": "Desktop Settings",
+  "minimizeToTray": "Minimize to Tray",
+  "minimizeToTrayDescription": "Close window to system tray instead of exiting",
+  "startOnStartup": "Start Pacey on Startup",
+  "startOnStartupDescription": "Automatically launch Pacey when you log into your system"
 }

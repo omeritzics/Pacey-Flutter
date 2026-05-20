@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pacey/l10n/app_localizations.dart';
@@ -134,6 +136,43 @@ class SettingsPage extends ConsumerWidget {
             },
           ),
           const Divider(),
+
+          // Desktop Settings Section
+          if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text(
+                l10n.desktopSettings,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SwitchListTile(
+              title: Text(l10n.minimizeToTray),
+              subtitle: Text(l10n.minimizeToTrayDescription),
+              value: ref.watch(appSettingsProvider).minimizeToTray,
+              onChanged: (bool value) {
+                ref
+                    .read(appSettingsProvider.notifier)
+                    .setMinimizeToTray(value);
+              },
+              secondary: const Icon(Icons.arrow_downward),
+            ),
+            SwitchListTile(
+              title: Text(l10n.startOnStartup),
+              subtitle: Text(l10n.startOnStartupDescription),
+              value: ref.watch(appSettingsProvider).startOnStartup,
+              onChanged: (bool value) {
+                ref
+                    .read(appSettingsProvider.notifier)
+                    .setStartOnStartup(value);
+              },
+              secondary: const Icon(Icons.power_settings_new),
+            ),
+            const Divider(),
+          ],
 
           // Data backup
           ListTile(

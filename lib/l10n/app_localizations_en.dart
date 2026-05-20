@@ -283,4 +283,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderTime => 'Time';
+
+  @override
+  String get desktopSettings => 'Desktop Settings';
+
+  @override
+  String get minimizeToTray => 'Minimize to Tray';
+
+  @override
+  String get minimizeToTrayDescription =>
+      'Close window to system tray instead of exiting';
+
+  @override
+  String get startOnStartup => 'Start Pacey on Startup';
+
+  @override
+  String get startOnStartupDescription =>
+      'Automatically launch Pacey when you log into your system';
 }

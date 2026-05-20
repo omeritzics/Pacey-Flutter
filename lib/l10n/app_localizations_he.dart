@@ -277,4 +277,21 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get reminderTime => 'שעה';
+
+  @override
+  String get desktopSettings => 'הגדרות שולחן עבודה';
+
+  @override
+  String get minimizeToTray => 'מזעור למגש המערכת';
+
+  @override
+  String get minimizeToTrayDescription =>
+      'סגירת החלון תמזער אותו למגש המערכת במקום לצאת';
+
+  @override
+  String get startOnStartup => 'הפעל את Pacey עם הפעלת המחשב';
+
+  @override
+  String get startOnStartupDescription =>
+      'הפעלה אוטומטית של Pacey בעת כניסה למערכת';
 }

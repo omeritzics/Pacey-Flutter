@@ -10,6 +10,7 @@ import 'core/backup/backup_settings_provider.dart';
 import 'features/dashboard/dashboard_page.dart';
 
 import 'package:pacey/features/reminders/notification_service.dart';
+import 'package:pacey/core/desktop/desktop_tray_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +19,9 @@ void main() async {
 
   final notificationService = NotificationService();
   await notificationService.init();
+
+  // Initialize desktop tray and window manager if on a desktop platform
+  await DesktopTrayManager.instance.init();
 
   runApp(
     ProviderScope(

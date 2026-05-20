@@ -114,5 +114,10 @@
   "afternoonReminderDescription": "תזכורת לתיעוד רמת האנרגיה בצהריים",
   "eveningReminder": "תזכורת ערב",
   "eveningReminderDescription": "תזכורת לתיעוד רמת האנרגיה בערב",
-  "reminderTime": "שעה"
+  "reminderTime": "שעה",
+  "desktopSettings": "הגדרות שולחן עבודה",
+  "minimizeToTray": "מזעור למגש המערכת",
+  "minimizeToTrayDescription": "סגירת החלון תמזער אותו למגש המערכת במקום לצאת",
+  "startOnStartup": "הפעל את Pacey עם הפעלת המחשב",
+  "startOnStartupDescription": "הפעלה אוטומטית של Pacey בעת כניסה למערכת"
 }

@@ -601,6 +601,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Time'**
   String get reminderTime;
+
+  /// No description provided for @desktopSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Desktop Settings'**
+  String get desktopSettings;
+
+  /// No description provided for @minimizeToTray.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimize to Tray'**
+  String get minimizeToTray;
+
+  /// No description provided for @minimizeToTrayDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Close window to system tray instead of exiting'**
+  String get minimizeToTrayDescription;
+
+  /// No description provided for @startOnStartup.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Pacey on Startup'**
+  String get startOnStartup;
+
+  /// No description provided for @startOnStartupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically launch Pacey when you log into your system'**
+  String get startOnStartupDescription;
 }
 
 class _AppLocalizationsDelegate

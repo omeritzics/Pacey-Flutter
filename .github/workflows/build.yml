@@ -24,6 +24,7 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+          pub-cache: false
 
       - name: Get Flutter dependencies
         run: flutter pub get
@@ -58,6 +59,7 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+          pub-cache: false
 
       - name: Get Flutter dependencies
         run: flutter pub get
@@ -89,6 +91,7 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+          pub-cache: false
 
       - name: Get Flutter dependencies
         run: flutter pub get
@@ -121,10 +124,7 @@ jobs:
     steps:
       - name: Install Linux dependencies
         run: |
-          sudo apt-get update --fix-missing || true
-          sudo apt-get install -y --fix-missing clang cmake ninja-build pkg-config libgtk-3-dev libpng-dev libjpeg-dev libtiff-dev fuse2 libfuse2 imagemagick || true
-          # Fallback installation if some packages fail
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev imagemagick || sudo apt-get install -y clang cmake ninja-build pkg-config imagemagick
+          sudo apt-get install -y --fix-missing clang cmake ninja-build pkg-config gtk+-3.0 libgtk-3-dev libayatana-appindicator3-dev libpng-dev libjpeg-dev libtiff-dev libfuse2 imagemagick || true
 
       - name: Cache AppImage tool
         uses: actions/cache@v3
@@ -144,6 +144,7 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+          pub-cache: false
 
       - name: Get Flutter dependencies
         run: flutter pub get
@@ -226,6 +227,7 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+          pub-cache: false
 
       - name: Get Flutter dependencies
         run: flutter pub get
@@ -270,6 +272,7 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+          pub-cache: false
 
       - name: Get Flutter dependencies
         run: flutter pub get
