@@ -1,12 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:pacey/l10n/app_localizations.dart';
 
 import '../../core/sync/device_pairing_service.dart';
 import '../../core/sync/device_pairing_provider.dart';
 import '../../core/sync/crdt_database_provider.dart';
+
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class DevicePairingScreen extends ConsumerStatefulWidget {
   const DevicePairingScreen({super.key});
@@ -114,27 +117,37 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen> {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(height: 16),
-                        if (_isScanning)
-                          SizedBox(
-                            height: 250,
-                            child: MobileScanner(
-                              onDetect: (capture) {
-                                final barcode = capture.barcodes.first;
-                                if (barcode.rawValue != null) {
-                                  _handleQRCodeScan(barcode.rawValue!, pairingService);
-                                }
+                        if (!Platform.isWindows && !Platform.isLinux)
+                          if (_isScanning)
+                            SizedBox(
+                              height: 250,
+                              child: MobileScanner(
+                                onDetect: (capture) {
+                                  final barcode = capture.barcodes.first;
+                                  if (barcode.rawValue != null) {
+                                    _handleQRCodeScan(barcode.rawValue!, pairingService);
+                                  }
+                                },
+                              ),
+                            )
+                          else
+                            FilledButton.icon(
+                              onPressed: () {
+                                setState(() => _isScanning = true);
                               },
-                            ),
-                          )
+                              icon: const Icon(Icons.qr_code_scanner),
+                              label: Text(l10n.startScanning),
+                            )
                         else
-                          FilledButton.icon(
-                            onPressed: () {
-                              setState(() => _isScanning = true);
-                            },
-                            icon: const Icon(Icons.qr_code_scanner),
-                            label: Text(l10n.startScanning),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              'QR scanning is not supported on this platform.\nPlease use the manual import/export feature instead.',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ),
-                        if (_isScanning)
+                        if (!Platform.isWindows && !Platform.isLinux && _isScanning)
                           Padding(
                             padding: const EdgeInsets.only(top: 16),
                             child: OutlinedButton.icon(

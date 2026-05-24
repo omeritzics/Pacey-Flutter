@@ -1,17 +1,15 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
+import 'dart:math' show Random;
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import '../../data/crdt_database.dart';
 
-enum ConnectionStatus {
-  disconnected,
-  connecting,
-  connected,
-  error,
-}
+enum ConnectionStatus { disconnected, connecting, connected, error }
 
 class DeviceInfo {
   final String deviceId;
@@ -83,8 +81,8 @@ class SyncMessage {
 
 class DevicePairingService extends ChangeNotifier {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  final Uuid _uuid = const Uuid();
-  
+  final Uuid uuid = const Uuid();
+
   String? _deviceId;
   String? _deviceName;
   WebSocketChannel? _channel;
@@ -92,7 +90,7 @@ class DevicePairingService extends ChangeNotifier {
   DeviceInfo? _connectedDevice;
   CrdtDatabase? _crdtDatabase;
   enc.Encrypter? _encrypter;
-  
+
   final List<DeviceInfo> _pairedDevices = [];
 
   String? get deviceId => _deviceId;
@@ -107,7 +105,7 @@ class DevicePairingService extends ChangeNotifier {
     await _loadDeviceInfo();
     await _loadPairedDevices();
     await _setupEncrypter();
-    
+
     // Set up callback to broadcast changesets when data changes
     _crdtDatabase!.onDataChange = () {
       if (isConnected) {
@@ -123,22 +121,81 @@ class DevicePairingService extends ChangeNotifier {
     } catch (e) {
       // Storage not available, will use in-memory values
     }
-    
-    if (_deviceId == null) {
-      _deviceId = _uuid.v4();
+
+    if (_deviceId == null || _deviceName == null) {
+      String model = 'Device';
+      String name = 'Pacey User';
+
       try {
-        await _storage.write(key: 'device_id', value: _deviceId!);
+        final deviceInfo = DeviceInfoPlugin();
+        if (kIsWeb) {
+          final webInfo = await deviceInfo.webBrowserInfo;
+          model = webInfo.browserName.name;
+          name = 'Web User';
+        } else if (Platform.isAndroid) {
+          final androidInfo = await deviceInfo.androidInfo;
+          model = androidInfo.model;
+          name = androidInfo.device;
+        } else if (Platform.isIOS) {
+          final iosInfo = await deviceInfo.iosInfo;
+          model = iosInfo.model;
+          name = iosInfo.name;
+        } else if (Platform.isMacOS) {
+          final macInfo = await deviceInfo.macOsInfo;
+          model = macInfo.model;
+          name = macInfo.computerName;
+        } else if (Platform.isWindows) {
+          final windowsInfo = await deviceInfo.windowsInfo;
+          model = 'Windows';
+          name = windowsInfo.computerName;
+        } else if (Platform.isLinux) {
+          final linuxInfo = await deviceInfo.linuxInfo;
+          model = linuxInfo.name;
+          name = linuxInfo.prettyName;
+        }
       } catch (e) {
-        // Storage not available, using in-memory value
+        // Fallback to basic Platform values if device_info fails
+        if (!kIsWeb) {
+          model = Platform.operatingSystem;
+          name = Platform.localHostname;
+        }
       }
-    }
-    
-    if (_deviceName == null) {
-      _deviceName = 'Pacey Device';
-      try {
-        await _storage.write(key: 'device_name', value: _deviceName!);
-      } catch (e) {
-        // Storage not available, using in-memory value
+
+      // Generate the suffix (5 random alphanumeric characters)
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      final random = Random();
+      final suffix = List.generate(
+        5,
+        (index) => chars[random.nextInt(chars.length)],
+      ).join();
+
+      // Sanitize model and name to be a clean slug (lowercase, alphanumeric, hyphens)
+      String sanitize(String value) {
+        return value
+            .toLowerCase()
+            .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+            .replaceAll(RegExp(r'^-+|-+$'), '');
+      }
+
+      final cleanModel = sanitize(model);
+      final cleanName = sanitize(name);
+
+      if (_deviceId == null) {
+        _deviceId = '$cleanModel-$cleanName-$suffix';
+        try {
+          await _storage.write(key: 'device_id', value: _deviceId!);
+        } catch (e) {
+          // Storage not available
+        }
+      }
+
+      if (_deviceName == null) {
+        _deviceName = '$model ($name)';
+        try {
+          await _storage.write(key: 'device_name', value: _deviceName!);
+        } catch (e) {
+          // Storage not available
+        }
       }
     }
   }
@@ -182,7 +239,7 @@ class DevicePairingService extends ChangeNotifier {
     } catch (e) {
       // Storage not available, will generate new key
     }
-    
+
     if (storedKey != null) {
       try {
         return enc.Key.fromBase16(storedKey);
@@ -213,22 +270,22 @@ class DevicePairingService extends ChangeNotifier {
       final pairingData = jsonDecode(pairingCode) as Map<String, dynamic>;
       final deviceId = pairingData['deviceId'] as String;
       final deviceName = pairingData['deviceName'] as String;
-      
+
       // Check if already paired
       if (_pairedDevices.any((d) => d.deviceId == deviceId)) {
         return true;
       }
-      
+
       final deviceInfo = DeviceInfo(
         deviceId: deviceId,
         deviceName: deviceName,
         lastSeen: DateTime.now(),
       );
-      
+
       _pairedDevices.add(deviceInfo);
       await _savePairedDevices();
       notifyListeners();
-      
+
       return true;
     } catch (e) {
       return false;
@@ -268,11 +325,13 @@ class DevicePairingService extends ChangeNotifier {
       notifyListeners();
 
       // Send initial ping
-      _sendMessage(SyncMessage(
-        type: 'ping',
-        deviceId: _deviceId,
-        timestamp: DateTime.now(),
-      ));
+      _sendMessage(
+        SyncMessage(
+          type: 'ping',
+          deviceId: _deviceId,
+          timestamp: DateTime.now(),
+        ),
+      );
     } catch (e) {
       _connectionStatus = ConnectionStatus.error;
       notifyListeners();
@@ -290,7 +349,7 @@ class DevicePairingService extends ChangeNotifier {
   void _handleMessage(dynamic message) {
     try {
       final syncMessage = SyncMessage.fromJsonString(message as String);
-      
+
       switch (syncMessage.type) {
         case 'changeset':
           if (_crdtDatabase != null && syncMessage.data != null) {
@@ -299,11 +358,13 @@ class DevicePairingService extends ChangeNotifier {
           break;
         case 'ping':
           // Respond with ack
-          _sendMessage(SyncMessage(
-            type: 'ack',
-            deviceId: _deviceId,
-            timestamp: DateTime.now(),
-          ));
+          _sendMessage(
+            SyncMessage(
+              type: 'ack',
+              deviceId: _deviceId,
+              timestamp: DateTime.now(),
+            ),
+          );
           break;
         case 'ack':
           // Connection acknowledged
@@ -329,13 +390,15 @@ class DevicePairingService extends ChangeNotifier {
 
     try {
       final encryptedChangeset = await _crdtDatabase!.exportChangeset();
-      
-      _sendMessage(SyncMessage(
-        type: 'changeset',
-        deviceId: _deviceId,
-        data: encryptedChangeset,
-        timestamp: DateTime.now(),
-      ));
+
+      _sendMessage(
+        SyncMessage(
+          type: 'changeset',
+          deviceId: _deviceId,
+          data: encryptedChangeset,
+          timestamp: DateTime.now(),
+        ),
+      );
     } catch (e) {
       // Handle export error
     }
@@ -350,11 +413,11 @@ class DevicePairingService extends ChangeNotifier {
   Future<void> removePairedDevice(String deviceId) async {
     _pairedDevices.removeWhere((d) => d.deviceId == deviceId);
     await _savePairedDevices();
-    
+
     if (_connectedDevice?.deviceId == deviceId) {
       await disconnect();
     }
-    
+
     notifyListeners();
   }
 

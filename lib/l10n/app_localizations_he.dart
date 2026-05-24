@@ -100,10 +100,10 @@ class AppLocalizationsHe extends AppLocalizations {
   String get history => 'היסטוריה';
 
   @override
-  String get last7Days => '7 הימים האחרונים';
+  String get last7Days => '7 ימים';
 
   @override
-  String get last30Days => '30 הימים האחרונים';
+  String get last30Days => '30 ימים';
 
   @override
   String get allTime => 'כל הזמנים';
@@ -289,7 +289,7 @@ class AppLocalizationsHe extends AppLocalizations {
       'סגירת החלון תמזער אותו למגש המערכת במקום לצאת';
 
   @override
-  String get startOnStartup => 'הפעל את Pacey עם הפעלת המחשב';
+  String get startOnStartup => 'הפעלת Pacey עם עליית המחשב';
 
   @override
   String get startOnStartupDescription =>
@@ -301,12 +301,6 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get syncDataDescription =>
       'ייצוא או ייבוא של קבוצות שינויים מוצפנות לסנכרון נתונים בין מכשירים באמצעות טכנולוגיית CRDT.';
-
-  @override
-  String get exportSyncData => 'ייצוא נתוני סנכרון';
-
-  @override
-  String get importSyncData => 'ייבוא נתוני סנכרון';
 
   @override
   String get exportSyncSuccessful => 'נתוני הסנכרון יוצאו בהצלחה.';
@@ -322,7 +316,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get syncDataInfo =>
-      'תכונת הסנכרון משתמשת ב-CRDT (סוגי נתונים חסרי סתירות ומשוכפלים) כדי למזג נתונים ממספר מכשירים. ייצא קבוצת שינויים ממכשיר אחד וייבא אותה במכשיר אחר כדי לסנכרן את הנתונים שלך.';
+      'תכונת הסנכרון משתמשת בטכנולוגיית CRDT כדי למזג נתונים ממספר מכשירים. אפשר לייצא מספר שינויים ממכשיר אחד ולייבא אותם למכשיר אחר כדי לסנכרן את הנתונים שלך.';
 
   @override
   String get devicePairing => 'צימוד מכשירים';

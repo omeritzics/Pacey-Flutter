@@ -1,15 +1,14 @@
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:pacey/l10n/app_localizations.dart';
 
 import '../../core/sync/crdt_database_provider.dart';
 import '../../core/sync/device_pairing_provider.dart';
+
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class CrdtSyncScreen extends ConsumerStatefulWidget {
   const CrdtSyncScreen({super.key});
@@ -19,7 +18,6 @@ class CrdtSyncScreen extends ConsumerStatefulWidget {
 }
 
 class _CrdtSyncScreenState extends ConsumerState<CrdtSyncScreen> {
-  bool _isWorking = false;
   bool _isScanning = false;
   bool _isInitialized = false;
 
@@ -29,97 +27,8 @@ class _CrdtSyncScreenState extends ConsumerState<CrdtSyncScreen> {
     // Initialization is handled in build method using addPostFrameCallback
   }
 
-  Future<void> _exportChangeset() async {
-    final l10n = AppLocalizations.of(context)!;
-    setState(() => _isWorking = true);
 
-    try {
-      final crdtDbAsync = ref.read(crdtDatabaseProvider);
-      final crdtDb = crdtDbAsync.value;
-      if (crdtDb == null) {
-        if (mounted) _showError(l10n.exportSyncFailed);
-        return;
-      }
-      final encryptedData = await crdtDb.exportChangeset();
 
-      final timestamp = DateTime.now().toUtc().toIso8601String().replaceAll(
-        ':',
-        '-',
-      );
-      final fileName = 'pacey-sync-$timestamp.enc';
-
-      final bytes = Uint8List.fromList(encryptedData.codeUnits);
-      final outputFile = await FilePicker.saveFile(
-        dialogTitle: l10n.exportSyncData,
-        fileName: fileName,
-        type: FileType.custom,
-        allowedExtensions: ['enc'],
-        bytes: bytes,
-      );
-
-      if (outputFile == null) return;
-
-      if (!Platform.isAndroid && !Platform.isIOS) {
-        final file = File(outputFile);
-        await file.writeAsBytes(bytes);
-      }
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.exportSyncSuccessful)),
-      );
-    } catch (e) {
-      if (mounted) _showError(l10n.exportSyncFailed);
-    } finally {
-      if (mounted) setState(() => _isWorking = false);
-    }
-  }
-
-  Future<void> _importChangeset() async {
-    final l10n = AppLocalizations.of(context)!;
-
-    final result = await FilePicker.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['enc'],
-      withData: true,
-    );
-    if (result == null || result.files.isEmpty || !mounted) return;
-
-    final file = result.files.first;
-    final bytes = file.bytes;
-    if (bytes == null && file.path == null) {
-      _showError(l10n.importSyncFailed);
-      return;
-    }
-
-    setState(() => _isWorking = true);
-    try {
-      final encryptedData = bytes != null
-          ? String.fromCharCodes(bytes)
-          : await File(file.path!).readAsString();
-
-      final crdtDbAsync = ref.read(crdtDatabaseProvider);
-      final crdtDb = crdtDbAsync.value;
-      if (crdtDb == null) {
-        if (mounted) _showError(l10n.importSyncFailed);
-        return;
-      }
-      await crdtDb.importChangeset(encryptedData);
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.importSyncSuccessful)),
-      );
-    } catch (e) {
-      if (mounted) _showError(l10n.importSyncFailed);
-    } finally {
-      if (mounted) setState(() => _isWorking = false);
-    }
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-  }
 
   void _handleQRCodeScan(String qrCode, dynamic pairingService) async {
     setState(() => _isScanning = false);
@@ -292,27 +201,37 @@ class _CrdtSyncScreenState extends ConsumerState<CrdtSyncScreen> {
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       const SizedBox(height: 16),
-                      if (_isScanning)
-                        SizedBox(
-                          height: 200,
-                          child: MobileScanner(
-                            onDetect: (capture) {
-                              final barcode = capture.barcodes.first;
-                              if (barcode.rawValue != null) {
-                                _handleQRCodeScan(barcode.rawValue!, pairingService);
-                              }
+                      if (!Platform.isWindows && !Platform.isLinux)
+                        if (_isScanning)
+                          SizedBox(
+                            height: 200,
+                            child: MobileScanner(
+                              onDetect: (capture) {
+                                final barcode = capture.barcodes.first;
+                                if (barcode.rawValue != null) {
+                                  _handleQRCodeScan(barcode.rawValue!, pairingService);
+                                }
+                              },
+                            ),
+                          )
+                        else
+                          FilledButton.icon(
+                            onPressed: () {
+                              setState(() => _isScanning = true);
                             },
-                          ),
-                        )
+                            icon: const Icon(Icons.qr_code_scanner),
+                            label: Text(l10n.startScanning),
+                          )
                       else
-                        FilledButton.icon(
-                          onPressed: () {
-                            setState(() => _isScanning = true);
-                          },
-                          icon: const Icon(Icons.qr_code_scanner),
-                          label: Text(l10n.startScanning),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'QR scanning is not supported on this platform.\nPlease use the manual import/export feature instead.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ),
-                      if (_isScanning)
+                      if (!Platform.isWindows && !Platform.isLinux && _isScanning)
                         Padding(
                           padding: const EdgeInsets.only(top: 16),
                           child: OutlinedButton.icon(
@@ -371,38 +290,6 @@ class _CrdtSyncScreenState extends ConsumerState<CrdtSyncScreen> {
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              const Divider(),
-              
-              // Manual Export/Import
-              Text(
-                l10n.syncDataDescription,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: _isWorking ? null : _exportChangeset,
-                icon: const Icon(Icons.upload_file),
-                label: Text(l10n.exportSyncData),
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: _isWorking ? null : _importChangeset,
-                icon: const Icon(Icons.download),
-                label: Text(l10n.importSyncData),
-              ),
-              if (_isWorking) ...[
-                const SizedBox(height: 24),
-                const Center(child: CircularProgressIndicator()),
-              ],
-              const SizedBox(height: 32),
-              const Divider(),
-              Text(
-                l10n.syncDataInfo,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
               ),
             ],
           );

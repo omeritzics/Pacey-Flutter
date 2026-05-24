@@ -77,22 +77,14 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['json'],
-      withData: true,
     );
     if (result == null || result.files.isEmpty || !mounted) return;
 
     final file = result.files.first;
-    final bytes = file.bytes;
-    if (bytes == null && file.path == null) {
-      _showError(l10n.importFailed);
-      return;
-    }
-
     setState(() => _isWorking = true);
     try {
-      final jsonString = bytes != null
-          ? String.fromCharCodes(bytes)
-          : await File(file.path!).readAsString();
+      final bytes = await file.readAsBytes();
+      final jsonString = utf8.decode(bytes);
 
       final appDb = ref.read(databaseProvider);
       final backupService = ref.read(backupServiceProvider);

@@ -269,19 +269,19 @@ abstract class AppLocalizations {
   /// No description provided for @last7Days.
   ///
   /// In en, this message translates to:
-  /// **'Last 7 days'**
+  /// **'7 days'**
   String get last7Days;
 
   /// No description provided for @last30Days.
   ///
   /// In en, this message translates to:
-  /// **'Last 30 days'**
+  /// **'30 days'**
   String get last30Days;
 
   /// No description provided for @allTime.
   ///
   /// In en, this message translates to:
-  /// **'All the times'**
+  /// **'All times'**
   String get allTime;
 
   /// No description provided for @energyTrend.
@@ -644,18 +644,6 @@ abstract class AppLocalizations {
   /// **'Export or import encrypted changesets to sync data between devices using CRDT technology.'**
   String get syncDataDescription;
 
-  /// No description provided for @exportSyncData.
-  ///
-  /// In en, this message translates to:
-  /// **'Export Sync Data'**
-  String get exportSyncData;
-
-  /// No description provided for @importSyncData.
-  ///
-  /// In en, this message translates to:
-  /// **'Import Sync Data'**
-  String get importSyncData;
-
   /// No description provided for @exportSyncSuccessful.
   ///
   /// In en, this message translates to:
@@ -683,7 +671,7 @@ abstract class AppLocalizations {
   /// No description provided for @syncDataInfo.
   ///
   /// In en, this message translates to:
-  /// **'The sync feature uses CRDT (Conflict-free Replicated Data Types) to merge data from multiple devices. Export a changeset from one device and import it on another to sync your data.'**
+  /// **'The sync feature uses CRDT technology to merge data from multiple devices. Export a changeset from one device and import it on another to sync your data.'**
   String get syncDataInfo;
 
   /// No description provided for @devicePairing.

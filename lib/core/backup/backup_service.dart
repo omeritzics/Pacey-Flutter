@@ -268,7 +268,7 @@ class BackupService {
         await file.parent.create(recursive: true);
       }
 
-      await file.writeAsString(json);
+      await file.writeAsString(json, encoding: utf8);
     } catch (e) {
       // Log the error for debugging
       if (kDebugMode) print('Auto export failed: $e');
@@ -290,7 +290,7 @@ class BackupService {
 
     if (!await file.exists()) return null;
 
-    final jsonString = await file.readAsString();
+    final jsonString = await file.readAsString(encoding: utf8);
     return importData(appDb, jsonString, mode: mode);
   }
 }

@@ -101,13 +101,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get history => 'History';
 
   @override
-  String get last7Days => 'Last 7 days';
+  String get last7Days => '7 days';
 
   @override
-  String get last30Days => 'Last 30 days';
+  String get last30Days => '30 days';
 
   @override
-  String get allTime => 'All the times';
+  String get allTime => 'All times';
 
   @override
   String get energyTrend => 'Energy Trend';
@@ -309,12 +309,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Export or import encrypted changesets to sync data between devices using CRDT technology.';
 
   @override
-  String get exportSyncData => 'Export Sync Data';
-
-  @override
-  String get importSyncData => 'Import Sync Data';
-
-  @override
   String get exportSyncSuccessful => 'Sync data exported successfully.';
 
   @override
@@ -329,7 +323,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncDataInfo =>
-      'The sync feature uses CRDT (Conflict-free Replicated Data Types) to merge data from multiple devices. Export a changeset from one device and import it on another to sync your data.';
+      'The sync feature uses CRDT technology to merge data from multiple devices. Export a changeset from one device and import it on another to sync your data.';
 
   @override
   String get devicePairing => 'Device Pairing';
