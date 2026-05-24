@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 final localeProvider = NotifierProvider<LocaleNotifier, Locale>(() {
   return LocaleNotifier();
@@ -49,12 +48,6 @@ class LocaleNotifier extends Notifier<Locale> {
         return const Locale("he");
       } else if (systemLocale.languageCode == "en") {
         return const Locale("en");
-      }
-
-      // For web platform, try to get browser language
-      if (kIsWeb) {
-        // Web-specific locale detection could be added here
-        // For now, fall back to English
       }
 
       // Default to English for unsupported languages

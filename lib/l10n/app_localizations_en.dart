@@ -300,4 +300,83 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get startOnStartupDescription =>
       'Automatically launch Pacey when you log into your system';
+
+  @override
+  String get syncData => 'Sync Data';
+
+  @override
+  String get syncDataDescription =>
+      'Export or import encrypted changesets to sync data between devices using CRDT technology.';
+
+  @override
+  String get exportSyncData => 'Export Sync Data';
+
+  @override
+  String get importSyncData => 'Import Sync Data';
+
+  @override
+  String get exportSyncSuccessful => 'Sync data exported successfully.';
+
+  @override
+  String get exportSyncFailed => 'Export failed. Please try again.';
+
+  @override
+  String get importSyncSuccessful => 'Sync data imported successfully.';
+
+  @override
+  String get importSyncFailed =>
+      'Import failed. Please check the file and try again.';
+
+  @override
+  String get syncDataInfo =>
+      'The sync feature uses CRDT (Conflict-free Replicated Data Types) to merge data from multiple devices. Export a changeset from one device and import it on another to sync your data.';
+
+  @override
+  String get devicePairing => 'Device Pairing';
+
+  @override
+  String get thisDevice => 'This Device';
+
+  @override
+  String get shareDeviceId => 'Share Device ID';
+
+  @override
+  String get scanToPair => 'Scan this QR code with another device to pair';
+
+  @override
+  String get scanDevice => 'Scan Device QR Code';
+
+  @override
+  String get startScanning => 'Start Scanning';
+
+  @override
+  String get pairedDevices => 'Paired Devices';
+
+  @override
+  String get noPairedDevices => 'No paired devices yet';
+
+  @override
+  String get pairingSuccess => 'Device paired successfully';
+
+  @override
+  String get pairingFailed => 'Failed to pair device';
+
+  @override
+  String get connectionStatus => 'Connection Status';
+
+  @override
+  String get connected => 'Connected';
+
+  @override
+  String get disconnected => 'Disconnected';
+
+  @override
+  String get connecting => 'Connecting';
+
+  @override
+  String get realTimeSync => 'Real-time Sync';
+
+  @override
+  String get realTimeSyncDescription =>
+      'Automatically sync data when connected to paired devices';
 }

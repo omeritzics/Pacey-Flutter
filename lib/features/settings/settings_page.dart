@@ -1,5 +1,4 @@
 import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pacey/l10n/app_localizations.dart';
@@ -10,6 +9,7 @@ import '../../core/settings/app_settings_provider.dart';
 import '../backup/data_backup_screen.dart';
 import '../gamification/gamification_provider.dart';
 import '../reminders/reminders_page.dart';
+import '../sync/crdt_sync_screen.dart';
 
 import '../energy/energy_provider.dart';
 import '../tasks/task_provider.dart';
@@ -138,7 +138,7 @@ class SettingsPage extends ConsumerWidget {
           const Divider(),
 
           // Desktop Settings Section
-          if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) ...[
+          if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) ...[
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Text(
@@ -185,6 +185,22 @@ class SettingsPage extends ConsumerWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const DataBackupScreen(),
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          // CRDT Sync
+          ListTile(
+            title: Text(l10n.syncData),
+            subtitle: Text(l10n.syncDataDescription),
+            leading: const Icon(Icons.sync),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CrdtSyncScreen(),
                 ),
               );
             },

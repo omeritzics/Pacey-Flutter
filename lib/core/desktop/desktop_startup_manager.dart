@@ -1,9 +1,7 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class DesktopStartupManager {
   static Future<void> setEnabled(bool enabled) async {
-    if (kIsWeb) return;
     if (Platform.isLinux) {
       await _setLinuxEnabled(enabled);
     } else if (Platform.isWindows) {
@@ -14,7 +12,6 @@ class DesktopStartupManager {
   }
 
   static Future<bool> isEnabled() async {
-    if (kIsWeb) return false;
     if (Platform.isLinux) {
       return await _isLinuxEnabled();
     } else if (Platform.isWindows) {

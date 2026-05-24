@@ -294,4 +294,82 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get startOnStartupDescription =>
       'הפעלה אוטומטית של Pacey בעת כניסה למערכת';
+
+  @override
+  String get syncData => 'סנכרון נתונים';
+
+  @override
+  String get syncDataDescription =>
+      'ייצוא או ייבוא של קבוצות שינויים מוצפנות לסנכרון נתונים בין מכשירים באמצעות טכנולוגיית CRDT.';
+
+  @override
+  String get exportSyncData => 'ייצוא נתוני סנכרון';
+
+  @override
+  String get importSyncData => 'ייבוא נתוני סנכרון';
+
+  @override
+  String get exportSyncSuccessful => 'נתוני הסנכרון יוצאו בהצלחה.';
+
+  @override
+  String get exportSyncFailed => 'הייצוא נכשל. נא לנסות שוב.';
+
+  @override
+  String get importSyncSuccessful => 'נתוני הסנכרון יובאו בהצלחה.';
+
+  @override
+  String get importSyncFailed => 'הייבוא נכשל. נא לבדוק את הקובץ ולנסות שוב.';
+
+  @override
+  String get syncDataInfo =>
+      'תכונת הסנכרון משתמשת ב-CRDT (סוגי נתונים חסרי סתירות ומשוכפלים) כדי למזג נתונים ממספר מכשירים. ייצא קבוצת שינויים ממכשיר אחד וייבא אותה במכשיר אחר כדי לסנכרן את הנתונים שלך.';
+
+  @override
+  String get devicePairing => 'צימוד מכשירים';
+
+  @override
+  String get thisDevice => 'מכשיר זה';
+
+  @override
+  String get shareDeviceId => 'שיתוף מזהה מכשיר';
+
+  @override
+  String get scanToPair => 'סרוק קוד QR זה במכשיר אחר לצימוד';
+
+  @override
+  String get scanDevice => 'סריקת קוד QR של מכשיר';
+
+  @override
+  String get startScanning => 'התחל סריקה';
+
+  @override
+  String get pairedDevices => 'מכשירים מצומדים';
+
+  @override
+  String get noPairedDevices => 'אין מכשירים מצומדים עדיין';
+
+  @override
+  String get pairingSuccess => 'המכשיר צומד בהצלחה';
+
+  @override
+  String get pairingFailed => 'צימוד המכשיר נכשל';
+
+  @override
+  String get connectionStatus => 'סטטוס חיבור';
+
+  @override
+  String get connected => 'מחובר';
+
+  @override
+  String get disconnected => 'מנותק';
+
+  @override
+  String get connecting => 'מתחבר';
+
+  @override
+  String get realTimeSync => 'סנכרון בזמן אמת';
+
+  @override
+  String get realTimeSyncDescription =>
+      'סנכרון אוטומטי של נתונים בעת חיבור למכשירים מצומדים';
 }

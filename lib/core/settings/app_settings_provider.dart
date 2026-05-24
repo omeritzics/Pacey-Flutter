@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:pacey/core/desktop/desktop_startup_manager.dart';
 import '../backup/backup_settings_provider.dart';
 
@@ -72,7 +71,7 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
     await prefs.setBool(_keyStartOnStartup, value);
     state = state.copyWith(startOnStartup: value);
 
-    final isDesktop = !kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS);
+    final isDesktop = (Platform.isWindows || Platform.isLinux || Platform.isMacOS);
     if (isDesktop) {
       await DesktopStartupManager.setEnabled(value);
     }

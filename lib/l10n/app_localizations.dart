@@ -631,6 +631,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Automatically launch Pacey when you log into your system'**
   String get startOnStartupDescription;
+
+  /// No description provided for @syncData.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Data'**
+  String get syncData;
+
+  /// No description provided for @syncDataDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Export or import encrypted changesets to sync data between devices using CRDT technology.'**
+  String get syncDataDescription;
+
+  /// No description provided for @exportSyncData.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Sync Data'**
+  String get exportSyncData;
+
+  /// No description provided for @importSyncData.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Sync Data'**
+  String get importSyncData;
+
+  /// No description provided for @exportSyncSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync data exported successfully.'**
+  String get exportSyncSuccessful;
+
+  /// No description provided for @exportSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed. Please try again.'**
+  String get exportSyncFailed;
+
+  /// No description provided for @importSyncSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync data imported successfully.'**
+  String get importSyncSuccessful;
+
+  /// No description provided for @importSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Import failed. Please check the file and try again.'**
+  String get importSyncFailed;
+
+  /// No description provided for @syncDataInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'The sync feature uses CRDT (Conflict-free Replicated Data Types) to merge data from multiple devices. Export a changeset from one device and import it on another to sync your data.'**
+  String get syncDataInfo;
+
+  /// No description provided for @devicePairing.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Pairing'**
+  String get devicePairing;
+
+  /// No description provided for @thisDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'This Device'**
+  String get thisDevice;
+
+  /// No description provided for @shareDeviceId.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Device ID'**
+  String get shareDeviceId;
+
+  /// No description provided for @scanToPair.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this QR code with another device to pair'**
+  String get scanToPair;
+
+  /// No description provided for @scanDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Device QR Code'**
+  String get scanDevice;
+
+  /// No description provided for @startScanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Scanning'**
+  String get startScanning;
+
+  /// No description provided for @pairedDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Paired Devices'**
+  String get pairedDevices;
+
+  /// No description provided for @noPairedDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'No paired devices yet'**
+  String get noPairedDevices;
+
+  /// No description provided for @pairingSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Device paired successfully'**
+  String get pairingSuccess;
+
+  /// No description provided for @pairingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pair device'**
+  String get pairingFailed;
+
+  /// No description provided for @connectionStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Status'**
+  String get connectionStatus;
+
+  /// No description provided for @connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connected;
+
+  /// No description provided for @disconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected'**
+  String get disconnected;
+
+  /// No description provided for @connecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting'**
+  String get connecting;
+
+  /// No description provided for @realTimeSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Real-time Sync'**
+  String get realTimeSync;
+
+  /// No description provided for @realTimeSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically sync data when connected to paired devices'**
+  String get realTimeSyncDescription;
 }
 
 class _AppLocalizationsDelegate
