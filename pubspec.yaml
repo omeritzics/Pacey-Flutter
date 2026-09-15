@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^3.4.3
-  dynamic_color: ^1.8.1
+  dynamic_color: ^2.1.0
   fl_chart: ^1.2.0
   uuid: ^4.6.0
   path_provider: ^2.1.6
