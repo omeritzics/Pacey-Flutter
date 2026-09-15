@@ -21,7 +21,7 @@ dependencies:
   intl: ^0.20.3
   file_picker: ^12.0.0-beta.7
   share_plus: ^13.3.0
-  sqflite_common_ffi: ^2.4.2
+  sqflite_common_ffi: ^2.4.3
   shared_preferences: ^2.5.5
   confetti: ^0.8.0
 dev_dependencies:
